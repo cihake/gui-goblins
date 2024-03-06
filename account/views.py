@@ -4,21 +4,26 @@ from account.forms import RegistrationForm, AccountAuthenticationForm, AccountUp
 
 def registration_view(request):
     context = {}
-    if request.POST:
+    if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():
             form.save()
             email = form.cleaned_data.get('email')
-            raw_password = form.cleaned_data.get('password')
+            raw_password = form.cleaned_data.get('password1') 
             account = authenticate(email=email, password=raw_password)
-            login(request, account)
-            return redirect('home')
+            if account is not None:
+                login(request, account)
+                return redirect('home')
+            else:
+                # Authentication failed
+                messages.error(request, "Authentication failed. Please check your email and password.")
         else:
             context['registration_form'] = form
     else:
         form = RegistrationForm()
         context['registration_form'] = form
     return render(request, 'account/register.html', context)
+
 
 def logout_view(request):
     logout(request)
