@@ -38,6 +38,9 @@ INSTALLED_APPS = [
     #My Apps
     'personal',
     'account',
+    'candyland',
+    'catan',
+    'monopoly',
     
 
     #Django Apps

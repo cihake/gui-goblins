@@ -23,7 +23,7 @@ class Main:
     winner = 0
 
     # loop for turns
-    """if (current_player.skip == False):
+    if (current_player.skip == False):
         # draw the new board, declaring the current player's turn
         # Interaction: wait for the player to draw a card, and show what they drew
         card = deck.draw_card()
@@ -73,7 +73,7 @@ class Main:
         elif (position == len(board.spaces)):
             winner = current_player.ordinal
         
-        """
+        
     
     # go to the next turn
     """turn += 1

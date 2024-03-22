@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>Candyland</title>
+        <!--Access the jQuery library-->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    </head>
+    <body>
+        <!--Display the "winner" message-->
+        <div id="winner"></div>
+        <!--Create a button-->
+        <div>
+            <button class="button" data-action="draw_card">Draw a card</button>
+        </div>
+        <!--Point to the javascript files, effectively implementing them-->
+        <script src="{% static 'listener.js' %}"></script>
+        <script src="{% static 'responder.js' %}"></script>
+    </body>
+</html>
