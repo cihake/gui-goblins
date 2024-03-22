@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from .utils import add_coins
 
 class MyAccountManager(BaseUserManager):
     def create_user(self, email, username, password=None):
@@ -50,5 +51,41 @@ class Account(AbstractBaseUser):
     def has_perm(self, perm, obj=None):
         return self.is_admin
 
-    def has_module_perms(self, app_label):
+    def has_module_perms(self, app_label
+):
         return True
+
+# Defines the Coin model for use in the database.
+class Coin(models.Model):
+    user = models.OneToOneField(Account, on_delete=models.CASCADE)
+    amount = models.IntegerField(default=0)
+
+# toString method that returns a string representation of the user's Coins. 
+    def __str__(self):
+        return f"{self.user.username}'s Coins"
+
+# Model to define achievements for users. 
+class Achievement(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField()
+    requirements = models.CharField(max_length=100)
+    coin_reward = models.IntegerField(default=0)
+    score = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.name
+# Model to link users with their earned achievements. 
+class UserAchievement(models.Model):
+    user = models.ForeignKey(Account, on_delete=models.CASCADE)
+    achievement = models.ForeignKey(Achievement, on_delete=models.CASCADE)
+    earned_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username}: {self.achievement.name}"
+
+class Leaderboard(models.Model):
+    user = models.ForeignKey(Account, on_delete=models.CASCADE)
+    score = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.user.username}: {self.score}"
