@@ -10,7 +10,6 @@
     </head>
     <body>
         <button>Click</button>
-        <!--<img id="board" src="{% static 'CandyLand.jpg' %}">-->
         
         <!--*************************************************************************-->
         <!--JavaScript for input-->
@@ -37,7 +36,7 @@
                 });
 
                 // Get mouse coordinates over the board
-                $("board").click(function() {
+                /*$("board").click(function() {
                     mousey = event.pageY;
                     mousex = event.pageX;
                     // 8 is the mandatory offset, even for absolute positioning
@@ -55,7 +54,7 @@
                             console.log(response);
                         }
                     })
-                });
+                });*/
 
                 // Function to get the CSRF token
                 function getCookie(name) {
