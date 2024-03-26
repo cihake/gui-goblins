@@ -5,9 +5,13 @@ from django.http import JsonResponse
 def candyland_view(request):
     # AJAX requests
     if (request.method == 'POST' and request.headers.get('x-requested-with') == 'XMLHttpRequest'):
-        input = request.POST.get('input')
-        print(input)
-        return JsonResponse({'value': input})
+        try:
+            input = request.POST.get('input')
+            print(input)
+            return JsonResponse({'value': input})
+        except Exception as e:
+            print("Error processing AJAX request:", e)
+            return JsonResponse({'error': 'An error occurred while processing your request'}, status=500)
     
     # Initial HTTP request; setup, page render
     else:

@@ -4,6 +4,9 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from personal.views import (home_screen_view, credits_view)
+from candyland.views import (candyland_view)
+#from monopoly.views import (monopoly_view)
+#from catan.views import (catan_view)
 
 
 from account.views import (
@@ -13,9 +16,6 @@ from account.views import (
     account_view,
     coin_balance_view,
     leaderboard_view,
-    candyland_view,
-    monopoly_view,
-    catan_view,
 )
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -28,8 +28,8 @@ urlpatterns = [
     path('coins/', coin_balance_view, name = 'coins'),
     path('leaderboard/', leaderboard_view, name='leaderboard'),
     path('candyland/', candyland_view, name='candyland'),
-    path('monopoly/', monopoly_view, name='monopoly'),
-    path('catan/', catan_view, name='catan'),
+    #path('monopoly/', monopoly_view, name='monopoly'),
+    #path('catan/', catan_view, name='catan'),
 ]
 
 if settings.DEBUG:
