@@ -67,6 +67,7 @@
                     },
                     error: function(xhr, status, error) {
                         // Handle error response
+                        console.log("Error");
                         console.error('Error:', xhr.status);  // Log the HTTP status code to console
                         console.error('Message:', xhr.responseText);  // Log the error message to console
                     }

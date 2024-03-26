@@ -12,6 +12,8 @@ def candyland_view(request):
         except Exception as e:
             print("Error processing AJAX request:", e)
             return JsonResponse({'error': 'An error occurred while processing your request'}, status=500)
+    elif (request.method == 'GET'):
+        return JsonResponse({'message': 'GET request received'})
     
     # Initial HTTP request; setup, page render
     else:
