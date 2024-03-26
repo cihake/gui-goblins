@@ -6,7 +6,7 @@ Positions are floats instead of integers to allow for scaling calculations.
 Because of this, you may need to convert the values to integers
 for certain functions. Remember; y goes down.
 """
-class Board:
+class Board (models.Model):
     ypos = models.FloatField()
     xpos = models.FloatField()
     scale = models.FloatField()
@@ -42,7 +42,6 @@ class Player(models.Model):
 class Deck(models.Model):
     ypos = models.FloatField()
     xpos = models.FloatField()
-    cards = models.CardField()
 
 """
 A card from the deck. Its value corresponds with either the color

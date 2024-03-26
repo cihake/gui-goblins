@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Candyland</title>
+        <!--Access the jQuery library-->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    </head>
+    <body>
+
+        <button>Click</button>
+        
+        <!--*************************************************************************-->
+        <!--JavaScript for input-->
+        <script>
+            // Run once the document has loaded
+            $(document).ready(function() {
+                // Get CSRF token, mandatory security for AJAX
+                var csrftoken = getCookie('csrftoken');
+
+                // Register a button click
+                $("button").click(function() {
+                    $.ajax({
+                        url: '/candyland/',
+                        type: 'POST',
+                        data: {
+                            'input': 'button_click',
+                        },
+                        headers: {'X-CSRFToken': csrftoken},
+                    });
+                });
+
+                // Function to get the CSRF token
+                function getCookie(name) {
+                    var cookieValue = null;
+                    if (document.cookie && document.cookie !== '') {
+                        var cookies = document.cookie.split(';');
+                        for (var i = 0; i < cookies.length; i++) {
+                            var cookie = cookies[i].trim();
+                            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                break;
+                            }
+                        }
+                    }
+                    return cookieValue;
+                }
+            });
+        </script>
+        <!--*************************************************************************-->
+        <!--JavaScript for output-->
+        <script>
+            $(document).ready(function() {
+                // Get CSRF token, mandatory security for AJAX
+                var csrftoken = getCookie('csrftoken');
+
+                $.ajax({
+                    url: '/candyland/',
+                    type: 'GET',
+                    dataType: 'json',
+                    headers: {'X-CSRFToken': csrftoken},
+
+                    success: function(response) {
+                        console.log(response);
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle error response
+                        console.error('Error:', xhr.status);  // Log the HTTP status code to console
+                        console.error('Message:', xhr.responseText);  // Log the error message to console
+                    }
+                });
+
+                // Function to get the CSRF token
+                function getCookie(name) {
+                    var cookieValue = null;
+                    if (document.cookie && document.cookie !== '') {
+                        var cookies = document.cookie.split(';');
+                        for (var i = 0; i < cookies.length; i++) {
+                            var cookie = cookies[i].trim();
+                            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                break;
+                            }
+                        }
+                    }
+                    return cookieValue;
+                }
+            });
+        </script>
+    </body>
+</html>

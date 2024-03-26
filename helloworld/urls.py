@@ -11,6 +11,11 @@ from account.views import (
     logout_view, 
     login_view,
     account_view,
+    coin_balance_view,
+    leaderboard_view,
+    candyland_view,
+    monopoly_view,
+    catan_view,
 )
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -20,6 +25,11 @@ urlpatterns = [
     path('login/', login_view, name="login"),
     path('account/', account_view, name="account"),
     path('credits/', credits_view, name='credits'),
+    path('coins/', coin_balance_view, name = 'coins'),
+    path('leaderboard/', leaderboard_view, name='leaderboard'),
+    path('candyland/', candyland_view, name='candyland'),
+    path('monopoly/', monopoly_view, name='monopoly'),
+    path('catan/', catan_view, name='catan'),
 ]
 
 if settings.DEBUG:
