@@ -1,4 +1,14 @@
 from django.shortcuts import render
+from django.http import JsonResponse
 
 def monopoly_view(request):
-    return render(request, 'monopoly.html')
+    # AJAX POST request; active response
+    if (request.method == 'POST' and request.headers.get('x-requested-with') == 'XMLHttpRequest'):
+        input = request.POST.get('input')
+        print(input)
+
+        return JsonResponse({'echo': input})
+    
+    # Initial HTTP request; setup, page render
+    else:
+        return render(request, 'monopoly.html')

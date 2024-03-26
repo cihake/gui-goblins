@@ -1,5 +1,77 @@
 <!DOCTYPE html>
 
 <html>
-    
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Monopoly</title>
+        <!--Access the jQuery library-->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    </head>
+    <body>
+        <button>Click</button>
+        
+        <!--*************************************************************************-->
+        <!--JavaScript for input-->
+        <script>
+            // Run once the document has loaded
+            $(document).ready(function() {
+                // Get CSRF token, mandatory security for AJAX
+                var csrftoken = getCookie('csrftoken');
+
+                // Register a button click
+                $('button').click(function() {
+                    $.ajax({
+                        url: '/monopoly/',
+                        type: 'POST',
+                        data: {
+                            'input': 'button_click',
+                        },
+                        headers: {'X-CSRFToken': csrftoken},
+
+                        success: function(response) {
+                            console.log(response);
+                        }
+                    });
+                });
+
+                // Get mouse coordinates over the board
+                /*$('board').click(function() {
+                    mousey = event.pageY;
+                    mousex = event.pageX;
+                    // 8 is the mandatory offset, even for absolute positioning
+                    console.log((mousey-8) + "," + (mousex-8));
+                    $.ajax({
+                        url: '/monopoly/',
+                        type: 'POST',
+                        data: {
+                            'mousey': mousey,
+                            'mousex': mousex,
+                        },
+                        headers: {'X-CSRFToken': csrftoken},
+
+                        success: function(response) {
+                            console.log(response);
+                        }
+                    })
+                });*/
+
+                // Function to get the CSRF token
+                function getCookie(name) {
+                    var cookieValue = null;
+                    if (document.cookie && document.cookie !== '') {
+                        var cookies = document.cookie.split(';');
+                        for (var i = 0; i < cookies.length; i++) {
+                            var cookie = cookies[i].trim();
+                            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                break;
+                            }
+                        }
+                    }
+                    return cookieValue;
+                }
+            });
+        </script>
+    </body>
 </html>
