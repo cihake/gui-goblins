@@ -9,8 +9,8 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     </head>
     <body>
-
         <button>Click</button>
+        <!--<img id="board" src="{% static 'CandyLand.jpg' %}">-->
         
         <!--*************************************************************************-->
         <!--JavaScript for input-->
@@ -29,48 +29,32 @@
                             'input': 'button_click',
                         },
                         headers: {'X-CSRFToken': csrftoken},
+
+                        success: function(response) {
+                            console.log(response);
+                        }
                     });
                 });
 
-                // Function to get the CSRF token
-                function getCookie(name) {
-                    var cookieValue = null;
-                    if (document.cookie && document.cookie !== '') {
-                        var cookies = document.cookie.split(';');
-                        for (var i = 0; i < cookies.length; i++) {
-                            var cookie = cookies[i].trim();
-                            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                                break;
-                            }
+                // Get mouse coordinates over the board
+                $("board").click(function() {
+                    mousey = event.pageY;
+                    mousex = event.pageX;
+                    // 8 is the mandatory offset, even for absolute positioning
+                    console.log((mousey-8) + "," + (mousex-8));
+                    $.ajax({
+                        url: '/candyland/',
+                        type: 'POST',
+                        data: {
+                            'mousey': mousey,
+                            'mousex': mousex,
+                        },
+                        headers: {'X-CSRFToken': csrftoken},
+
+                        success: function(response) {
+                            console.log(response);
                         }
-                    }
-                    return cookieValue;
-                }
-            });
-        </script>
-        <!--*************************************************************************-->
-        <!--JavaScript for output-->
-        <script>
-            $(document).ready(function() {
-                // Get CSRF token, mandatory security for AJAX
-                var csrftoken = getCookie('csrftoken');
-
-                $.ajax({
-                    url: '/candyland/',
-                    type: 'GET',
-                    dataType: 'json',
-                    headers: {'X-CSRFToken': csrftoken},
-
-                    success: function(response) {
-                        console.log(response);
-                    },
-                    error: function(xhr, status, error) {
-                        // Handle error response
-                        console.log("Error");
-                        console.error('Error:', xhr.status);  // Log the HTTP status code to console
-                        console.error('Message:', xhr.responseText);  // Log the error message to console
-                    }
+                    })
                 });
 
                 // Function to get the CSRF token
