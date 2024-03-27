@@ -34,7 +34,6 @@
         <li><a href="#instructions">Instructions</a></li>
       </ul>
     </li>
-    <li><a href="#acknowledgements">Acknowledgements</a></li>
     <li><a href="#license">License</a></li>
     <li><a href="#acknowledgments">Acknowledgments</a></li>
   </ol>
