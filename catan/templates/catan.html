@@ -10,6 +10,8 @@
     </head>
     <body>
         <button>Click</button>
+        <!--SVG to draw the board-->
+        <svg id="board" width="300" height="300"></svg>
         
         <!--*************************************************************************-->
         <!--JavaScript for input-->
@@ -31,6 +33,7 @@
 
                         success: function(response) {
                             console.log(response);
+                            draw_circle_grid();
                         }
                     });
                 });
@@ -55,6 +58,26 @@
                         }
                     })
                 });*/
+
+                function draw_circle(x, y) {
+                    var svg = document.getElementById('board');
+                    var circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                    circle.setAttribute("r", 10);
+                    circle.setAttribute("cx", x*40);
+                    circle.setAttribute("cy", y*40);
+                    svg.appendChild(circle);
+                }
+
+                function draw_circle_grid(x=0, y=0) {
+                    x ++;
+                    if (x > 5) {
+                        x = 0;
+                        y ++;
+                    }
+                    if (y > 5) {return;}
+                    draw_circle(x, y);
+                    setTimeout(function() {draw_circle_grid(x, y)}, 400);
+                }
 
                 // Function to get the CSRF token
                 function getCookie(name) {
