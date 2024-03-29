@@ -8,10 +8,34 @@
         <title>Candyland</title>
         <!--Access the jQuery library-->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        
+        <!--Define the CSS style for content-->
+        <style>
+            html, body {
+                margin: 0; padding: 0; height: 100%; overflow: visible;
+            }
+    
+            #svg-container {
+                width: 100vw; height: 100vh;
+                display: flex; justify-content: center; align-items: center;
+            }
+    
+            #board {
+                width: auto; height: auto; /*Maintain aspect ratio*/
+                max-width: 100%; max-height: 100%;
+            }
+        </style>
     </head>
     <body>
-        <image id="board" src="{% static 'CandyLand.jpg' %}"></image>
-        <button>Click</button>
+        <svg id="svg-container" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
+            <g id="board" height="100">
+                <image id="board_image" xlink:href="{% static 'CandyLand.jpg' %}"
+                height="100" />
+            </g>
+        </svg>
+        
+        <!--xlink:href="{% static 'CandyLand.jpg' %}"-->
+        <!--<button>Click</button>-->
         
         <!--*************************************************************************-->
         <!--JavaScript for input-->
@@ -20,6 +44,31 @@
             $(document).ready(function() {
                 // Get CSRF token, mandatory security for AJAX
                 var csrftoken = getCookie('csrftoken');
+
+                // Initialize
+                var xcoords = [0, 86, 120, 154, 188, 222, 257, 292, 326, 360, 395, 430, 464, 498, 532, 566, 601, 636, 666, 675, 663, 638, 604, 571, 538, 503, 470, 445, 448, 479, 513, 549, 582, 614, 628, 612, 580, 547, 513, 482, 450, 424, 398, 370, 340, 310, 278, 245, 210, 176, 143, 110, 84, 62, 46, 46, 59, 80, 107, 138, 173, 209, 241, 278, 310, 345, 381, 415, 450, 487, 519, 551, 586, 618, 649, 682, 713, 743, 772, 801, 816, 793, 758, 733, 708, 678, 644, 612, 582, 569, 581, 612, 647, 681, 720, 743, 731, 701, 668, 634, 599, 564, 529, 499, 466, 437, 410, 385, 362, 342, 317, 286, 257, 226, 193, 158, 123, 88, 58, 37, 43, 58, 85, 119, 153, 187, 222, 257, 290, 323, 353, 382, 393];
+                var ycoords = [0, 923, 931, 938, 949, 955, 956, 954, 944, 936, 932, 930, 931, 938, 947, 953, 957, 951, 935, 902, 867, 844, 838, 849, 859, 862, 856, 829, 794, 772, 768, 775, 781, 767, 736, 702, 688, 685, 690, 701, 718, 743, 765, 786, 807, 823, 839, 849, 849, 845, 833, 820, 799, 772, 739, 703, 670, 644, 622, 607, 602, 603, 608, 617, 625, 630, 635, 639, 635, 633, 626, 613, 602, 590, 575, 560, 545, 526, 507, 488, 455, 424, 424, 449, 472, 492, 498, 488, 471, 437, 402, 385, 384, 382, 380, 355, 321, 301, 290, 284, 284, 291, 299, 313, 329, 346, 369, 393, 421, 448, 473, 492, 512, 524, 537, 543, 546, 538, 525, 493, 459, 428, 406, 392, 384, 384, 383, 379, 369, 355, 336, 317, 282];
+                var image = document.getElementById('board_image');
+                var bbox = image.getBBox();
+
+                // Convert the absolute coordinates to relative coordinates
+                for (var i = 0; i < xcoords.length; i ++) {
+                    console.log(xcoords[i] + "," + ycoords[i]);
+                    var scale = bbox.height / 1000;
+                    xcoords[i] = xcoords[i] * scale;
+                    ycoords[i] = ycoords[i] * scale;
+                    console.log(xcoords[i], ycoords[i]);
+                    draw_circle(xcoords[i], ycoords[i]);
+                }
+
+                /*for (var i = 0; i < base_xcoord.length; i++) {
+                    draw_circle(base_xcoords[i], base_ycoords[i]);
+                }*/
+
+                console.log('Image X position:', bbox.x);
+                console.log('Image Y position:', bbox.y);
+                console.log('Image width:', bbox.width);
+                console.log('Image height:', bbox.height);
 
                 // Register a button click
                 $('button').click(function() {
@@ -57,6 +106,16 @@
                         }
                     })
                 });*/
+
+                function draw_circle(x, y) {
+                    var svg = document.getElementById('svg-container');
+                    var circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                    circle.setAttribute("r", 1.5);
+                    circle.setAttribute("cx", x);
+                    circle.setAttribute("cy", y);
+                    circle.setAttribute("fill", "blue");
+                    svg.appendChild(circle);
+                }
 
                 // Function to get the CSRF token
                 function getCookie(name) {
