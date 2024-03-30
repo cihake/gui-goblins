@@ -64,21 +64,23 @@
                 for (var i = 0; i < xcoords.length; i ++) {
                     xcoords[i] = xcoords[i] * scale;
                     ycoords[i] = ycoords[i] * scale;
-                    //draw_circle(xcoords[i], ycoords[i]);
                 }
 
-                // Register a button click
-                $('button').click(function() {
+                create_circle("piece1", xcoords[1], ycoords[1], 15);
+
+                // Register a dice roll
+                $('.dice_roll').click(function() {
                     $.ajax({
                         url: '/candyland/',
                         type: 'POST',
                         data: {
-                            'input': 'button_click',
+                            'input': 'dice_roll',
                         },
                         headers: {'X-CSRFToken': csrftoken},
-
+                        // Alter the piece's position
                         success: function(response) {
-                            console.log(response);
+                            $('#piece1').attr("cx", xcoords[2]);
+                            $('#piece1').attr("cy", ycoords[2]);
                         }
                     });
                 });
@@ -104,14 +106,16 @@
                     })
                 });*/
 
-                function draw_circle(x, y) {
-                    var svg = document.getElementById('svg-container');
-                    var circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-                    circle.setAttribute("r", 15);
-                    circle.setAttribute("cx", x);
-                    circle.setAttribute("cy", y);
-                    circle.setAttribute("fill", "blue");
-                    svg.appendChild(circle);
+                // Function to create a circle dynamically using SVG
+                function create_circle(id, x, y, radius) {
+                    var svgNS = "http://www.w3.org/2000/svg";
+                    var circle = document.createElementNS(svgNS, "circle");
+                    circle.setAttributeNS(null, "id", id);
+                    circle.setAttributeNS(null, "cx", x);
+                    circle.setAttributeNS(null, "cy", y);
+                    circle.setAttributeNS(null, "r", radius);
+                    circle.setAttributeNS(null, "class", "circle");
+                    document.getElementById("svg-container").appendChild(circle);
                 }
 
                 // Function to get the CSRF token
