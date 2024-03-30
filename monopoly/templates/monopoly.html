@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 
 <html>
@@ -7,9 +8,45 @@
         <title>Monopoly</title>
         <!--Access the jQuery library-->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+        <!--Define the CSS style for content-->
+        <style>
+            html, body {
+                margin: 0; padding: 0; height: 100%; overflow: visible;
+            }
+            #svg-container {
+                width: 100vw; height: 100vh;
+                display: flex; justify-content: center; align-items: center;
+            }
+            #board {
+                width: auto; height: auto; /*Maintain aspect ratio*/
+                max-width: 100%; max-height: 100%;
+            }
+            text {
+                font-family: Arial, sans-serif; font-size: 30px; fill: black;;
+            }
+            button {
+                position: absolute; padding: 10px 20px;
+                background-color: #007bff; color: white;
+                border: none; border-radius: 5px; cursor: pointer;
+            }
+            /* Positioning for each button */
+            .dice_roll {
+                top: 55%;
+                left: 80%;
+            }
+        </style>
     </head>
     <body>
-        <button>Click</button>
+        <svg id="svg-container" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid meet">
+            <!--The game board-->
+            <g id="board" height="1000">
+                <image id="board_image" xlink:href="{% static 'Monopoly.jpg' %}"
+                height="1000" />
+            </g>
+            <text id="wintext" x="100%" y="8%"> Player 1 wins!</text>
+        </svg>
+        <button class="dice_roll">Roll dice</button>
         
         <!--*************************************************************************-->
         <!--JavaScript for input-->
