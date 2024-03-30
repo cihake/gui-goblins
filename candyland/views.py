@@ -1,26 +1,14 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 
-def candyland_view(request):
-    # Check if player1_space is present in session
-    if 'player1_space' not in request.session:
-        # Reset game attributes
-        request.session['player1_space'] = 1  # Initialize player1 space attribute
-
-    # Retrieve player1 space attribute from session
-    player1_space = request.session['player1_space']
-    
+def catan_view(request):
     # AJAX POST request; active response
-    if request.method == 'POST' and request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        input_value = request.POST.get('input')
+    if (request.method == 'POST' and request.headers.get('x-requested-with') == 'XMLHttpRequest'):
+        input = request.POST.get('input')
+        print(input)
 
-        request.session['player1_space'] = player1_space  # Update player1 space attribute
-        data = {
-            'echo': input_value
-        }
-
-        return JsonResponse(data)
+        return JsonResponse({'echo': input})
     
-    # Initial page render
+    # Initial HTTP request; setup, page render
     else:
-        return render(request, 'candyland.html')
+        return render(request, 'catan.html')
