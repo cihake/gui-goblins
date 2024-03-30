@@ -85,7 +85,8 @@
                         headers: {'X-CSRFToken': csrftoken},
                         // Alter the piece's position
                         success: function(response) {
-                            player1_space ++;
+                            console.log(response);
+                            player1_space += 1;
                             $('#piece1').attr("cx", xcoords[player1_space]);
                             $('#piece1').attr("cy", ycoords[player1_space]);
                             if (player1_space == 132) {

@@ -2,7 +2,12 @@ from django.db import models
 
 
 class Game(models.Model):
-    winner = models.IntegerField()
+    victory = models.IntegerField()
+
+    def to_dict(self):
+        return {
+            'victory': self.victory,
+        }
 
 """
 A player of the game. They have an ordinal (which player they are),
@@ -12,3 +17,10 @@ class Player(models.Model):
     ordinal = models.IntegerField()
     space = models.IntegerField()
     skip = models.BooleanField()
+
+    def to_dict(self):
+        return {
+            'ordinal': self.ordinal,
+            'space': self.space,
+            'skip': self.skip
+        }
