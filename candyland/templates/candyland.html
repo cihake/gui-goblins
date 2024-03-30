@@ -37,6 +37,7 @@
             }
         </style>
     </head>
+    <!--*************************************************************************-->
     <body>
         <svg id="svg-container" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid meet">
             <!--The game board-->
@@ -46,7 +47,7 @@
             </g>
             <text id="wintext" x="100%" y="8%"> Player 1 wins!</text>
         </svg>
-        <button class="dice_roll">Move</button>
+        <button class="dice_roll">Roll dice</button>
         
         <!--xlink:href="{% static 'CandyLand.jpg' %}"-->
         <!--<button>Click</button>-->
@@ -66,13 +67,12 @@
                 $('#wintext').hide();
                 var player1_space = 1;
 
-                // Convert the absolute coordinates to relative coordinates
+                // Convert the absolute coordinates to relative coordinates, draw players
                 for (var i = 0; i < xcoords.length; i ++) {
                     xcoords[i] = xcoords[i] * scale;
                     ycoords[i] = ycoords[i] * scale;
                 }
-
-                create_circle("piece1", xcoords[1], ycoords[1], 15);
+                create_circle("piece1", xcoords[1], ycoords[1], 15, "black");
 
                 // Register a dice roll
                 $('.dice_roll').click(function() {
@@ -85,48 +85,47 @@
                         headers: {'X-CSRFToken': csrftoken},
                         // Alter the piece's position
                         success: function(response) {
-                            console.log(response);
-                            player1_space += 1;
+                            var dice_value = roll_dice();
+                            player1_space += dice_value;
+                            if (player1_space >= 132) {
+                                player1_space = 132;
+                                declare_winner(1);
+                            }
                             $('#piece1').attr("cx", xcoords[player1_space]);
                             $('#piece1').attr("cy", ycoords[player1_space]);
-                            if (player1_space == 132) {
-                                $('#wintext').show();
-                            }
+
+                            console.log("dice roll: " + dice_value);
                         }
                     });
                 });
-
-                // Get mouse coordinates over the board
-                /*$("board").click(function() {
-                    mousey = event.pageY;
-                    mousex = event.pageX;
-                    // 8 is the mandatory offset, even for absolute positioning
-                    console.log((mousey-8) + "," + (mousex-8));
-                    $.ajax({
-                        url: '/candyland/',
-                        type: 'POST',
-                        data: {
-                            'mousey': mousey,
-                            'mousex': mousex,
-                        },
-                        headers: {'X-CSRFToken': csrftoken},
-
-                        success: function(response) {
-                            console.log(response);
-                        }
-                    })
-                });*/
-
-                // Function to create a circle dynamically using SVG
-                function create_circle(id, x, y, radius) {
+            });
+        </script>
+        <!--*************************************************************************-->
+        <!--JavaScript functions-->
+        <script>
+            // Function to create a circle dynamically using SVG
+            function create_circle(id, x, y, radius, color) {
                     var svgNS = "http://www.w3.org/2000/svg";
                     var circle = document.createElementNS(svgNS, "circle");
                     circle.setAttributeNS(null, "id", id);
                     circle.setAttributeNS(null, "cx", x);
                     circle.setAttributeNS(null, "cy", y);
                     circle.setAttributeNS(null, "r", radius);
-                    circle.setAttributeNS(null, "class", "circle");
-                    document.getElementById("svg-container").appendChild(circle);
+                    circle.setAttributeNS(null, "fill", color);
+                    document.getElementById("board").appendChild(circle);
+                }
+
+                // Function to simulate a dice roll
+                function roll_dice() {
+                    var die1 = Math.floor(Math.random() * (6 - 1 + 1)) + 1;
+                    var die2 = Math.floor(Math.random() * (6 - 1 + 1)) + 1;
+                    return die1 + die2;
+                }
+
+                // Function to declare a winner
+                function declare_winner(player) {
+                    $('#wintext').text("Player " + player + " wins!");
+                    $('#wintext').show();
                 }
 
                 // Function to get the CSRF token
@@ -144,7 +143,6 @@
                     }
                     return cookieValue;
                 }
-            });
         </script>
     </body>
 </html>
