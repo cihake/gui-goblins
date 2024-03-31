@@ -46,6 +46,8 @@
             <g id="board" height="1000">
                 <image id="board_image" xlink:href="{% static 'SettlersOfCatan.jpg' %}"
                 height="1000" />
+                <g id="corners" height="1000"></g>
+                <g id="tiles" height="1000"></g>
             </g>
             <text id="wintext" x="110%" y="8%"> Player 1 wins!</text>
         </svg>
@@ -79,6 +81,46 @@
                         success: function(response) {
                             var dice_value = roll_dice();
                             console.log("dice roll: " + dice_value);
+                        }
+                    });
+                });
+
+                // React to a corner being clicked
+                $('#corners').on('click', 'circle', function(event) {
+                    var position = $(this).attr('data-id');
+                    console.log("Corner " + position);
+
+                    $.ajax({
+                        url: '/catan/',
+                        method: 'POST',
+                        data: {
+                            'input': 'corner',
+                            'position': position,
+                        },
+                        headers: {'X-CSRFToken': csrftoken},
+
+                        success: function(response) {
+                            
+                        }
+                    });
+                });
+
+                // React to a tile being clicked
+                $('#tiles').on('click', 'circle', function(event) {
+                    var position = $(this).attr('data-id');
+                    console.log("Tile " + position);
+
+                    $.ajax({
+                        url: '/catan/',
+                        method: 'POST',
+                        data: {
+                            'input': 'tile',
+                            'position': position,
+                        },
+                        headers: {'X-CSRFToken': csrftoken},
+
+                        success: function(response) {
+                            
                         }
                     });
                 });
@@ -123,22 +165,6 @@
                     draw_circle(x, y);
                     setTimeout(function() {draw_circle_grid(x, y)}, 400);
                 }
-
-                // Function to get the CSRF token
-                function getCookie(name) {
-                    var cookieValue = null;
-                    if (document.cookie && document.cookie !== '') {
-                        var cookies = document.cookie.split(';');
-                        for (var i = 0; i < cookies.length; i++) {
-                            var cookie = cookies[i].trim();
-                            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                                break;
-                            }
-                        }
-                    }
-                    return cookieValue;
-                }
             });
         </script>
         <!--*************************************************************************-->
@@ -148,8 +174,8 @@
             function setup_coords(corner_coords, tile_coords) {
                 var scale = 1000 / 522;
                 var hex_length = (522 - 75) / 5;
-                var hlength = scale * hex_length / 2;
-                var vlength = scale * hex_length / (2 * Math.sqrt(3));
+                var hlength = scale * hex_length / 2; // Horizontal
+                var vlength = scale * hex_length / (2 * Math.sqrt(3)); // Vertical
                 var firstpos = [209 * scale - 5 * hlength, 54 * scale - 3 * vlength];
                 // Corners
                 for (var x = 0; x < 8; x++) { // Columns
@@ -170,7 +196,8 @@
                             xpos = firstpos[0] + hlength * (1 + x * 2);
                         }
                         corner_coords[x][y] = [xpos, ypos];
-                        create_circle(y, xpos, ypos, 30, "black");
+                        var circle_data = x + "," + y;
+                        create_data_circle("corners", circle_data, xpos, ypos, 40, "black");
                     }
                 }
                 // Tiles
@@ -186,7 +213,8 @@
                             xpos = firstpos[0] + hlength * (1 + x * 2);
                         }
                         tile_coords[x][y] = [xpos, ypos];
-                        create_circle(y, xpos, ypos, 40, "red");
+                        var circle_data = x + "," + y;
+                        create_data_circle("tiles", circle_data, xpos, ypos, 50, "red");
                     }
                 }
             }
@@ -201,6 +229,18 @@
                 circle.setAttributeNS(null, "r", radius);
                 circle.setAttributeNS(null, "fill", color);
                 document.getElementById("board").appendChild(circle);
+            }
+
+            // Function to create a circle, with a specific group and data
+            function create_data_circle(group_id, data_id, x, y, radius, color) {
+                var svgNS = "http://www.w3.org/2000/svg";
+                var circle = document.createElementNS(svgNS, "circle");
+                circle.setAttributeNS(null, "data-id", data_id);
+                circle.setAttributeNS(null, "cx", x);
+                circle.setAttributeNS(null, "cy", y);
+                circle.setAttributeNS(null, "r", radius);
+                circle.setAttributeNS(null, "fill", color);
+                document.getElementById(group_id).appendChild(circle);
             }
 
             // Function to simulate a dice roll
