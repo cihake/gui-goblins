@@ -8,11 +8,46 @@
         <title>Settlers of Catan</title>
         <!--Access the jQuery library-->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+        <!--Define the CSS style for content-->
+        <style>
+            html, body {
+                margin: 0; padding: 0; height: 100%; overflow: visible;
+            }
+            #svg-container {
+                width: 100vw; height: 100vh;
+                display: flex; justify-content: center; align-items: center;
+            }
+            #board {
+                width: auto; height: auto; /*Maintain aspect ratio*/
+                max-width: 100%; max-height: 100%;
+            }
+            text {
+                font-family: Arial, sans-serif; font-size: 30px; fill: black;;
+            }
+            button {
+                position: absolute; padding: 10px 20px;
+                background-color: #007bff; color: white;
+                border: none; border-radius: 5px; cursor: pointer;
+            }
+            /* Positioning for each button */
+            .dice_roll {
+                top: 55%;
+                left: 85%;
+            }
+        </style>
     </head>
+    <!--*************************************************************************-->
     <body>
-        <button>Click</button>
-        <!--SVG to draw the board-->
-        <svg id="board" width="300" height="300"></svg>
+        <svg id="svg-container" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid meet">
+            <!--The game board-->
+            <g id="board" height="1000">
+                <image id="board_image" xlink:href="{% static 'SettlersOfCatan.jpg' %}"
+                height="1000" />
+            </g>
+            <text id="wintext" x="110%" y="8%"> Player 1 wins!</text>
+        </svg>
+        <button class="dice_roll">Roll dice</button>
         
         <!--*************************************************************************-->
         <!--JavaScript for input-->
@@ -22,19 +57,21 @@
                 // Get CSRF token, mandatory security for AJAX
                 var csrftoken = getCookie('csrftoken');
 
-                // Register a button click
-                $('button').click(function() {
+                $('#wintext').hide();
+
+                // Register a dice roll
+                $('.dice_roll').click(function() {
                     $.ajax({
                         url: '/catan/',
                         type: 'POST',
                         data: {
-                            'input': 'button_click',
+                            'input': 'dice_roll',
                         },
                         headers: {'X-CSRFToken': csrftoken},
-
+                        // Alter the piece's position
                         success: function(response) {
-                            console.log(response);
-                            draw_circle_grid();
+                            var dice_value = roll_dice();
+                            console.log("dice roll: " + dice_value);
                         }
                     });
                 });
@@ -96,6 +133,50 @@
                     return cookieValue;
                 }
             });
+        </script>
+        <!--*************************************************************************-->
+        <!--JavaScript functions-->
+        <script>
+            // Function to create a circle dynamically using SVG
+            function create_circle(id, x, y, radius, color) {
+                    var svgNS = "http://www.w3.org/2000/svg";
+                    var circle = document.createElementNS(svgNS, "circle");
+                    circle.setAttributeNS(null, "id", id);
+                    circle.setAttributeNS(null, "cx", x);
+                    circle.setAttributeNS(null, "cy", y);
+                    circle.setAttributeNS(null, "r", radius);
+                    circle.setAttributeNS(null, "fill", color);
+                    document.getElementById("board").appendChild(circle);
+                }
+
+                // Function to simulate a dice roll
+                function roll_dice() {
+                    var die1 = Math.floor(Math.random() * (6 - 1 + 1)) + 1;
+                    var die2 = Math.floor(Math.random() * (6 - 1 + 1)) + 1;
+                    return die1 + die2;
+                }
+
+                // Function to declare a winner
+                function declare_winner(player) {
+                    $('#wintext').text("Player " + player + " wins!");
+                    $('#wintext').show();
+                }
+
+                // Function to get the CSRF token
+                function getCookie(name) {
+                    var cookieValue = null;
+                    if (document.cookie && document.cookie !== '') {
+                        var cookies = document.cookie.split(';');
+                        for (var i = 0; i < cookies.length; i++) {
+                            var cookie = cookies[i].trim();
+                            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                break;
+                            }
+                        }
+                    }
+                    return cookieValue;
+                }
         </script>
     </body>
 </html>
