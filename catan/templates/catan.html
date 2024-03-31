@@ -193,44 +193,44 @@
 
             // Function to create a circle dynamically using SVG
             function create_circle(id, x, y, radius, color) {
-                    var svgNS = "http://www.w3.org/2000/svg";
-                    var circle = document.createElementNS(svgNS, "circle");
-                    circle.setAttributeNS(null, "id", id);
-                    circle.setAttributeNS(null, "cx", x);
-                    circle.setAttributeNS(null, "cy", y);
-                    circle.setAttributeNS(null, "r", radius);
-                    circle.setAttributeNS(null, "fill", color);
-                    document.getElementById("board").appendChild(circle);
-                }
+                var svgNS = "http://www.w3.org/2000/svg";
+                var circle = document.createElementNS(svgNS, "circle");
+                circle.setAttributeNS(null, "id", id);
+                circle.setAttributeNS(null, "cx", x);
+                circle.setAttributeNS(null, "cy", y);
+                circle.setAttributeNS(null, "r", radius);
+                circle.setAttributeNS(null, "fill", color);
+                document.getElementById("board").appendChild(circle);
+            }
 
-                // Function to simulate a dice roll
-                function roll_dice() {
-                    var die1 = Math.floor(Math.random() * (6 - 1 + 1)) + 1;
-                    var die2 = Math.floor(Math.random() * (6 - 1 + 1)) + 1;
-                    return die1 + die2;
-                }
+            // Function to simulate a dice roll
+            function roll_dice() {
+                var die1 = Math.floor(Math.random() * (6 - 1 + 1)) + 1;
+                var die2 = Math.floor(Math.random() * (6 - 1 + 1)) + 1;
+                return die1 + die2;
+            }
 
-                // Function to declare a winner
-                function declare_winner(player) {
-                    $('#wintext').text("Player " + player + " wins!");
-                    $('#wintext').show();
-                }
+            // Function to declare a winner
+            function declare_winner(player) {
+                $('#wintext').text("Player " + player + " wins!");
+                $('#wintext').show();
+            }
 
-                // Function to get the CSRF token
-                function getCookie(name) {
-                    var cookieValue = null;
-                    if (document.cookie && document.cookie !== '') {
-                        var cookies = document.cookie.split(';');
-                        for (var i = 0; i < cookies.length; i++) {
-                            var cookie = cookies[i].trim();
-                            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                                break;
-                            }
+            // Function to get the CSRF token
+            function getCookie(name) {
+                var cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    var cookies = document.cookie.split(';');
+                    for (var i = 0; i < cookies.length; i++) {
+                        var cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
                         }
                     }
-                    return cookieValue;
                 }
+                return cookieValue;
+            }
         </script>
     </body>
 </html>
