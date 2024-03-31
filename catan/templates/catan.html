@@ -8,6 +8,8 @@
         <title>Settlers of Catan</title>
         <!--Access the jQuery library-->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <!--Access JavaScript classes-->
+        <!--<script src="{% static 'javascript/catan/corner.js' %}"></script>-->
 
         <!--Define the CSS style for content-->
         <style>
@@ -32,8 +34,8 @@
             }
             /* Positioning for each button */
             .dice_roll {
-                top: 55%;
-                left: 85%;
+                top: 0%;
+                left: 0%;
             }
         </style>
     </head>
@@ -47,7 +49,7 @@
             </g>
             <text id="wintext" x="110%" y="8%"> Player 1 wins!</text>
         </svg>
-        <button class="dice_roll">Roll dice</button>
+        <!--<button class="dice_roll">Roll dice</button>-->
         
         <!--*************************************************************************-->
         <!--JavaScript for input-->
@@ -56,8 +58,13 @@
             $(document).ready(function() {
                 // Get CSRF token, mandatory security for AJAX
                 var csrftoken = getCookie('csrftoken');
-
+                // Hide text
                 $('#wintext').hide();
+
+                // Set up coordinates
+                var corner_coords = [];
+                var tile_coords = [];
+                setup_coords(corner_coords, tile_coords);
 
                 // Register a dice roll
                 $('.dice_roll').click(function() {
@@ -137,6 +144,53 @@
         <!--*************************************************************************-->
         <!--JavaScript functions-->
         <script>
+            // Function to set up the game's coordinate system (involves geometry)
+            function setup_coords(corner_coords, tile_coords) {
+                var scale = 1000 / 522;
+                var hex_length = (522 - 75) / 5;
+                var hlength = scale * hex_length / 2;
+                var vlength = scale * hex_length / (2 * Math.sqrt(3));
+                var firstpos = [209 * scale - 5 * hlength, 54 * scale - 3 * vlength];
+                // Corners
+                for (var x = 0; x < 8; x++) { // Columns
+                    corner_coords[x] = [];
+                    for (var y = 0; y < 15; y++) { // Rows
+                        var ypos = 0;
+                        if (y % 2 == 0) {
+                            ypos = firstpos[1] + vlength * (Math.floor(y / 2) * 3);
+                        }
+                        else {
+                            ypos = firstpos[1] + vlength * (1 + Math.floor(y / 2) * 3);
+                        }
+                        var xpos = 0;
+                        if (y % 4 == 0 || y % 4 == 3) {
+                            xpos = firstpos[0] + hlength * (x * 2);
+                        }
+                        else if (y % 4 == 1 || y % 4 == 2) {
+                            xpos = firstpos[0] + hlength * (1 + x * 2);
+                        }
+                        corner_coords[x][y] = [xpos, ypos];
+                        create_circle(y, xpos, ypos, 30, "black");
+                    }
+                }
+                // Tiles
+                for (var x = 0; x < 7; x++) { // Columns
+                    tile_coords[x] = [];
+                    for (var y = 0; y < 7; y++) {
+                        var ypos = firstpos[1] + vlength * (2 + y * 3);
+                        var xpos = 0;
+                        if (y % 2 == 0) {
+                            xpos = firstpos[0] + hlength * (2 + x * 2);
+                        }
+                        else {
+                            xpos = firstpos[0] + hlength * (1 + x * 2);
+                        }
+                        tile_coords[x][y] = [xpos, ypos];
+                        create_circle(y, xpos, ypos, 40, "red");
+                    }
+                }
+            }
+
             // Function to create a circle dynamically using SVG
             function create_circle(id, x, y, radius, color) {
                     var svgNS = "http://www.w3.org/2000/svg";
