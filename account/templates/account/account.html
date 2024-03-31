@@ -1,40 +1,79 @@
+<!-- 
+    Extends the 'base.html' template, inheriting its structure and styles.
+-->
 {% extends 'base.html' %}
-
+<!-- 
+    This block defines the main content section of the page. 
+    Any content placed within this block will replace the corresponding 
+    block in the 'base.html' template.
+-->
 {% block content %}
-
+	<!-- 
+        Creates a form that submits data using the POST method.
+        {% csrf_token %} is a security measure to prevent Cross-Site Request Forgery (CSRF) attacks.
+    -->
 <h2>Account</h2>
 <form method="post">{% csrf_token %}
+	    <!-- 
+            Loops through each field in the account form.
+            Iterates over all form fields to display them.
+        -->
 	{% for field in account_form %}
-		<p>
-			{{field.label_tag}}
-			{{field}}
 
+		<p>
+			<!-- 
+                Displays the label associated with the form field.
+            -->
+			{{field.label_tag}}
+			<!-- 
+                Displays the form field itself.
+            -->
+			{{field}}
+                <!-- 
+                    Checks if the field has help text associated with it.
+                    If help text exists, it displays it in a small font with grey color.
+                -->
 			{% if field.help_text %}
+
 				<small style="color: grey;">{{field.help_text}}</small>
 			{% endif %}
-
-			
 		</p>
 
 	{% endfor %}
-
+        <!-- 
+            Loops through each field in the account form again.
+            Checks for errors associated with each field and displays them if any.
+        -->
 	{% for field in account_form %}
+            <!-- 
+                Displays any errors associated with the form field in red color.
+            -->	
 		{% for error in field.errors %}
 			<p style="color:red;">{{error}}</p>
 		{% endfor %}
 	{% endfor %}
-
+        <!-- 
+            Checks for non-field errors in the login form.
+            Displays them if any.
+        -->
 	{% if login_form.non_field_errors %}
 		<div style="color:red;">
+            <!-- 
+                Displays non-field errors in the account form, if any, in red color.
+            -->			
 			<p>{{account_form.non_field_errors}}</p>
 		</div>
 	{% endif %}
-
+    <!-- 
+        Creates a submit button for the form.
+    -->
 	<button type="submit">Save changes</button>
 	
 </form>
 
 
 
-
+<!-- 
+    End of the 'content' block, which contains the form for account-related actions.
+-->
 {% endblock content %}

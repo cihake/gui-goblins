@@ -6,7 +6,8 @@
     <title>FunGames.com</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <style type="text/css">
         .container {
             max-width: 800px;
@@ -59,26 +60,27 @@
 </audio>
 
 <body>
-    
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    
-    
- <script>
-    function playClickSound() {
-        var clickSound = document.getElementById('clickSound');
-        if (clickSound.paused) {
-            clickSound.play();
-        } else {
-            clickSound.currentTime = 0; // Rewind to the beginning if already playing
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+
+    <script>
+        function playClickSound() {
+            var clickSound = document.getElementById('clickSound');
+            if (clickSound.paused) {
+                clickSound.play();
+            } else {
+                clickSound.currentTime = 0; // Rewind to the beginning if already playing
+            }
         }
-    }
-</script>
+    </script>
     {% if request.user.is_authenticated %}
     <p>
-        <a href="{% url 'home' %}" onclick="playClickSound()">Home</a> | 
-        <a href="{% url 'account' %}" onclick="playClickSound()">Account</a> | 
+        <a href="{% url 'home' %}" onclick="playClickSound()">Home</a> |
+        <a href="{% url 'account' %}" onclick="playClickSound()">Account</a> |
         <a href="{% url 'logout' %}" onclick="playClickSound()">Logout</a> |
-        <a href="{% url 'credits' %}" onclick="playClickSound()">Credits</a>  |
+        <a href="{% url 'credits' %}" onclick="playClickSound()">Credits</a> |
         <a href="{% url 'coins' %}" onclick="playClickSound()">Coins</a> |
         <a href="{% url 'leaderboard' %}" onclick="playClickSound()">Leaderboard</a> |
 
@@ -86,25 +88,25 @@
     <p>Hello, {{request.user.username}}</p>
     {% else %}
     <p>
-        <a href="{% url 'home' %}" onclick="playClickSound()">Home</a> | 
-        <a href="{% url 'register' %}" onclick="playClickSound()">Register</a> | 
+        <a href="{% url 'home' %}" onclick="playClickSound()">Home</a> |
+        <a href="{% url 'register' %}" onclick="playClickSound()">Register</a> |
         <a href="{% url 'login' %}" onclick="playClickSound()">Login</a> |
-        <a href="{% url 'credits' %}" onclick="playClickSound()">Credits</a>  |
+        <a href="{% url 'credits' %}" onclick="playClickSound()">Credits</a> |
         <a href="{% url 'leaderboard' %}" onclick="playClickSound()">Leaderboard</a> |
     </p>
     {% endif %}
-   
+
     <div class="container">
         <div class="image" id="randomAd">
             <a id="adLink" href="#" target="_blank">
                 <img class="ad-image" id="adImage" src="" alt="Ad">
             </a>
         </div>
-    <div class="main">
-        {% block content %}
+        <div class="main">
+            {% block content %}
 
-        {% endblock content %}
-    </div>
+            {% endblock content %}
+        </div>
 
         <div class="image">
             <a href="monopoly">
@@ -137,7 +139,8 @@
     <script>
         function openFullscreen(imageUrl) {
             var newWindow = window.open('', '_blank', 'width=1000,height=1000');
-            newWindow.document.write('<html><head><title>Fullscreen Image</title></head><body style="margin:0;text-align:center;"><img src="' + imageUrl + '" style="max-width:100%; max-height:100%;"></body></html>');
+            newWindow.document.write('<html><head><title>Fullscreen Image</title></head><body style="margin:0;text-align:center;"><img src="' +
+                imageUrl + '" style="max-width:100%; max-height:100%;"></body></html>');
         }
     </script>
 
@@ -167,7 +170,7 @@
             displayRandomAd();
         };
 
-
-
-</script>
+    </script>
 </body>
+
+</html>

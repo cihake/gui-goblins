@@ -1,14 +1,40 @@
+<!-- 
+    Extends the 'base.html' template, inheriting its structure and styles.
+-->
 {% extends 'base.html' %}
-
+<!-- 
+    This block defines the main content section of the page. 
+    Any content placed within this block will replace the corresponding 
+    block in the 'base.html' template.
+-->
 {% block content %}
-
+<!-- 
+    Displays a heading for the login section of the page.
+-->
 <h2>Login</h2>
+    <!-- 
+        Creates a form that submits data using the POST method.
+        {% csrf_token %} is a security measure to prevent Cross-Site Request Forgery (CSRF) attacks.
+    -->
 <form method="post">{% csrf_token %}
+        <!-- 
+            Loops through each field in the login form.
+            Iterates over all form fields to display them.
+        -->
 	{% for field in login_form %}
 		<p>
+            <!-- 
+                Displays the label associated with the form field.
+            -->
 			{{field.label_tag}}
+            <!-- 
+                Displays the form field itself.
+            -->
 			{{field}}
-
+                <!-- 
+                    Checks if the field has help text associated with it.
+                    If help text exists, it displays it in a small font with grey color.
+                -->
 			{% if field.help_text %}
 				<small style="color: grey;">{{field.help_text}}</small>
 			{% endif %}
@@ -17,24 +43,36 @@
 		</p>
 
 	{% endfor %}
-
+        <!-- 
+            Loops through each field in the login form again.
+            Checks for errors associated with each field and displays them if any.
+        -->
 	{% for field in login_form %}
+            <!-- 
+                Displays any errors associated with the form field in red color.
+            -->
 		{% for error in field.errors %}
 			<p style="color:red;">{{error}}</p>
 		{% endfor %}
 	{% endfor %}
-
+        <!-- 
+            Checks for non-field errors in the login form.
+            Displays them if any.
+        -->
 	{% if login_form.non_field_errors %}
+            <!-- 
+                Displays non-field errors in the login form, if any, in red color.
+            -->
 		<div style="color:red;">
 			<p>{{login_form.non_field_errors}}</p>
 		</div>
 	{% endif %}
-
+    <!-- 
+        Creates a submit button for the form.
+    -->
 	<button type="submit">Login</button>
-	
 </form>
-
-
-
-
+<!-- 
+    End of the 'content' block, which contains the form for login-related actions.
+-->
 {% endblock content %}

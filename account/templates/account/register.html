@@ -1,30 +1,60 @@
+<!-- 
+    Extends the 'base.html' template, inheriting its structure and styles.
+-->
 {% extends 'base.html' %}
-
+<!-- 
+    This block defines the main content section of the page. 
+    Any content placed within this block will replace the corresponding 
+    block in the 'base.html' template.
+-->
 {% block content %}
-
+<!-- 
+    Displays a heading for the registration section of the page.
+-->
 <h2>Register</h2>
+    <!-- 
+        Creates a form that submits data using the POST method.
+        {% csrf_token %} is a security measure to prevent Cross-Site Request Forgery (CSRF) attacks.
+    -->
 <form method="post">{% csrf_token %}
+        <!-- 
+            Loops through each field in the registration form.
+            Iterates over all form fields to display them.
+        -->	
 	{% for field in registration_form %}
 		<p>
+           <!-- 
+                Displays the label associated with the form field.
+            -->			
 			{{field.label_tag}}
+            <!-- 
+                Displays the form field itself.
+            -->
 			{{field}}
-
+                <!-- 
+                    Checks if the field has help text associated with it.
+                    If help text exists, it displays it in a small font with grey color.
+                -->
 			{% if field.help_text %}
 				<small style="color: grey;">{{field.help_text}}</small>
 			{% endif %}
-
+                <!-- 
+                    Loops through each error associated with the form field.
+                    Displays any errors associated with the form field in red color.
+                -->
 			{% for error in field.errors %}
 				<p style="color:red;">{{error}}</p>
 			{% endfor %}
 		</p>
 
 	{% endfor %}
-
+    <!-- 
+        Creates a submit button for the form.
+    -->
 	<button type="submit">Register</button>
 	
 </form>
-
-
-
-
+<!-- 
+    End of the 'content' block, which contains the form for user registration.
+-->
 {% endblock content %}
