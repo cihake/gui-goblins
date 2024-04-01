@@ -8,8 +8,6 @@
         <title>Settlers of Catan</title>
         <!--Access the jQuery library-->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <!--Access JavaScript classes-->
-        <!--<script src="{% static 'javascript/catan/corner.js' %}"></script>-->
 
         <!--Define the CSS style for content-->
         <style>
@@ -52,9 +50,9 @@
             <text id="wintext" x="110%" y="8%"> Player 1 wins!</text>
         </svg>
         <!--<button class="dice_roll">Roll dice</button>-->
-        
+
         <!--*************************************************************************-->
-        <!--JavaScript for input-->
+        <!--JavaScript for setup and input-->
         <script>
             // Run once the document has loaded
             $(document).ready(function() {
@@ -63,10 +61,13 @@
                 // Hide text
                 $('#wintext').hide();
 
-                // Set up coordinates
-                var corner_coords = [];
-                var tile_coords = [];
-                setup_coords(corner_coords, tile_coords);
+                // Set up the board
+                var corners = [];
+                var corner_positions = [];
+                var tiles = [];
+                var tile_positions = [];
+                setup_board(corners, tiles, corner_positions, tile_positions);
+                var building_count = 0;
 
                 // Register a dice roll
                 $('.dice_roll').click(function() {
@@ -87,7 +88,7 @@
 
                 // React to a corner being clicked
                 $('#corners').on('click', 'circle', function(event) {
-                    var position = $(this).attr('data-id');
+                    var position = $(this).attr('data-id').split(',');
                     console.log("Corner " + position);
 
                     $.ajax({
@@ -100,14 +101,23 @@
                         headers: {'X-CSRFToken': csrftoken},
 
                         success: function(response) {
-                            
+                            // Draw a circle at the click position
+                            var xpos = position[0];
+                            var ypos = position[1];
+                            var xpos = corner_positions[position[0]][position[1]][0];
+                            var ypos = corner_positions[position[0]][position[1]][1];
+                            create_circle("settlement", xpos, ypos, 20, "red");
+                            building_count += 1;
+                            if (building_count >= 6) {
+                                $('#wintext').show();
+                            }
                         }
                     });
                 });
 
                 // React to a tile being clicked
                 $('#tiles').on('click', 'circle', function(event) {
-                    var position = $(this).attr('data-id');
+                    var position = $(this).attr('data-id').split(',');
                     console.log("Tile " + position);
 
                     $.ajax({
@@ -125,36 +135,6 @@
                     });
                 });
 
-                // Get mouse coordinates over the board
-                /*$('board').click(function() {
-                    mousey = event.pageY;
-                    mousex = event.pageX;
-                    // 8 is the mandatory offset, even for absolute positioning
-                    console.log((mousey-8) + "," + (mousex-8));
-                    $.ajax({
-                        url: '/catan/',
-                        type: 'POST',
-                        data: {
-                            'mousey': mousey,
-                            'mousex': mousex,
-                        },
-                        headers: {'X-CSRFToken': csrftoken},
-
-                        success: function(response) {
-                            console.log(response);
-                        }
-                    })
-                });*/
-
-                function draw_circle(x, y) {
-                    var svg = document.getElementById('board');
-                    var circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-                    circle.setAttribute("r", 10);
-                    circle.setAttribute("cx", x*40);
-                    circle.setAttribute("cy", y*40);
-                    svg.appendChild(circle);
-                }
-
                 function draw_circle_grid(x=0, y=0) {
                     x ++;
                     if (x > 5) {
@@ -171,7 +151,7 @@
         <!--JavaScript functions-->
         <script>
             // Function to set up the game's coordinate system (involves geometry)
-            function setup_coords(corner_coords, tile_coords) {
+            function setup_board(corners, tiles, corner_positions, tile_positions) {
                 var scale = 1000 / 522;
                 var hex_length = (522 - 75) / 5;
                 var hlength = scale * hex_length / 2; // Horizontal
@@ -179,7 +159,7 @@
                 var firstpos = [209 * scale - 5 * hlength, 54 * scale - 3 * vlength];
                 // Corners
                 for (var x = 0; x < 8; x++) { // Columns
-                    corner_coords[x] = [];
+                    corner_positions[x] = [];
                     for (var y = 0; y < 15; y++) { // Rows
                         var ypos = 0;
                         if (y % 2 == 0) {
@@ -195,14 +175,14 @@
                         else if (y % 4 == 1 || y % 4 == 2) {
                             xpos = firstpos[0] + hlength * (1 + x * 2);
                         }
-                        corner_coords[x][y] = [xpos, ypos];
+                        corner_positions[x][y] = [xpos, ypos];
                         var circle_data = x + "," + y;
-                        create_data_circle("corners", circle_data, xpos, ypos, 40, "black");
+                        create_data_circle("corners", circle_data, xpos, ypos, 30, "transparent");
                     }
                 }
                 // Tiles
                 for (var x = 0; x < 7; x++) { // Columns
-                    tile_coords[x] = [];
+                    tile_positions[x] = [];
                     for (var y = 0; y < 7; y++) {
                         var ypos = firstpos[1] + vlength * (2 + y * 3);
                         var xpos = 0;
@@ -212,9 +192,9 @@
                         else {
                             xpos = firstpos[0] + hlength * (1 + x * 2);
                         }
-                        tile_coords[x][y] = [xpos, ypos];
+                        tile_positions[x][y] = [xpos, ypos];
                         var circle_data = x + "," + y;
-                        create_data_circle("tiles", circle_data, xpos, ypos, 50, "red");
+                        create_data_circle("tiles", circle_data, xpos, ypos, 70, "transparent");
                     }
                 }
             }
