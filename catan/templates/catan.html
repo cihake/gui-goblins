@@ -31,6 +31,10 @@
                 border: none; border-radius: 5px; cursor: pointer;
             }
             /* Positioning for each button */
+            .reset {
+                top: 0%;
+                left: 0%;
+            }
             .dice_roll {
                 top: 0%;
                 left: 0%;
@@ -50,6 +54,7 @@
             <text id="wintext" x="110%" y="8%"> Player 1 wins!</text>
         </svg>
         <!--<button class="dice_roll">Roll dice</button>-->
+        <button class="reset">Reset</button>
 
         <!--*************************************************************************-->
         <!--JavaScript for setup and input-->
@@ -62,12 +67,26 @@
                 $('#wintext').hide();
 
                 // Set up the board
-                var corners = [];
                 var corner_positions = [];
-                var tiles = [];
                 var tile_positions = [];
-                setup_board(corners, tiles, corner_positions, tile_positions);
+                setup_board(corner_positions, tile_positions);
                 var building_count = 0;
+
+                // Reload the page on reset, dump cache in view
+                $('.reset').click(function() {
+                    $.ajax({
+                        url: '/catan/',
+                        type: 'POST',
+                        data: {
+                            'input': 'reset',
+                        },
+                        headers: {'X-CSRFToken': csrftoken},
+                        
+                        complete: function(response) {
+                            location.reload();
+                        }
+                    });
+                });
 
                 // Register a dice roll
                 $('.dice_roll').click(function() {
@@ -90,22 +109,23 @@
                 $('#corners').on('click', 'circle', function(event) {
                     var position = $(this).attr('data-id').split(',');
                     console.log("Corner " + position);
+                    var xindex = parseInt(position[0]);
+                    var yindex = parseInt(position[1]);
 
                     $.ajax({
                         url: '/catan/',
                         method: 'POST',
                         data: {
                             'input': 'corner',
-                            'position': position,
+                            'xindex': xindex,
+                            'yindex': yindex,
                         },
                         headers: {'X-CSRFToken': csrftoken},
 
                         success: function(response) {
                             // Draw a circle at the click position
-                            var xpos = position[0];
-                            var ypos = position[1];
-                            var xpos = corner_positions[position[0]][position[1]][0];
-                            var ypos = corner_positions[position[0]][position[1]][1];
+                            var xpos = corner_positions[xindex][yindex][0];
+                            var ypos = corner_positions[xindex][yindex][1];
                             create_circle("settlement", xpos, ypos, 20, "red");
                             building_count += 1;
                             if (building_count >= 6) {
@@ -119,13 +139,16 @@
                 $('#tiles').on('click', 'circle', function(event) {
                     var position = $(this).attr('data-id').split(',');
                     console.log("Tile " + position);
+                    var xindex = parseInt(position[0]);
+                    var yindex = parseInt(position[1]);
 
                     $.ajax({
                         url: '/catan/',
                         method: 'POST',
                         data: {
                             'input': 'tile',
-                            'position': position,
+                            'xindex': xindex,
+                            'yindex': yindex,
                         },
                         headers: {'X-CSRFToken': csrftoken},
 
@@ -151,7 +174,7 @@
         <!--JavaScript functions-->
         <script>
             // Function to set up the game's coordinate system (involves geometry)
-            function setup_board(corners, tiles, corner_positions, tile_positions) {
+            function setup_board(corner_positions, tile_positions) {
                 var scale = 1000 / 522;
                 var hex_length = (522 - 75) / 5;
                 var hlength = scale * hex_length / 2; // Horizontal

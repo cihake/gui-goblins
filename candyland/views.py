@@ -2,13 +2,22 @@ from django.shortcuts import render
 from django.http import JsonResponse
 
 def candyland_view(request):
-    # AJAX POST request; active response
-    if (request.method == 'POST' and request.headers.get('x-requested-with') == 'XMLHttpRequest'):
-        input = request.POST.get('input')
-        print(input)
+    # Initialize variables
+    if 'position' not in request.session:
+        request.session['position'] = 1
 
-        return JsonResponse({'echo': input})
-    
-    # Initial HTTP request; setup, page render
+    # Handle AJAX POST request
+    if request.method == 'POST' and request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        input_data = request.POST.get('input')
+        
+        # Reset the game variables
+        if input_data == 'reset':
+            request.session['position'] = 1  # Reset position
+            return JsonResponse({'status': 'reset'})
+
+        request.session['position'] += 1  # Increment position
+        return JsonResponse({'echo': input_data})
+
+    # Initial HTTP request
     else:
         return render(request, 'candyland.html')
