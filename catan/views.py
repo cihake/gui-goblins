@@ -32,9 +32,16 @@ def catan_view(request):
         response = {}
 
         if input == "reset":
+            game.__init__()
+            board.initialize_corners(15, 8)
+            board.initialize_tiles(7, 7)
+        
+        if input == "clear_data":
             # Clear the session cache
+            response = JsonResponse(response)
+            response_sent = response.content  # This forces the response to be fully rendered
             request.session.flush()
-            return JsonResponse(response)
+            return response
 
         if input == "corner":
             yindex = int(request.POST.get('yindex'))
@@ -42,20 +49,6 @@ def catan_view(request):
             corner_to_build = board.corners[yindex][xindex]
             neighbor_corners = board.get_neighbor_corners(corner_to_build)
             neighbor_tiles = board.get_neighbor_tiles(corner_to_build)
-            y0 = str(neighbor_corners[0].yindex) + " "
-            x0 = str(neighbor_corners[0].xindex) + ","
-            y1 = str(neighbor_corners[1].yindex) + " "
-            x1 = str(neighbor_corners[1].xindex) + ","
-            y2 = str(neighbor_corners[2].yindex) + " "
-            x2 = str(neighbor_corners[2].xindex) + ","
-            print("Corners: " + x0 + y0 + x1 + y1 + x2 + y2)
-            y0 = str(neighbor_tiles[0].yindex) + " "
-            x0 = str(neighbor_tiles[0].xindex) + ","
-            y1 = str(neighbor_tiles[1].yindex) + " "
-            x1 = str(neighbor_tiles[1].xindex) + ","
-            y2 = str(neighbor_tiles[2].yindex) + " "
-            x2 = str(neighbor_tiles[2].xindex) + ","
-            print("Tiles: " + x0 + y0 + x1 + y1 + x2 + y2)
 
         # Sava game data, return response
             
