@@ -2,7 +2,7 @@
 A corner can be built on, harvest and trade, and have roads between (with restrictions)
 """
 class Corner:
-    def __init__(self, yindex, xindex):
+    def __init__(self, yindex, xindex, building=0):
         self.yindex = yindex
         self.xindex = xindex
         self.building = 0
