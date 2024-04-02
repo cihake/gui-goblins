@@ -74,18 +74,10 @@
 
                 // Reload the page on reset, dump cache in view
                 $('.reset').click(function() {
-                    $.ajax({
-                        url: '/catan/',
-                        type: 'POST',
-                        data: {
-                            'input': 'reset',
-                        },
-                        headers: {'X-CSRFToken': csrftoken},
-                        
-                        complete: function(response) {
-                            location.reload();
-                        }
-                    });
+                    reset_game();
+                });
+                $(window).on('beforeunload', function() {
+                    reset_game();
                 });
 
                 // Register a dice roll
@@ -257,6 +249,22 @@
             function declare_winner(player) {
                 $('#wintext').text("Player " + player + " wins!");
                 $('#wintext').show();
+            }
+
+            // Function to reset the game
+            function reset_game() {
+                $.ajax({
+                    url: '/catan/',
+                    type: 'POST',
+                    data: {
+                        'input': 'reset',
+                    },
+                    headers: {'X-CSRFToken': getCookie('csrftoken')},
+                    
+                    complete: function(response) {
+                        location.reload();
+                    }
+                });
             }
 
             // Function to get the CSRF token
