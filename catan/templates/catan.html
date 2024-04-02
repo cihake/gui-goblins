@@ -39,6 +39,10 @@
                 top: 0%;
                 left: 0%;
             }
+            .clear_data {
+                top: 10%;
+                left: 0%
+            }
         </style>
     </head>
     <!--*************************************************************************-->
@@ -55,6 +59,7 @@
         </svg>
         <!--<button class="dice_roll">Roll dice</button>-->
         <button class="reset">Reset</button>
+        <button class="clear_data">Clear session (debug)</button>
 
         <!--*************************************************************************-->
         <!--JavaScript for setup and input-->
@@ -71,6 +76,23 @@
                 var tile_positions = [];
                 setup_board(corner_positions, tile_positions);
                 var building_count = 0;
+
+                // Clear session data, dump cache
+                // Register a dice roll
+                $('.clear_data').click(function() {
+                    $.ajax({
+                        url: '/catan/',
+                        type: 'POST',
+                        data: {
+                            'input': 'clear_data',
+                        },
+                        headers: {'X-CSRFToken': csrftoken},
+                        // Alter the piece's position
+                        complete: function(response) {
+                            location.reload();
+                        }
+                    });
+                });
 
                 // Reload the page on reset, dump cache in view
                 $('.reset').click(function() {
@@ -210,6 +232,7 @@
                         tile_positions[x][y] = [xpos, ypos];
                         var circle_data = x + "," + y;
                         create_data_circle("tiles", circle_data, xpos, ypos, 70, "transparent");
+                        create_circle("tile_marker", xpos, ypos, 3, "black")
                     }
                 }
             }
