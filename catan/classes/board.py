@@ -3,9 +3,7 @@ from .tile import Tile
 import math
 from dataclasses import dataclass
 
-"""
-The board that the game is played on. It has a 2D array both of corners and of tiles.
-"""
+
 @dataclass
 class Board:
     corners: list
@@ -14,21 +12,19 @@ class Board:
     @staticmethod
     def initialize_corners(corner_rows, corner_cols):
         corners = []
-        for y in range(corner_rows):
-            row = []
-            for x in range(corner_cols):
-                row.append(Corner(y, x))
-            corners.append(row)
+        for y in range(rows):
+            for x in range(cols):
+                corners.append(Corner(y, x))
         return corners
     
     @staticmethod
     def initialize_tiles(tile_rows, tile_cols):
         tiles = []
-        for y in range(tile_rows):
-            row = []
-            for x in range(tile_cols):
-                row.append(Tile(y, x, "null"))
-            tiles.append(row)
+        for y in range(rows):
+            for x in range(cols):
+                tiles.append(Tile(y, x, "null"))
+        return tiles
+
         # Manually set the terrain
         terrain = [
             ["empty", "empty", "water", "water", "water", "empty", "empty"],
@@ -36,29 +32,30 @@ class Board:
             ["water", "hills", "pasture", "hills", "mountains", "water", "empty"],
             ["water", "mountains", "pasture", "desert", "fields", "pasture", "water"],
             ["water", "hills", "forest", "fields", "forest", "water", "empty"],
+            ["empty", "water", "fields", "forest", "pasture", "water", "empty"],
             ["empty", "water", "water", "water", "water", "empty", "empty"]
         ]
+
+        for y in range(tile_rows):
+            for x in range(tile_cols):
+                tiles[y][x].terrain = terrain[y][x]
         
-        tiles[3][3].terrain = "desert"
         return tiles
     
     @staticmethod
     def to_dict(corners, tiles):
-        def filter_none(lst):
-            return [elem.to_dict() for elem in lst if elem is not None]
-
         return {
-            'corners': [filter_none(row) for row in corners],
-            'tiles': [filter_none(row) for row in tiles],
+            'corners': [[elem.to_dict() for elem in row] for row in corners],
+            'tiles': [[elem.to_dict() for elem in row] for row in tiles],
         }
 
     @staticmethod
     def from_dict(data):
         def create_obj(obj_class, data_dict):
             return obj_class(**data_dict) if data_dict else None
-
-        corners = [[create_obj(Corner, corner_data) for corner_data in row] for row in data['corners']]
-        tiles = [[create_obj(Tile, tile_data) for tile_data in row] for row in data['tiles']]
+        # Ensure to handle None values properly when reconstructing the 2D array
+        corners = [[create_obj(Corner, corner_data) for corner_data in row] if row else None for row in data['corners']]
+        tiles = [[create_obj(Tile, tile_data) for tile_data in row] if row else None for row in data['tiles']]
         return Board(corners, tiles)
     
     
@@ -90,7 +87,7 @@ class Board:
         yindex = corner.yindex
         x = corner.xindex
         tiles = self.tiles
-        y = math.floor(yindex / 2) # Offsets calculated based on this
+        y = math.floor(yindex / 2)
         # There are four offsets, and each lacks one of them
         neighbors = []
         neighbors.append(tiles[y][x])

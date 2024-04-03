@@ -40,7 +40,7 @@
                 left: 0%;
             }
             .clear_data {
-                top: 10%;
+                top: 6%;
                 left: 0%
             }
         </style>
@@ -125,6 +125,8 @@
                     console.log("Corner " + position);
                     var xindex = parseInt(position[0]);
                     var yindex = parseInt(position[1]);
+                    // Store the sensor circle
+                    var clicked_circle = $(this);
 
                     $.ajax({
                         url: '/catan/',
@@ -140,7 +142,9 @@
                             // Draw a circle at the click position
                             var xpos = corner_positions[xindex][yindex][0];
                             var ypos = corner_positions[xindex][yindex][1];
-                            create_circle("settlement", xpos, ypos, 20, "red");
+                            create_group_circle("corners", xpos, ypos, 20, "red");
+                            clicked_circle.appendTo('#corners');
+
                             building_count += 1;
                             if (building_count >= 6) {
                                 $('#wintext').show();
@@ -247,6 +251,17 @@
                 circle.setAttributeNS(null, "r", radius);
                 circle.setAttributeNS(null, "fill", color);
                 document.getElementById("board").appendChild(circle);
+            }
+
+            // Function to create a circle with a specific group
+            function create_group_circle(group_id, x, y, radius, color) {
+                var svgNS = "http://www.w3.org/2000/svg";
+                var circle = document.createElementNS(svgNS, "circle");
+                circle.setAttributeNS(null, "cx", x);
+                circle.setAttributeNS(null, "cy", y);
+                circle.setAttributeNS(null, "r", radius);
+                circle.setAttributeNS(null, "fill", color);
+                document.getElementById(group_id).appendChild(circle);
             }
 
             // Function to create a circle, with a specific group and data
