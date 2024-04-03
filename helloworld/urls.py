@@ -16,6 +16,7 @@ from account.views import (
     account_view,
     coin_balance_view,
     leaderboard_view,
+    store_view,
 )
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,6 +31,7 @@ urlpatterns = [
     path('candyland/', candyland_view, name='candyland'),
     path('monopoly/', monopoly_view, name='monopoly'),
     path('catan/', catan_view, name='catan'),
+    path('store/', store_view, name='store')
 ]
 
 if settings.DEBUG:

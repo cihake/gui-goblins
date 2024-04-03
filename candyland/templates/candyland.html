@@ -76,30 +76,40 @@
 
                 // Register a dice roll
                 $('.dice_roll').click(function() {
+        $.ajax({
+            url: '/candyland/',
+            type: 'POST',
+            data: {
+                'input': 'dice_roll',
+            },
+            headers: {'X-CSRFToken': csrftoken},
+            success: function(response) {
+                var dice_value = roll_dice();
+                player1_space += dice_value;
+                
+                // Check if the player has won
+                if (player1_space >= 132) {
                     $.ajax({
                         url: '/candyland/',
                         type: 'POST',
                         data: {
-                            'input': 'dice_roll',
+                            'input': 'win',
+                            'user_id': userId,
                         },
                         headers: {'X-CSRFToken': csrftoken},
-                        // Alter the piece's position
                         success: function(response) {
-                            var dice_value = roll_dice();
-                            player1_space += dice_value;
-                            if (player1_space >= 132) {
-                                player1_space = 132;
-                                declare_winner(1);
-                            }
-                            $('#piece1').attr("cx", xcoords[player1_space]);
-                            $('#piece1').attr("cy", ycoords[player1_space]);
-
-                            console.log("dice roll: " + dice_value);
+                            alert('Congratulations! You won the game and received 15 coins!');
                         }
                     });
-                });
-                
-            });
+                } else {
+                    // Update the player's position on the board
+                    $('#piece1').attr("cx", xcoords[player1_space]);
+                    $('#piece1').attr("cy", ycoords[player1_space]);
+                }
+            }
+        });
+    });
+});
         </script>
         <!--*************************************************************************-->
         <!--JavaScript functions-->
@@ -127,6 +137,7 @@
                 function declare_winner(player) {
                     $('#wintext').text("Player " + player + " wins!");
                     $('#wintext').show();
+
                 }
 
                 // Function to get the CSRF token
@@ -145,5 +156,15 @@
                     return cookieValue;
                 }
         </script>
+       <script>
+        // Show a popup message indicating that the user has been charged 10 coins
+        window.onload = function() {
+            alert('You have been charged 10 coins to play Candyland.');
+        };
+    </script>
+<script>
+    var userId = {{ user.id }};
+</script>
+
     </body>
 </html>

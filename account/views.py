@@ -2,8 +2,10 @@ from django.shortcuts import render, redirect  # Importing render and redirect f
 from django.contrib.auth import login, authenticate, logout  # Importing login, authenticate, and logout functions for user authentication
 from django.contrib import messages  # Importing messages module for displaying error messages
 from account.forms import RegistrationForm, AccountAuthenticationForm, AccountUpdateForm  # Importing custom forms for user registration, authentication, and account update
-from .models import Coin, Leaderboard  # Importing Coin and Leaderboard models from the current app's models
+from .models import Account, Coin, Leaderboard  # Importing Coin and Leaderboard models from the current app's models
 from .utils import add_coins, add_score  # Importing custom utility functions for adding coins and score to user's account
+from django.http import JsonResponse
+import json
 
 # View for user registration.
 def registration_view(request):
@@ -92,5 +94,35 @@ def coin_balance_view(request):
 
 # View for displaying leaderboard.
 def leaderboard_view(request):
-    leaderboard = Leaderboard.objects.order_by('-score')[:10]  # Get top 10 leaderboard entries
+    leaderboard = Leaderboard.objects.order_by('-wins')[:10]  # Get top 10 leaderboard entries
     return render(request, 'account/leaderboard.html', {'leaderboard': leaderboard})  # Render leaderboard page with leaderboard data
+
+def store_view(request):
+    coin_prices = {
+        'gold': 100.00,
+        'silver': 50.00,
+        'bronze': 10.00
+    }
+
+    if request.method == 'POST':
+        data = json.loads(request.body)  # Parse the request body JSON data
+        coin_id = data.get('coin_id')  # Get the coin ID from the request body
+        
+        coin_price = coin_prices.get(coin_id)
+        if coin_price is None:
+            return JsonResponse({'success': False, 'error': 'Invalid coin ID'})
+
+        try:
+            coin_balance = Coin.objects.get(user=request.user).amount
+            Coin.objects.filter(user=request.user).update(amount=coin_balance + coin_price)
+            return JsonResponse({'success': True})  # Return success response
+        except Coin.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'No coins found for the user'})  # Return error response
+
+    # Render the store page if it's a GET request
+    context = {
+        'gold_price': coin_prices['gold'],
+        'silver_price': coin_prices['silver'],
+        'bronze_price': coin_prices['bronze']
+    }
+    return render(request, 'account/store.html', context)

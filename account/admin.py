@@ -8,7 +8,7 @@ from .models import Account, Achievement
 # Define custom admin class for the Account model, inheriting from UserAdmin.
 class AccountAdmin(UserAdmin):
     # Specify fields to be displayed in the list view of the admin panel.
-    list_display = ('email', 'username', 'date_joined', 'last_login', 'is_admin', 'is_staff')
+    list_display = ('email', 'username', 'date_joined', 'last_login', 'is_admin', 'is_staff', 'wins')
     # Enable searching by email and username in the admin panel
     search_fields = ('email', 'username',)
     # Specify fields to be displayed as read-only in the admin panel
@@ -28,3 +28,5 @@ admin.site.register(Achievement, AchievementAdmin)
 
 # Register the admin class for the Account model
 admin.site.register(Account, AccountAdmin)
+
+

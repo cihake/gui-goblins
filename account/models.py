@@ -38,6 +38,7 @@ class MyAccountManager(BaseUserManager):
 class Account(AbstractBaseUser):
     email = models.EmailField(verbose_name="email", max_length=60, unique=True)  # Email field for user's email address.
     username = models.CharField(max_length=30, unique=True)  # Field for user's username.
+    wins = models.IntegerField(default=0)
     date_joined = models.DateTimeField(verbose_name='date joined',auto_now_add=True)  # Field to store user's registration date.
     last_login = models.DateTimeField(verbose_name='last login', auto_now=True)  # Field to store user's last login date.
     is_admin = models.BooleanField(default=False)  # Flag indicating if the user is an admin.
@@ -46,6 +47,7 @@ class Account(AbstractBaseUser):
     is_superuser = models.BooleanField(default=False)  # Flag indicating if the user is a superuser.
     USERNAME_FIELD = 'email'  # Field used for authentication (email).
     REQUIRED_FIELDS = ['username']  # Fields required for user creation.
+    from django.db import transaction
 
     objects = MyAccountManager()  # Custom manager for user accounts.
 
@@ -90,6 +92,7 @@ class UserAchievement(models.Model):
 class Leaderboard(models.Model):
     user = models.ForeignKey(Account, on_delete=models.CASCADE)  # Relationship with user account.
     score = models.IntegerField(default=0)  # Field to store user's score.
+    wins = models.IntegerField(default=0)
 
     def __str__(self):
         return f"{self.user.username}: {self.score}"  # String representation of user's score in leaderboard.

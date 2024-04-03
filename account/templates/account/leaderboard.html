@@ -20,7 +20,7 @@
                 <tr>
                     <th scope="col">Rank</th>
                     <th scope="col">Username</th>
-                    <th scope="col">Score</th>
+                    <th scope="col">Wins</th>
                 </tr>
             </thead>
             <tbody>
@@ -28,7 +28,7 @@
                     <tr>
                         <td>{{ forloop.counter }}</td> <!-- Display the rank -->
                         <td>{{ entry.user.username }}</td> <!-- Display the username -->
-                        <td>{{ entry.score }}</td> <!-- Display the score -->
+                        <td>{{ entry.score }}</td> <!-- Display the wins -->
                     </tr>
                 {% endfor %}
             </tbody>
