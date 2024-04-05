@@ -91,8 +91,8 @@ def catan_view(request):
             
         game_data['game'] = game.to_dict()
         game_data['board'] = board.to_dict(board.corners, board.tiles)
-        request.session['game_data'] = json.dumps(game_data, cls=DjangoJSONEncoder)
-        return JsonResponse(response)"""
+        request.session['game_data'] = json.dumps(game_data, cls=DjangoJSONEncoder)"""
+        return JsonResponse(response)
     
     # Initial HTTP request, page render
     else:
