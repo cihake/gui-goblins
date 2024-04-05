@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse
-from .models import Game, Board, Corner, Tile
+from .models.game import Game
+#from .models import Game, Board, Corner, Tile
 """from django.core.serializers.json import DjangoJSONEncoder
 import json
 from .classes.game import Game
