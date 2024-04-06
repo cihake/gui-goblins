@@ -1,3 +1,6 @@
+"""
+A tile indicates resources
+"""
 class Tile:
     def __init__(self, yindex, xindex, terrain):
         self.yindex = yindex
