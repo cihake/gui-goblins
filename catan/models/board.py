@@ -5,7 +5,7 @@ from .tile import Tile
 The board that the game is played on. It has a 2D array both of corners and of tiles.
 """
 class Board(models.Model):
-    game_key = models.UUIDField(primary_key=True)
+    game_key = models.UUIDField(unique=True)
     corners = models.ManyToManyField('Corner', related_name='board')
     tiles = models.ManyToManyField('Tile', related_name='board')
 
