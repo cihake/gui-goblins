@@ -33,12 +33,13 @@
             /* Positioning for each button */
             .clear_data {
                 top: 0%;
-                left: 0%
+                left: 0%;
             }
             .clear_database {
                 top: 6%;
                 left: 0%;
             }
+            
             .dice_roll {
                 top: 0%;
                 left: 0%;
@@ -82,14 +83,8 @@
                     $.ajax({
                         url: '/catan/',
                         type: 'POST',
-                        data: {
-                            'input': 'clear_data',
-                        },
+                        data: {'input': 'clear_data'},
                         headers: {'X-CSRFToken': csrftoken},
-                        
-                        complete: function(response) {
-                            //location.reload();
-                        }
                     });
                 });
                 // Clear database
@@ -97,10 +92,8 @@
                     $.ajax({
                         url: '/catan/',
                         type: 'POST',
-                        data: {
-                            'input': 'clear_database',
-                        },
-                        headers: {'X-CSRFToken': getCookie('csrftoken')},
+                        data: {'input': 'clear_database'},
+                        headers: {'X-CSRFToken': csrftoken},
                     });
                 });
                 // Reset game variables
@@ -108,10 +101,8 @@
                     $.ajax({
                         url: '/catan/',
                         type: 'POST',
-                        data: {
-                            'input': 'reload',
-                        },
-                        headers: {'X-CSRFToken': getCookie('csrftoken')},
+                        data: {'input': 'reload'},
+                        headers: {'X-CSRFToken': csrftoken},
                     });
                 });
 
