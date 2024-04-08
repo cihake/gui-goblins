@@ -12,11 +12,13 @@ def catan_view(request):
         game_key = uuid.uuid4()
         request.session['game_key'] = str(game_key)
         game = Game.objects.create(game_key=game_key)
+        print("Game created")
     
     # Load game objects if key already in session
     else:
         game_key = uuid.UUID(request.session.get('game_key')) # Convert string to UUID
         game = Game.objects.get(game_key=game_key)
+        print("Game retrieved")
 
     #*************************************************************************************
     # AJAX POST request; active response
@@ -31,7 +33,9 @@ def catan_view(request):
             request.session.clear()
         elif input == "clear_database":
             Game.objects.all().delete()
+            #default_game = Game.objects.create(game_key=game_key)
             Board.objects.all().delete()
+            #default_board = Board.objects.create(game_key=game_key)
             Corner.objects.all().delete()
             Tile.objects.all().delete()
         elif input == "reload":
