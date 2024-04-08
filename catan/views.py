@@ -9,19 +9,14 @@ from .models.tile import Tile
 def catan_view(request):
     # If a game key is not in the session, initialize
     if 'game_key' not in request.session:
-        # Generate a new game key
         game_key = uuid.uuid4()
-        print("Key generated: " + str(game_key))
         request.session['game_key'] = str(game_key)
-        # Create a new Game object with the generated key
-        #game = Game.objects.create(game_key=game_key)
+        game = Game.objects.create(game_key=game_key)
     
-    # Load game object if key exists
+    # Load game objects if key already in session
     else:
         game_key = uuid.UUID(request.session.get('game_key')) # Convert string to UUID
-        print("Key retrieved: " + str(game_key))
-        # Retrieve the corresponding Game object
-        #game = Game.objects.get(game_key=game_key)
+        game = Game.objects.get(game_key=game_key)
 
     #*************************************************************************************
     # AJAX POST request; active response
@@ -34,14 +29,17 @@ def catan_view(request):
         # Clear the session cache
         if input == "clear_data":
             request.session.clear()
+        elif input == "clear_database":
+            Game.objects.all().delete()
+            Board.objects.all().delete()
+            Corner.objects.all().delete()
+            Tile.objects.all().delete()
+        elif input == "reload":
+            game.turn = 1
         
-        """elif input == "reset":
-            # Reset the game data and store it in the session
-            board = Board.initialize(15, 8, 7, 7)
-            request.session['board_id'] = board.id"""
-        
-        """elif input == "corner":
-            # Handle corner interaction
+        elif input == "corner":
+            game.turn += 1
+            """# Handle corner interaction
             # Example: increment building count
             corner_id = int(request.POST.get('corner_id'))
             corner = Corner.objects.get(pk=corner_id)
@@ -90,6 +88,8 @@ def catan_view(request):
         game_data['game'] = game.to_dict()
         game_data['board'] = board.to_dict(board.corners, board.tiles)
         request.session['game_data'] = json.dumps(game_data, cls=DjangoJSONEncoder)"""
+        print("Turn: " + str(game.turn))
+        game.save()
         return JsonResponse(response)
     
     # Initial HTTP request, page render
