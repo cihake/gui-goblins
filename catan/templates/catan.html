@@ -77,8 +77,7 @@
                 setup_board(corner_positions, tile_positions);
                 var building_count = 0;
 
-                // Clear session data, dump cache
-                // Register a dice roll
+                // Dump cache
                 $('.clear_data').click(function() {
                     $.ajax({
                         url: '/catan/',
@@ -87,14 +86,14 @@
                             'input': 'clear_data',
                         },
                         headers: {'X-CSRFToken': csrftoken},
-                        // Alter the piece's position
+                        
                         complete: function(response) {
-                            location.reload();
+                            //location.reload();
                         }
                     });
                 });
 
-                // Reload the page on reset, dump cache in view
+                // Reload the page on reset
                 $('.reset').click(function() {
                     reset_game();
                 });
@@ -111,7 +110,7 @@
                             'input': 'dice_roll',
                         },
                         headers: {'X-CSRFToken': csrftoken},
-                        // Alter the piece's position
+                        
                         success: function(response) {
                             var dice_value = roll_dice();
                             console.log("dice roll: " + dice_value);
