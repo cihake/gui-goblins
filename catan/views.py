@@ -1,28 +1,30 @@
 from django.shortcuts import render
 from django.http import JsonResponse
-from .models import Game, Board, Corner, Tile
-"""from django.core.serializers.json import DjangoJSONEncoder
-import json
-from .classes.game import Game
-from .classes.board import Board
-from .classes.corner import Corner
-from .classes.tile import Tile"""
+import uuid, json # uuid creates game key, json saves/loads it
+from .models.game import Game
+from .models.board import Board
+from .models.corner import Corner
+from .models.tile import Tile
 
 def catan_view(request):
-    """# Initialize game data if not already in session
-    if 'game_data' not in request.session:
-        game = Game()
-        board = Board(Board.initialize_corners(15, 8), Board.initialize_tiles(7, 7))
-        # Serialize and save the data to session
-        game_data = {
-            'game': game.to_dict(),
-            'board': board.to_dict(board.corners, board.tiles),
-        }
-        request.session['game_data'] = json.dumps(game_data, cls=DjangoJSONEncoder)
-    else: # Load data from session
-        game_data = json.loads(request.session['game_data'])
-        game = Game(**game_data['game'])
-        board = Board.from_dict(game_data['board'])"""
+    request.session.clear()
+    # If a game key is not in the session, initialize
+    if 'game_key' not in request.session:
+        # Generate a new game key
+        game_key = uuid.uuid4()
+        print("Key generated: " + str(game_key))
+        request.session['game_key'] = json.dumps(game_key)
+        print("Key saved")
+        # Create a new Game object with the generated key
+        game = Game.objects.create(game_key=game_key)
+    
+    # Load game object if key exists
+    else:
+        print("Key retrieval attempt")
+        game_key = uuid.UUID(request.session.get('game_key')) # Convert string to UUID
+        print("Key retrieved: " + str(game_key))
+        # Retrieve the corresponding Game object
+        game = Game.objects.get(game_key=game_key)
 
     #*************************************************************************************
     # AJAX POST request; active response

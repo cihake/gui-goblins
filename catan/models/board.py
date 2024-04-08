@@ -1,18 +1,11 @@
 from django.db import models
-
-"""
-Game overhead. It stores the players, along with flags for turn progression
-and multi-step interaction.
-"""
-class Game(models.Model):
-    number_players = models.IntegerField()
-    turn = models.IntegerField()
-
-
+from .corner import Corner
+from .tile import Tile
 """
 The board that the game is played on. It has a 2D array both of corners and of tiles.
 """
 class Board(models.Model):
+    game_key = models.UUIDField(primary_key=True)
     corners = models.ManyToManyField('Corner', related_name='board')
     tiles = models.ManyToManyField('Tile', related_name='board')
 
@@ -60,20 +53,3 @@ class Board(models.Model):
             for attr_name, attr_value in attributes.items():
                 setattr(tile, attr_name, attr_value)
             tile.save()
-
-
-"""
-A corner can be built on, harvest and trade, and have roads between (with restrictions)
-"""
-class Corner(models.Model):
-    yindex = models.IntegerField()
-    xindex = models.IntegerField()
-    building = models.IntegerField()
-
-"""
-A tile indicates resources, can be used for maritime trade, and may house the robber
-"""
-class Tile(models.Model):
-    yindex = models.IntegerField()
-    xindex = models.IntegerField()
-    terrain = models.CharField(max_length=100)
