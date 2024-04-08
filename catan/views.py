@@ -12,13 +12,15 @@ def catan_view(request):
         game_key = uuid.uuid4()
         request.session['game_key'] = str(game_key)
         game = Game.objects.create(game_key=game_key)
-        print("Game created")
+        #board = Board.initialize(game_key, 15, 8, 7, 7)
+        print("Game created: initial turn = " + str(game.turn))
     
     # Load game objects if key already in session
     else:
         game_key = uuid.UUID(request.session.get('game_key')) # Convert string to UUID
         game = Game.objects.get(game_key=game_key)
-        print("Game retrieved")
+        #board = Board.objects.get(game_key=game_key)
+        print("Game retrieved: retrieved turn = " + str(game.turn))
 
     #*************************************************************************************
     # AJAX POST request; active response
@@ -33,9 +35,7 @@ def catan_view(request):
             request.session.clear()
         elif input == "clear_database":
             Game.objects.all().delete()
-            #default_game = Game.objects.create(game_key=game_key)
             Board.objects.all().delete()
-            #default_board = Board.objects.create(game_key=game_key)
             Corner.objects.all().delete()
             Tile.objects.all().delete()
         elif input == "reload":
@@ -92,7 +92,7 @@ def catan_view(request):
         game_data['game'] = game.to_dict()
         game_data['board'] = board.to_dict(board.corners, board.tiles)
         request.session['game_data'] = json.dumps(game_data, cls=DjangoJSONEncoder)"""
-        print("Turn: " + str(game.turn))
+        print("End of request: turn = " + str(game.turn))
         game.save()
         return JsonResponse(response)
     
