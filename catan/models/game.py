@@ -6,3 +6,4 @@ and multi-step interaction.
 class Game(models.Model):
     game_key = models.UUIDField(primary_key=True)
     turn = models.IntegerField(default=1)
+    number_players = models.IntegerField(default=1)
