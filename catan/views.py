@@ -12,15 +12,15 @@ def catan_view(request):
         game_key = uuid.uuid4()
         request.session['game_key'] = str(game_key)
         game = Game.objects.create(game_key=game_key)
-        #board = Board.initialize(game_key, 15, 8, 7, 7)
-        print("Game created: initial turn = " + str(game.turn))
+        board = Board.initialize(game_key, 15, 8, 7, 7)
+        game.save()
+        board.save()
     
     # Load game objects if key already in session
     else:
         game_key = uuid.UUID(request.session.get('game_key')) # Convert string to UUID
         game = Game.objects.get(game_key=game_key)
-        #board = Board.objects.get(game_key=game_key)
-        print("Game retrieved: retrieved turn = " + str(game.turn))
+        board = Board.objects.get(game_key=game_key)
 
     #*************************************************************************************
     # AJAX POST request; active response
@@ -43,6 +43,17 @@ def catan_view(request):
         
         elif input == "corner":
             game.turn += 1
+            yindex = request.POST.get('yindex')
+            xindex = request.POST.get('xindex')
+            corner = board.corners.get(yindex=yindex, xindex=xindex)
+            print ("corner building = " + str(corner.building))
+            if corner.building == 0:
+                corner.building += 1
+                corner.save()
+                print("Building placed.")
+            else:
+                print("That corner is occupied.")
+            
             """# Handle corner interaction
             # Example: increment building count
             corner_id = int(request.POST.get('corner_id'))
@@ -92,8 +103,9 @@ def catan_view(request):
         game_data['game'] = game.to_dict()
         game_data['board'] = board.to_dict(board.corners, board.tiles)
         request.session['game_data'] = json.dumps(game_data, cls=DjangoJSONEncoder)"""
-        print("End of request: turn = " + str(game.turn))
+        print ("End of move: turn = " + str(game.turn))
         game.save()
+        board.save()
         return JsonResponse(response)
     
     # Initial HTTP request, page render

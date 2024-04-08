@@ -13,43 +13,45 @@ class Board(models.Model):
     def initialize(cls, game_key, corner_rows, corner_cols, tile_rows, tile_cols):
         board = cls.objects.create(game_key=game_key)
 
-        # Create corners
+        corners = []
         for y in range(corner_rows):
             for x in range(corner_cols):
                 corner = Corner(yindex=y, xindex=x, building=0)
-                corner.save()
-                board.corners.add(corner)
+                corners.append(corner)
+        Corner.objects.bulk_create(corners)
+        board.corners.add(*corners)
 
-        # Create tiles
+        tiles = []
         for y in range(tile_rows):
             for x in range(tile_cols):
                 terrain = "null"  # Set default terrain
                 tile = Tile(yindex=y, xindex=x, terrain=terrain)
-                tile.save()
-                board.tiles.add(tile)
+                tiles.append(tile)
+        Tile.objects.bulk_create(tiles)
+        board.tiles.add(*tiles)
 
         return board
     
     # Method to get corner at given coordinates
     def get_corner(self, y, x):
-        return self.corners.filter(yindex=y, xindex=x).first()
-
-    # Method to update corner attribute at given coordinates
-    def update_corner(self, y, x, attributes):
-        corner = self.get_corner_at(y, x)
-        if corner:
-            for attr_name, attr_value in attributes.items():
-                setattr(corner, attr_name, attr_value)
-            corner.save()
+        return self.corners.get(yindex=y, xindex=x)
 
     # Method to get tile at given coordinates
     def get_tile(self, y, x):
-        return self.tiles.filter(yindex=y, xindex=x).first()
+        return self.tiles.get(yindex=y, xindex=x)
+
+    # Method to update corner attribute at given coordinates
+    def update_corner(self, y, x, attributes):
+        corner = self.corners.get(yindex=y, xindex=x)
+        if corner:
+            for attr_name, attr_value in attributes.items():
+                setattr(corner, attr_name, attr_value)
+            corner.save()  # Save the corner after updating
 
     # Method to update tile attribute at given coordinates
     def update_tile(self, y, x, attributes):
-        tile = self.get_tile_at(y, x)
+        tile = self.tiles.get(yindex=y, xindex=x)
         if tile:
             for attr_name, attr_value in attributes.items():
                 setattr(tile, attr_name, attr_value)
-            tile.save()
+            tile.save()  # Save the tile after updating
