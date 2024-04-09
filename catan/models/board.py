@@ -71,23 +71,24 @@ class Board(models.Model):
     def get_neighbor_corners(self, corner):
         y = corner.yindex
         x = corner.xindex
+        # Get an intermediate "corners" model
         corner_model = self.corners.through._meta.get_field('corner').remote_field.model
         corners = corner_model.objects.filter(board=self)  # Query all corner objects related to this board
         ymax = corners.aggregate(max_y=models.Max('yindex'))['max_y']
         xmax = corners.aggregate(max_x=models.Max('xindex'))['max_x']
         neighbors = []
         # All have these neighbors.
-        if y > 0: neighbors.append(corners.filter(yindex=y-1, xindex=x).first())
-        if y < ymax: neighbors.append(corners.filter(yindex=y+1, xindex=x).first())
+        if y > 0: neighbors.append(corners.get(yindex=y-1, xindex=x))
+        if y < ymax: neighbors.append(corners.get(yindex=y+1, xindex=x))
         # Determine the unique neighbor
         if y % 4 == 0 and y < ymax and x > 0:
-            neighbors.append(corners.filter(yindex=y+1, xindex=x-1).first())
+            neighbors.append(corners.get(yindex=y+1, xindex=x-1))
         elif y % 4 == 1 and y > 0 and x < ymax:
-            neighbors.append(corners.filter(yindex=y-1, xindex=x+1).first())
+            neighbors.append(corners.get(yindex=y-1, xindex=x+1))
         elif y % 4 == 2 and y < ymax and x < xmax:
-            neighbors.append(corners.filter(yindex=y+1, xindex=x+1).first())
+            neighbors.append(corners.get(yindex=y+1, xindex=x+1))
         elif y % 4 == 3 and y > 0 and x > 0:
-            neighbors.append(corners.filter(yindex=y-1, xindex=x-1).first())
+            neighbors.append(corners.get(yindex=y-1, xindex=x-1))
         
         return neighbors
     
@@ -95,22 +96,23 @@ class Board(models.Model):
     def get_neighbor_tiles(self, corner):
         yindex = corner.yindex
         x = corner.xindex
+        # Get an intermediate "tiles" model
         tile_model = self.tiles.through._meta.get_field('tile').remote_field.model
         tiles = tile_model.objects.filter(board=self)  # Query all tile objects related to this board
         y = math.floor(yindex / 2)
         # There are four offsets, and each lacks one of them.
         neighbors = []
-        neighbors.append(tiles.filter(yindex=y, xindex=x).first())
-        if y > 0: neighbors.append(tiles.filter(yindex=y-1, xindex=x).first())
-        if x > 0: neighbors.append(tiles.filter(yindex=y, xindex=x-1).first())
-        if y > 0 and x > 0: neighbors.append(tiles.filter(yindex=y-1, xindex=x-1).first())
-        if yindex % 4 == 0 and tiles.filter(yindex=y, xindex=x).first() in neighbors:
-            neighbors.remove(tiles.filter(yindex=y, xindex=x).first())
-        elif yindex % 4 == 1 and tiles.filter(yindex=y-1, xindex=x-1).first() in neighbors:
-            neighbors.remove(tiles.filter(yindex=y-1, xindex=x-1).first())
-        elif yindex % 4 == 2 and tiles.filter(yindex=y, xindex=x-1).first() in neighbors:
-            neighbors.remove(tiles.filter(yindex=y, xindex=x-1).first())
-        elif yindex % 4 == 3 and tiles.filter(yindex=y-1, xindex=x).first() in neighbors:
-            neighbors.remove(tiles.filter(yindex=y-1, xindex=x).first())
+        neighbors.append(tiles.get(yindex=y, xindex=x))
+        if y > 0: neighbors.append(tiles.get(yindex=y-1, xindex=x))
+        if x > 0: neighbors.append(tiles.get(yindex=y, xindex=x-1))
+        if y > 0 and x > 0: neighbors.append(tiles.get(yindex=y-1, xindex=x-1))
+        if yindex % 4 == 0 and tiles.get(yindex=y, xindex=x) in neighbors:
+            neighbors.remove(tiles.get(yindex=y, xindex=x))
+        elif yindex % 4 == 1 and tiles.get(yindex=y-1, xindex=x-1) in neighbors:
+            neighbors.remove(tiles.get(yindex=y-1, xindex=x-1))
+        elif yindex % 4 == 2 and tiles.get(yindex=y, xindex=x-1) in neighbors:
+            neighbors.remove(tiles.get(yindex=y, xindex=x-1))
+        elif yindex % 4 == 3 and tiles.get(yindex=y-1, xindex=x) in neighbors:
+            neighbors.remove(tiles.get(yindex=y-1, xindex=x))
         
         return neighbors
