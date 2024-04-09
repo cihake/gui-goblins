@@ -45,8 +45,9 @@ def catan_view(request):
             game.turn += 1
             yindex = request.POST.get('yindex')
             xindex = request.POST.get('xindex')
-            build_response = build_attempt(board, yindex, xindex)
-            print(build_response)
+            build_attempt(board, yindex, xindex, response)
+            print(response['build_response'])
+            print("Build success: " + str(response['build_success']))
             """corner = board.corners.get(yindex=yindex, xindex=xindex)
             print ("corner building = " + str(corner.building))
             neighbor_corners = board.get_neighbor_corners(corner)
@@ -136,31 +137,41 @@ def catan_view(request):
 #*************************************************************************************
 """The corner is buildable if it isn't build, its corner neighbors aren't built,
 and at least one of its neighbors is a land tile"""
-def build_attempt(board, yindex, xindex):
+def build_attempt(board, yindex, xindex, response):
     corner_to_build = board.corners.get(yindex=yindex, xindex=xindex)
+    
     # Check if already built
     if corner_to_build.building == 1:
-        return "That corner already has a building on it."
+        response['build_success'] = 0
+        response['build_response'] = "That corner already has a building on it."
+        return
+    
     # Land check
     neighbor_tiles = board.get_neighbor_tiles(corner_to_build)
     touching_land = False
     for Tile in neighbor_tiles:
         terrain = Tile.terrain
-        print(terrain)
         if (terrain == "forest" or terrain == "pasture" or terrain == "fields"
         or terrain == "hills" or terrain == "mountains"):
             touching_land = True
     if touching_land == False:
-        return "The building must be near land."
+        response['build_success'] = 0
+        response['build_response'] = "The building must be near land."
+        return
+    
+    # Neighbors check
+    neighbor_corners = board.get_neighbor_corners(corner_to_build)
+    for Corner in neighbor_corners:
+        building = Corner.building
+        if building != 0:
+            response['build_success'] = 0
+            response['build_response'] = ("You must build at least two intersections"
+            "away from another building, as per the neighbor rule.")
+            return
+    
     # Successful build
     corner_to_build.building = 1
     corner_to_build.save()
-    return "Built successfully"
-    
-    neighbor_corners = board.get_neighbor_corners(corner_to_build)
-    for i in neighbor_corners:
-        if neighbor_corners[i].building != 0:
-            return ("You must build at least two intersections away from another building,"
-            "as per the neighbor rule.")
-    
-    
+    response['build_success'] = 1
+    response['build_response'] = "Built successfully"
+    return
