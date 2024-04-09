@@ -47,6 +47,22 @@ def catan_view(request):
             xindex = request.POST.get('xindex')
             corner = board.corners.get(yindex=yindex, xindex=xindex)
             print ("corner building = " + str(corner.building))
+            """neighbor_corners = board.get_neighbor_corners(corner)
+            y0 = str(neighbor_corners[0].yindex) + ","
+            x0 = str(neighbor_corners[0].xindex) + " "
+            y1 = str(neighbor_corners[1].yindex) + ","
+            x1 = str(neighbor_corners[1].xindex) + " "
+            y2 = str(neighbor_corners[2].yindex) + ","
+            x2 = str(neighbor_corners[2].xindex) + " "
+            print("Corner 0: " + y0 + x0 + "Corner 1: " + y1 + x1 + "Corner 2: " + y2 + x2)
+            neighbor_tiles = board.get_neighbor_tiles(corner)
+            y0 = str(neighbor_tiles[0].yindex) + ","
+            x0 = str(neighbor_tiles[0].xindex) + " "
+            y1 = str(neighbor_tiles[1].yindex) + ","
+            x1 = str(neighbor_tiles[1].xindex) + " "
+            y2 = str(neighbor_tiles[2].yindex) + ","
+            x2 = str(neighbor_tiles[2].xindex) + " "
+            print("Tile 0: " + y0 + x0 + "Tile 1: " + y1 + x1 + "Tile 2: " + y2 + x2)"""
             if corner.building == 0:
                 corner.building += 1
                 corner.save()
