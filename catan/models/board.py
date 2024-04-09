@@ -22,11 +22,20 @@ class Board(models.Model):
                 corners.append(corner)
         Corner.objects.bulk_create(corners)
         board.corners.add(*corners)
-
+        
+        tile_terrain = [
+            ["empty", "empty", "water", "water", "water", "empty", "empty"],
+            ["empty", "water", "forest", "fields", "mountains", "water", "empty"],
+            ["water", "hills", "pasture", "hills", "mountains", "water", "empty"],
+            ["water", "mountains", "pasture", "desert", "fields", "pasture", "water"],
+            ["water", "hills", "forest", "fields", "forest", "water", "empty"],
+            ["empty", "water", "fields", "forest", "pasture", "water", "empty"],
+            ["empty", "water", "water", "water", "water", "empty", "empty"]
+        ]
         tiles = []
         for y in range(tile_rows):
             for x in range(tile_cols):
-                terrain = "null"  # Set default terrain
+                terrain = tile_terrain[y][x]
                 tile = Tile(yindex=y, xindex=x, terrain=terrain)
                 tiles.append(tile)
         Tile.objects.bulk_create(tiles)
