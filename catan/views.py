@@ -45,9 +45,11 @@ def catan_view(request):
             game.turn += 1
             yindex = request.POST.get('yindex')
             xindex = request.POST.get('xindex')
-            corner = board.corners.get(yindex=yindex, xindex=xindex)
+            build_response = build_attempt(board, yindex, xindex)
+            print(build_response)
+            """corner = board.corners.get(yindex=yindex, xindex=xindex)
             print ("corner building = " + str(corner.building))
-            """neighbor_corners = board.get_neighbor_corners(corner)
+            neighbor_corners = board.get_neighbor_corners(corner)
             y0 = str(neighbor_corners[0].yindex) + ","
             x0 = str(neighbor_corners[0].xindex) + " "
             y1 = str(neighbor_corners[1].yindex) + ","
@@ -58,11 +60,14 @@ def catan_view(request):
             neighbor_tiles = board.get_neighbor_tiles(corner)
             y0 = str(neighbor_tiles[0].yindex) + ","
             x0 = str(neighbor_tiles[0].xindex) + " "
+            terrain0 = "Terrain 0: " + neighbor_tiles[0].terrain + ", "
             y1 = str(neighbor_tiles[1].yindex) + ","
             x1 = str(neighbor_tiles[1].xindex) + " "
+            terrain1 = "Terrain 1: " + neighbor_tiles[1].terrain + ", "
             y2 = str(neighbor_tiles[2].yindex) + ","
             x2 = str(neighbor_tiles[2].xindex) + " "
-            print("Tile 0: " + y0 + x0 + "Tile 1: " + y1 + x1 + "Tile 2: " + y2 + x2)"""
+            terrain2 = "Terrain 2: " + neighbor_tiles[2].terrain + ", "
+            print("Tile 0: " + y0 + x0 + terrain0 + "Tile 1: " + y1 + x1 + terrain1 + "Tile 2: " + y2 + x2 + terrain2)
             if corner.building == 0:
                 corner.building += 1
                 corner.save()
@@ -70,7 +75,7 @@ def catan_view(request):
             else:
                 print("That corner is occupied.")
             
-            """# Handle corner interaction
+            # Handle corner interaction
             # Example: increment building count
             corner_id = int(request.POST.get('corner_id'))
             corner = Corner.objects.get(pk=corner_id)
@@ -131,22 +136,26 @@ def catan_view(request):
 #*************************************************************************************
 """The corner is buildable if it isn't build, its corner neighbors aren't built,
 and at least one of its neighbors is a land tile"""
-"""def build_attempt(board, yindex, xindex):
-    board.corners[yindex][xindex].building += 1
-    corner_to_build = board.corners[yindex][xindex]
+def build_attempt(board, yindex, xindex):
+    corner_to_build = board.corners.get(yindex=yindex, xindex=xindex)
+    # Check if already built
     if corner_to_build.building == 1:
         return "That corner already has a building on it."
-    
+    # Land check
     neighbor_tiles = board.get_neighbor_tiles(corner_to_build)
     touching_land = False
-    for i in neighbor_tiles:
-        terrain = neighbor_tiles[i].terrain
+    for Tile in neighbor_tiles:
+        terrain = Tile.terrain
         print(terrain)
         if (terrain == "forest" or terrain == "pasture" or terrain == "fields"
         or terrain == "hills" or terrain == "mountains"):
             touching_land = True
     if touching_land == False:
         return "The building must be near land."
+    # Successful build
+    corner_to_build.building = 1
+    corner_to_build.save()
+    return "Built successfully"
     
     neighbor_corners = board.get_neighbor_corners(corner_to_build)
     for i in neighbor_corners:
@@ -154,4 +163,4 @@ and at least one of its neighbors is a land tile"""
             return ("You must build at least two intersections away from another building,"
             "as per the neighbor rule.")
     
-    return "Built successfully"""
+    
