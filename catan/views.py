@@ -1,24 +1,28 @@
 from django.shortcuts import render
 from django.http import JsonResponse
-import uuid, json # uuid creates game key, json saves/loads it
+import uuid # unique key for games
 from .models.game import Game
 from .models.board import Board
 from .models.corner import Corner
 from .models.tile import Tile
 
 def catan_view(request):
-    # If a game key is not in the session, initialize
+    # Load game key, or create one if none in session and valueless
     if 'game_key' not in request.session:
-        game_key = uuid.uuid4()
-        request.session['game_key'] = str(game_key)
+        request.session['game_key'] = "no key"
+    try: # Game key properly stored as a uuid
+        game_key = uuid.UUID(request.session['game_key'])  # Convert string to UUID
+    except ValueError: # Game key is not a uuid
+        request.session['game_key'] = str(uuid.uuid4())
+        game_key = uuid.UUID(request.session['game_key'])
+    
+    # Create game objects if none match the key
+    if not Game.objects.filter(game_key=request.session['game_key']).exists():
         game = Game.objects.create(game_key=game_key)
         board = Board.initialize(game_key, 15, 8, 7, 7)
         game.save()
         board.save()
-    
-    # Load game objects if key already in session
-    else:
-        game_key = uuid.UUID(request.session.get('game_key')) # Convert string to UUID
+    else: # Load game objects
         game = Game.objects.get(game_key=game_key)
         board = Board.objects.get(game_key=game_key)
 
@@ -39,6 +43,7 @@ def catan_view(request):
             Corner.objects.all().delete()
             Tile.objects.all().delete()
         elif input == "reload":
+            game_key = "no key"
             game.turn = 1
         
         elif input == "corner":
@@ -47,7 +52,6 @@ def catan_view(request):
             xindex = request.POST.get('xindex')
             build_attempt(board, yindex, xindex, response)
             print(response['build_response'])
-            print("Build success: " + str(response['build_success']))
             """corner = board.corners.get(yindex=yindex, xindex=xindex)
             print ("corner building = " + str(corner.building))
             neighbor_corners = board.get_neighbor_corners(corner)
