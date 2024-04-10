@@ -8,6 +8,7 @@ from .models.tile import Tile
 
 def catan_view(request):
     # Load game key, or create one if none in session and valueless
+    game_key = "no key"
     if 'game_key' not in request.session:
         request.session['game_key'] = "no key"
     try: # Game key properly stored as a uuid
@@ -17,7 +18,7 @@ def catan_view(request):
         game_key = uuid.UUID(request.session['game_key'])
     
     # Create game objects if none match the key
-    if not Game.objects.filter(game_key=request.session['game_key']).exists():
+    if not Game.objects.filter(game_key=game_key).exists():
         game = Game.objects.create(game_key=game_key)
         board = Board.initialize(game_key, 15, 8, 7, 7)
         game.save()
@@ -34,7 +35,7 @@ def catan_view(request):
         print("input: " + input)
         response = {}
 
-        # Clear the session cache
+        # Reset data
         if input == "clear_data":
             request.session.clear()
         elif input == "clear_database":
@@ -43,15 +44,16 @@ def catan_view(request):
             Corner.objects.all().delete()
             Tile.objects.all().delete()
         elif input == "reload":
-            game_key = "no key"
+            request.session['game_key'] = "no key"
             game.turn = 1
         
+        # Corner clicked
         elif input == "corner":
-            game.turn += 1
             yindex = request.POST.get('yindex')
             xindex = request.POST.get('xindex')
             build_attempt(board, yindex, xindex, response)
             print(response['build_response'])
+            if response['build_success'] == 1: game.turn += 1
             """corner = board.corners.get(yindex=yindex, xindex=xindex)
             print ("corner building = " + str(corner.building))
             neighbor_corners = board.get_neighbor_corners(corner)
