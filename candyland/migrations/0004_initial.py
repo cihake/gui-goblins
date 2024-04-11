@@ -8,6 +8,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
+        ('candyland', '0003_delete_game_delete_player'),
     ]
 
     operations = [
@@ -26,8 +27,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('ordinal', models.IntegerField(default=0)),
-                ('space', models.IntegerField(default=0)),
-                ('money', models.IntegerField(default=0)),
+                ('space', models.IntegerField(default=1)),
+                ('skip', models.BooleanField(default=False)),
             ],
         ),
     ]
