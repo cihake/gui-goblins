@@ -31,6 +31,15 @@
                 border: none; border-radius: 5px; cursor: pointer;
             }
             /* Positioning for each button */
+            /* Positioning for each button */
+            .clear_data {
+                top: 0%;
+                left: 0%;
+            }
+            .clear_database {
+                top: 6%;
+                left: 0%;
+            }
             .dice_roll {
                 top: 55%;
                 left: 85%;
@@ -49,6 +58,8 @@
             <text id="money1" x="110%" y="92%"></text>
         </svg>
         <button class="dice_roll">Roll dice</button>
+        <button class="clear_database">Erase database objects (debug)</button>
+        <button class="clear_data">Clear session (debug)</button>
         
         <!--*************************************************************************-->
         <!--JavaScript for input-->
@@ -71,6 +82,34 @@
                 // Display player 1
                 create_circle("piece1", xcoords[0], ycoords[0], 15, "black");
                 $('#money1').text("Player 1 : $" + player1_money);
+
+                // Dump cache
+                $('.clear_data').click(function() {
+                    $.ajax({
+                        url: '/catan/',
+                        type: 'POST',
+                        data: {'input': 'clear_data'},
+                        headers: {'X-CSRFToken': csrftoken},
+                    });
+                });
+                // Clear database
+                $('.clear_database').click(function() {
+                    $.ajax({
+                        url: '/catan/',
+                        type: 'POST',
+                        data: {'input': 'clear_database'},
+                        headers: {'X-CSRFToken': csrftoken},
+                    });
+                });
+                // Reset game variables
+                $(window).on('beforeunload', function() {
+                    $.ajax({
+                        url: '/catan/',
+                        type: 'POST',
+                        data: {'input': 'reload'},
+                        headers: {'X-CSRFToken': csrftoken},
+                    });
+                });
 
                 // Register a dice roll
                 $('.dice_roll').click(function() {
