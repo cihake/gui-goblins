@@ -57,7 +57,7 @@
             </g>
             <text id="wintext" x="110%" y="8%"> Player 1 wins!</text>
         </svg>
-        <!--<button class="dice_roll">Roll dice</button>-->
+        <button class="end_turn">Gather resources</button>
         <button class="clear_database">Erase database objects (debug)</button>
         <button class="clear_data">Clear session (debug)</button>
 
@@ -106,18 +106,17 @@
                 });
 
                 // Register a dice roll
-                $('.dice_roll').click(function() {
+                $('.end_turn').click(function() {
                     $.ajax({
                         url: '/catan/',
                         type: 'POST',
                         data: {
-                            'input': 'dice_roll',
+                            'input': 'end_turn',
                         },
                         headers: {'X-CSRFToken': csrftoken},
                         
                         success: function(response) {
-                            var dice_value = roll_dice();
-                            console.log("dice roll: " + dice_value);
+                            
                         }
                     });
                 });
@@ -284,13 +283,6 @@
                 circle.setAttributeNS(null, "r", radius);
                 circle.setAttributeNS(null, "fill", color);
                 document.getElementById(group_id).appendChild(circle);
-            }
-
-            // Function to simulate a dice roll
-            function roll_dice() {
-                var die1 = Math.floor(Math.random() * (6 - 1 + 1)) + 1;
-                var die2 = Math.floor(Math.random() * (6 - 1 + 1)) + 1;
-                return die1 + die2;
             }
 
             // Function to declare a winner
