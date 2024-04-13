@@ -58,11 +58,11 @@ def catan_view(request):
             xindex = request.POST.get('xindex')
             build_attempt(board, yindex, xindex, response)
             print(response['build_response'])
-            if response['build_success'] == 1: game.turn += 1
         
         elif input == "end_turn":
-            dice_value = random.randint(1, 6) + random.randint(1, 6)
-            print("Dice value: " + str(dice_value))
+            gather_resources(board, player1, response)
+            player1.save()
+            game.turn += 1
             
         # Sava game data, return response
         game.save()
@@ -114,3 +114,33 @@ def build_attempt(board, yindex, xindex, response):
     response['build_success'] = 1
     response['build_response'] = "Built successfully"
     return
+
+
+"""At the start of a turn, for every corner that is built, check the adjacent tiles.
+If the tile's dice value matches the dice roll, add the corresponding terrain resource
+to the corresponding player."""
+def gather_resources(board, player, response):
+    dice_value = random.randint(1, 6) + random.randint(1, 6)
+    print("Dice value: " + str(dice_value))
+
+    for Corner in board.corners.all():
+        if Corner.building > 0:
+            for Tile in board.get_neighbor_tiles(Corner):
+                if Tile.dice == dice_value:
+                    terrain = Tile.terrain
+                    if terrain == "pasture":
+                        player.wool += 1
+                        print("Wool gathered")
+                    elif terrain == "fields":
+                        player.grain += 1
+                        print("Grain gathered")
+                    elif terrain == "forest":
+                        player.lumber += 1
+                        print("Lumber gathered")
+                    elif terrain == "hills":
+                        player.brick += 1
+                        print("Brick gathered")
+                    elif terrain == "mountains":
+                        player.ore += 1
+                        print("Ore gathered")
+    print(player.__str__())
