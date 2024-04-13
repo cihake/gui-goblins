@@ -8,7 +8,7 @@ from .models.tile import Tile
 
 def catan_view(request):
     # Load game key, or create one if none in session and valueless
-    game_key = "no key"
+    game_key = "no key" # variable, not saved value
     if 'game_key' not in request.session:
         request.session['game_key'] = "no key"
     try: # Game key properly stored as a uuid
@@ -43,7 +43,7 @@ def catan_view(request):
             Board.objects.all().delete()
             Corner.objects.all().delete()
             Tile.objects.all().delete()
-        elif input == "reload":
+        elif input == "unload":
             request.session['game_key'] = "no key"
             game.turn = 1
         

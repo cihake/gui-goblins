@@ -75,18 +75,14 @@
                 var xcoords = coordinates[0];
                 var ycoords = coordinates[1];
 
-                // Player 1 setup
-                var player1_space = 0;
-                var player1_money = 0;
-
                 // Display player 1
                 create_circle("piece1", xcoords[0], ycoords[0], 15, "black");
-                $('#money1').text("Player 1 : $" + player1_money);
+                $('#money1').text("Player 1 : $" + String(0));
 
                 // Dump cache
                 $('.clear_data').click(function() {
                     $.ajax({
-                        url: '/catan/',
+                        url: '/monopoly/',
                         type: 'POST',
                         data: {'input': 'clear_data'},
                         headers: {'X-CSRFToken': csrftoken},
@@ -95,7 +91,7 @@
                 // Clear database
                 $('.clear_database').click(function() {
                     $.ajax({
-                        url: '/catan/',
+                        url: '/monopoly/',
                         type: 'POST',
                         data: {'input': 'clear_database'},
                         headers: {'X-CSRFToken': csrftoken},
@@ -104,17 +100,18 @@
                 // Reset game variables
                 $(window).on('beforeunload', function() {
                     $.ajax({
-                        url: '/catan/',
+                        url: '/monopoly/',
                         type: 'POST',
-                        data: {'input': 'reload'},
+                        data: {'input': 'unload'},
                         headers: {'X-CSRFToken': csrftoken},
                     });
                 });
 
                 // Register a dice roll
                 $('.dice_roll').click(function() {
+                    console.log("Dice roll")
                     $.ajax({
-                        url: '/candyland/',
+                        url: '/monopoly/',
                         type: 'POST',
                         data: {
                             'input': 'dice_roll',
@@ -123,19 +120,14 @@
                         
                         success: function(response) {
                             // Alter the piece's position
-                            var dice_value = roll_dice();
-                            player1_space += dice_value;
-                            // Loop back around; pass GO
-                            if (player1_space >= 39) {
-                                player1_space -= 39;
-                                player1_money += 200;
-                                $('#money1').text("Player 1 : $" + player1_money);
-                            }
+                            var player1_space = response['player1_space']
+                            var player1_money = response['player1_money']
+
+                            $('#money1').text("Player 1 : $" + player1_money);
                             // Change the displayed space
                             $('#piece1').attr("cx", xcoords[player1_space]);
                             $('#piece1').attr("cy", ycoords[player1_space]);
 
-                            console.log("dice roll: " + dice_value);
                             // If $1000 are accrued, the player wins
                             if (player1_money >= 1000) {
                                 declare_winner(1);
@@ -187,13 +179,6 @@
                     circle.setAttributeNS(null, "r", radius);
                     circle.setAttributeNS(null, "fill", color);
                     document.getElementById("board").appendChild(circle);
-                }
-
-                // Function to simulate a dice roll
-                function roll_dice() {
-                    var die1 = Math.floor(Math.random() * (6 - 1 + 1)) + 1;
-                    var die2 = Math.floor(Math.random() * (6 - 1 + 1)) + 1;
-                    return die1 + die2;
                 }
 
                 // Function to declare a winner
