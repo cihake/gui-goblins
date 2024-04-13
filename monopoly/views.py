@@ -38,10 +38,6 @@ def monopoly_view(request):
         print("input: " + input)
         response = {}
 
-        for i in range(39):
-            space = board.get_space(i)
-            print("type: " + space.type + ", name: " + space.name)
-
         # Reset data
         if input == "clear_data":
             request.session.clear()
@@ -53,6 +49,7 @@ def monopoly_view(request):
         # Move the player
         elif input == "dice_roll":
             dice_value = random.randint(1, 6) + random.randint(1, 6)
+            print("Dice value: " + str(dice_value))
             player1.space += dice_value
             
             # loop back around, pass GO
@@ -60,11 +57,17 @@ def monopoly_view(request):
                 player1.space -= 39
                 player1.money += 200
             
-            player1.save()
+            # Respond to the landed space
+            response['space_type'] = "No type"
+            response['announcement'] = "No message"
+            respond_to_space(board, player1, response)
+            print(response['announcement'])
+
             response['player1_space'] = player1.space
             response['player1_money'] = player1.money
             print("Space: " + str(player1.space))
             print("Money: " + str(player1.money))
+            player1.save()
         
         game.save()
         board.save()
@@ -75,3 +78,20 @@ def monopoly_view(request):
         return render(request, 'monopoly.html')
 
 #*************************************************************************************
+"""Event handler for space landing"""
+def respond_to_space(board, player, response):
+    space = board.get_space(player.space)
+    
+    if space.type == "tax":
+        response['space_type'] = "tax"
+        tax_player(player, space, response)
+
+
+"""Charge a tax to the player"""
+def tax_player(player, space, response):
+    tax = 0
+    if space.name == "Income Tax": tax = 200
+    elif space.name == "Electric Company" or space.name == "Water Works": tax = 150
+    elif space.name == "Luxury Tax": tax = 100
+    player.money -= tax
+    response['announcement'] = space.name + ": pay $" + str(tax)
