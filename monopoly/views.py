@@ -4,6 +4,8 @@ import uuid # unique key for games
 import math, random
 from .models.game import Game
 from .models.player import Player
+from .models.board import Board
+from .models.space import Space
 
 def monopoly_view(request):
     # Load game key, or create one if none in session and valueless
@@ -20,11 +22,14 @@ def monopoly_view(request):
     if not Game.objects.filter(game_key=game_key).exists():
         game = Game.objects.create(game_key=game_key)
         player1 = Player.objects.create(game_key=game_key, ordinal=1)
+        board = Board.initialize(game_key)
         game.save()
         player1.save()
+        board.save()
     else: # Load game objects
         game = Game.objects.get(game_key=game_key)
         player1 = Player.objects.get(game_key=game_key, ordinal=1)
+        board = Board.objects.get(game_key=game_key)
     
     #*************************************************************************************
     # AJAX POST request; active response
@@ -32,6 +37,10 @@ def monopoly_view(request):
         input = request.POST.get('input')
         print("input: " + input)
         response = {}
+
+        for i in range(39):
+            space = board.get_space(i)
+            print("type: " + space.type + ", name: " + space.name)
 
         # Reset data
         if input == "clear_data":
@@ -58,6 +67,7 @@ def monopoly_view(request):
             print("Money: " + str(player1.money))
         
         game.save()
+        board.save()
         return JsonResponse(response)
     
     # Initial HTTP request; setup, page render
