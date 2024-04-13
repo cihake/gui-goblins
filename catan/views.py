@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 import uuid # unique key for games
 from .models.game import Game
+from .models.player import Player
 from .models.board import Board
 from .models.corner import Corner
 from .models.tile import Tile
@@ -21,11 +22,14 @@ def catan_view(request):
     if not Game.objects.filter(game_key=game_key).exists():
         game = Game.objects.create(game_key=game_key)
         board = Board.initialize(game_key, 15, 8, 7, 7)
+        player1 = Player.objects.create(game_key=game_key, ordinal=1)
         game.save()
         board.save()
+        player1.save()
     else: # Load game objects
         game = Game.objects.get(game_key=game_key)
         board = Board.objects.get(game_key=game_key)
+        player1 = Player.objects.get(game_key=game_key)
 
     #*************************************************************************************
     # AJAX POST request; active response
@@ -40,12 +44,12 @@ def catan_view(request):
             request.session.clear()
         elif input == "clear_database":
             Game.objects.all().delete()
+            Player.objects.all().delete()
             Board.objects.all().delete()
             Corner.objects.all().delete()
             Tile.objects.all().delete()
         elif input == "unload":
             request.session['game_key'] = "no key"
-            game.turn = 1
         
         # Corner clicked
         elif input == "corner":
