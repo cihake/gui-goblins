@@ -134,24 +134,13 @@ class Board(models.Model):
     """Print check for the neighbor corners method"""
     def print_neighbor_corners(self, neighbor_corners):
         output = ""
-        number_neighbors = len(neighbor_corners)
-        for i in range(number_neighbors):
-            corner = neighbor_corners[i]
-            y = str(corner.yindex) + ","
-            x = str(corner.xindex) + " "
-            building = "Building: " + str(corner.building) + " - "
-            output += "Corner: " + y + x + building
+        for Corner in neighbor_corners:
+            output += Corner.__str__()
         print(output)
     
     """Print check for the nieghbor tiles method"""
     def print_neighbor_tiles(self, neighbor_tiles):
         output = ""
-        number_neighbors = len(neighbor_tiles)
-        for i in range(number_neighbors):
-            tile = neighbor_tiles[i]
-            y = str(tile.yindex) + ","
-            x = str(tile.xindex) + " "
-            terrain = "Terrain: " + tile.terrain + ", "
-            dice = "Dice: " + str(tile.dice) + " - "
-            output += "Tile: " + y + x + terrain + dice
+        for Tile in neighbor_tiles:
+            output += Tile.__str__()
         print(output)

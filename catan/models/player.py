@@ -12,4 +12,11 @@ class Player(models.Model):
     brick = models.IntegerField(default=0)
     ore = models.IntegerField(default=0)
 
-    
+    def __str__(self):
+        ordinal = "Player:" + str(self.ordinal) + ", "
+        wool = "Wool:" + str(self.wool) + ", "
+        grain = "Grain:" + str(self.grain) + ", "
+        lumber = "Lumber:" + str(self.lumber) + ", "
+        brick = "Brick:" + str(self.brick) + ", "
+        ore = "Ore:" + str(self.ore) + ", "
+        return ordinal + wool + grain + lumber + brick + ore
