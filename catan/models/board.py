@@ -32,11 +32,21 @@ class Board(models.Model):
             ["empty", "water", "fields", "forest", "pasture", "water", "empty"],
             ["empty", "water", "water", "water", "water", "empty", "empty"]
         ]
+        tile_dice = [
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 6, 5, 9, 0, 0],
+            [0, 4, 3, 8, 10, 0, 0],
+            [0, 6, 5, 0, 9, 12, 0],
+            [0, 3, 2, 10, 11, 0, 0],
+            [0, 0, 11, 4, 8, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+        ]
         tiles = []
         for y in range(tile_rows):
             for x in range(tile_cols):
                 terrain = tile_terrain[y][x]
-                tile = Tile(yindex=y, xindex=x, terrain=terrain)
+                dice = tile_dice[y][x]
+                tile = Tile(yindex=y, xindex=x, terrain=terrain, dice=dice)
                 tiles.append(tile)
         Tile.objects.bulk_create(tiles)
         board.tiles.add(*tiles)
@@ -89,6 +99,8 @@ class Board(models.Model):
             neighbors.append(corners.get(yindex=y+1, xindex=x+1))
         elif y % 4 == 3 and y > 0 and x > 0:
             neighbors.append(corners.get(yindex=y-1, xindex=x-1))
+
+        self.print_neighbor_corners(neighbors)
         
         return neighbors
     
@@ -114,5 +126,32 @@ class Board(models.Model):
             neighbors.remove(tiles.get(yindex=y, xindex=x-1))
         elif yindex % 4 == 3 and tiles.get(yindex=y-1, xindex=x) in neighbors:
             neighbors.remove(tiles.get(yindex=y-1, xindex=x))
+
+        self.print_neighbor_tiles(neighbors)
         
         return neighbors
+    
+    """Print check for the neighbor corners method"""
+    def print_neighbor_corners(self, neighbor_corners):
+        output = ""
+        number_neighbors = len(neighbor_corners)
+        for i in range(number_neighbors):
+            corner = neighbor_corners[i]
+            y = str(corner.yindex) + ","
+            x = str(corner.xindex) + " "
+            building = "Building: " + str(corner.building) + " - "
+            output += "Corner: " + y + x + building
+        print(output)
+    
+    """Print check for the nieghbor tiles method"""
+    def print_neighbor_tiles(self, neighbor_tiles):
+        output = ""
+        number_neighbors = len(neighbor_tiles)
+        for i in range(number_neighbors):
+            tile = neighbor_tiles[i]
+            y = str(tile.yindex) + ","
+            x = str(tile.xindex) + " "
+            terrain = "Terrain: " + tile.terrain + ", "
+            dice = "Dice: " + str(tile.dice) + " - "
+            output += "Tile: " + y + x + terrain + dice
+        print(output)
