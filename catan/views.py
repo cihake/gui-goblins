@@ -65,6 +65,7 @@ def catan_view(request):
             game.turn += 1
             
         # Sava game data, return response
+        send_inventories(player1, response)
         game.save()
         board.save()
         return JsonResponse(response)
@@ -74,6 +75,20 @@ def catan_view(request):
         return render(request, 'catan.html')
 
 #*************************************************************************************
+def send_inventories(player, response):
+    players = [player]
+    players_data = [{
+        'ordinal': player.ordinal,
+        'wool': player.wool,
+        'grain': player.grain,
+        'lumber': player.lumber,
+        'brick': player.brick,
+        'ore': player.ore,
+    } for player in players]
+
+    response['players_data'] = players_data
+
+
 """The corner is buildable if it isn't build, its corner neighbors aren't built,
 and at least one of its neighbors is a land tile"""
 def build_attempt(board, yindex, xindex, response):

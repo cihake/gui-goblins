@@ -139,7 +139,7 @@
                     });
                 });
 
-                // Register a dice roll
+                // Register the "end turn" button
                 $('.end_turn').click(function() {
                     $.ajax({
                         url: '/catan/',
@@ -150,7 +150,7 @@
                         headers: {'X-CSRFToken': csrftoken},
                         
                         success: function(response) {
-                            $('#player1_wool').text("Modified");
+                            update_inventories(response)
                         }
                     });
                 });
@@ -177,12 +177,7 @@
                         success: function(response) {
                             // Draw a circle if the corner was successfully built on
                             if (response['build_success'] != 0) {
-                                draw_building(response, clicked_circle, corner_positions, xindex, yindex)
-                                
-                                building_count += 1;
-                                if (building_count >= 6) {
-                                    $('#wintext').show();
-                                }
+                                draw_building(response, clicked_circle, corner_positions, xindex, yindex);
                             }
                         }
                     });
@@ -238,19 +233,11 @@
                     corner_positions[x] = [];
                     for (var y = 0; y < 15; y++) { // Rows
                         var ypos = 0;
-                        if (y % 2 == 0) {
-                            ypos = firstpos[1] + vlength * (Math.floor(y / 2) * 3);
-                        }
-                        else {
-                            ypos = firstpos[1] + vlength * (1 + Math.floor(y / 2) * 3);
-                        }
+                        if (y % 2 == 0) { ypos = firstpos[1] + vlength * (Math.floor(y / 2) * 3); }
+                        else { ypos = firstpos[1] + vlength * (1 + Math.floor(y / 2) * 3); }
                         var xpos = 0;
-                        if (y % 4 == 0 || y % 4 == 3) {
-                            xpos = firstpos[0] + hlength * (x * 2);
-                        }
-                        else if (y % 4 == 1 || y % 4 == 2) {
-                            xpos = firstpos[0] + hlength * (1 + x * 2);
-                        }
+                        if (y % 4 == 0 || y % 4 == 3) { xpos = firstpos[0] + hlength * (x * 2); }
+                        else if (y % 4 == 1 || y % 4 == 2) { xpos = firstpos[0] + hlength * (1 + x * 2); }
                         corner_positions[x][y] = [xpos, ypos];
                         var circle_data = x + "," + y;
                         create_data_circle("corners", circle_data, xpos, ypos, 30, "transparent");
@@ -259,21 +246,34 @@
                 // Tiles
                 for (var x = 0; x < 7; x++) { // Columns
                     tile_positions[x] = [];
-                    for (var y = 0; y < 7; y++) {
+                    for (var y = 0; y < 7; y++) { // Rows
                         var ypos = firstpos[1] + vlength * (2 + y * 3);
                         var xpos = 0;
-                        if (y % 2 == 0) {
-                            xpos = firstpos[0] + hlength * (2 + x * 2);
-                        }
-                        else {
-                            xpos = firstpos[0] + hlength * (1 + x * 2);
-                        }
+                        if (y % 2 == 0) { xpos = firstpos[0] + hlength * (2 + x * 2); }
+                        else { xpos = firstpos[0] + hlength * (1 + x * 2); }
                         tile_positions[x][y] = [xpos, ypos];
                         var circle_data = x + "," + y;
                         create_data_circle("tiles", circle_data, xpos, ypos, 70, "transparent");
                         create_circle("tile_marker", xpos, ypos, 3, "black")
                     }
                 }
+            }
+
+            // Function to update player inventory displays
+            function update_inventories(response) {
+                console.log(response.players_data[0]);
+                response.players_data.forEach(function(player) {
+                    // Update the HTML elements for each player
+                    $('#player' + player.ordinal + '_wool').text("wool " + player.wool);
+                    $('#player' + player.ordinal + '_grain').text("grain " + player.grain);
+                    $('#player' + player.ordinal + '_lumber').text("lumber " + player.lumber);
+                    $('#player' + player.ordinal + '_brick').text("brick " + player.brick);
+                    $('#player' + player.ordinal + '_ore').text("ore " + player.ore);
+                    player_inventory = [player.wool, player.grain, player.lumber, player.brick, player.ore]
+                    for (var i = 0; i < player_inventory.length; i++) {
+                        if (player_inventory[i] >= 10) {declare_winner(player.ordinal)}
+                    }
+                });
             }
 
             // Function to draw a building at a given position
@@ -327,6 +327,7 @@
                 newItem.textContent = text;
                 document.getElementById(group).appendChild(newItem);
             }
+
             // Function to declare a winner
             function declare_winner(player) {
                 $('#wintext').text("Player " + player + " wins!");
