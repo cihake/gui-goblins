@@ -43,6 +43,29 @@
                 top: 45%;
                 left: 85%;
             }
+            /* Styling for dropdown menus */
+            .menu-container {
+                position: fixed;
+                border: 1px solid #ccc;
+                background-color: white;
+                padding: 10px;
+                width: 100px;
+                box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            }
+
+            #player1_inventory {
+                bottom: 0%;
+                left: 4%;
+            }
+
+            .menu-item {
+                padding: 5px 10px;
+                border-bottom: 1px solid #eee;
+            }
+
+            .menu-item:last-child {
+                border-bottom: none;
+            }
         </style>
     </head>
     <!--*************************************************************************-->
@@ -61,6 +84,8 @@
         <button class="clear_database">Erase database objects (debug)</button>
         <button class="clear_data">Clear session (debug)</button>
 
+        <div class="menu-container" id="player1_inventory"></div>
+
         <!--*************************************************************************-->
         <!--JavaScript for setup and input-->
         <script>
@@ -77,6 +102,15 @@
                 setup_board(corner_positions, tile_positions);
                 var building_count = 0;
 
+                // Set up player display
+                add_menu_item("player1_inventory", "player1_wool", "wool 0");
+                add_menu_item("player1_inventory", "player1_grain", "grain 0");
+                add_menu_item("player1_inventory", "player1_lumber", "lumber 0");
+                add_menu_item("player1_inventory", "player1_brick", "brick 0");
+                add_menu_item("player1_inventory", "player1_ore", "ore 0");
+                add_menu_item("player1_inventory", "player1_title", "player 1");
+
+                // Erasure functions
                 // Dump cache
                 $('.clear_data').click(function() {
                     $.ajax({
@@ -116,7 +150,7 @@
                         headers: {'X-CSRFToken': csrftoken},
                         
                         success: function(response) {
-                            
+                            $('#player1_wool').text("Modified");
                         }
                     });
                 });
@@ -285,6 +319,14 @@
                 document.getElementById(group_id).appendChild(circle);
             }
 
+            // Function to add items to a dropdown menu
+            function add_menu_item(group, id, text) {
+                const newItem = document.createElement('div');
+                newItem.classList.add('menu-item');
+                newItem.setAttribute('id', id);
+                newItem.textContent = text;
+                document.getElementById(group).appendChild(newItem);
+            }
             // Function to declare a winner
             function declare_winner(player) {
                 $('#wintext').text("Player " + player + " wins!");
