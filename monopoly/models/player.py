@@ -8,3 +8,4 @@ class Player(models.Model):
     ordinal = models.IntegerField(default=-1)
     space = models.IntegerField(default=0)
     money = models.IntegerField(default=0)
+    
