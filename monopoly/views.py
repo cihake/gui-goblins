@@ -6,6 +6,8 @@ from .models.game import Game
 from .models.player import Player
 from .models.board import Board
 from .models.space import Space
+from .models.property_deck import PropertyDeck
+from .models.property import Property
 
 def monopoly_view(request):
     # Load game key, or create one if none in session and valueless
@@ -23,13 +25,16 @@ def monopoly_view(request):
         game = Game.objects.create(game_key=game_key)
         player1 = Player.objects.create(game_key=game_key, ordinal=1)
         board = Board.initialize(game_key)
+        property_deck = PropertyDeck.initialize(game_key)
         game.save()
         player1.save()
         board.save()
+        property_deck.save()
     else: # Load game objects
         game = Game.objects.get(game_key=game_key)
         player1 = Player.objects.get(game_key=game_key, ordinal=1)
         board = Board.objects.get(game_key=game_key)
+        property_deck = PropertyDeck.objects.get(game_key=game_key)
     
     #*************************************************************************************
     # AJAX POST request; active response
@@ -71,6 +76,7 @@ def monopoly_view(request):
         
         game.save()
         board.save()
+        property_deck.save()
         return JsonResponse(response)
     
     # Initial HTTP request; setup, page render
