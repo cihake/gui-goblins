@@ -176,7 +176,7 @@
 
                         success: function(response) {
                             // Draw a circle if the corner was successfully built on
-                            if (response['build_success'] != 0) {
+                            if (response['build_success'] == 1) {
                                 draw_building(response, clicked_circle, corner_positions, xindex, yindex);
                             }
                         }

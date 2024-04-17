@@ -22,7 +22,7 @@ def catan_view(request):
     # Create game objects if none match the key
     if not Game.objects.filter(game_key=game_key).exists():
         game = Game.objects.create(game_key=game_key)
-        board = Board.initialize(game_key, 15, 8, 7, 7)
+        board = Board.initialize(game_key)
         player1 = Player.objects.create(game_key=game_key, ordinal=1)
         game.save()
         board.save()
@@ -60,7 +60,9 @@ def catan_view(request):
             print(response['build_response'])
         
         elif input == "end_turn":
-            gather_resources(board, player1, response)
+            dice_value = random.randint(1, 6) + random.randint(1, 6)
+            print("Dice value: " + str(dice_value))
+            gather_resources(board, player1, dice_value, response)
             player1.save()
             game.turn += 1
             
@@ -96,7 +98,7 @@ def build_attempt(board, yindex, xindex, response):
     
     # Check if already built
     if corner_to_build.building == 1:
-        response['build_success'] = 0
+        response['build_success'] = -1
         response['build_response'] = "That corner already has a building on it."
         return
     
@@ -109,7 +111,7 @@ def build_attempt(board, yindex, xindex, response):
         or terrain == "hills" or terrain == "mountains"):
             touching_land = True
     if touching_land == False:
-        response['build_success'] = 0
+        response['build_success'] = -2
         response['build_response'] = "The building must be near land."
         return
     
@@ -118,7 +120,7 @@ def build_attempt(board, yindex, xindex, response):
     for Corner in neighbor_corners:
         building = Corner.building
         if building != 0:
-            response['build_success'] = 0
+            response['build_success'] = -3
             response['build_response'] = ("You must build at least two intersections"
             "away from another building, as per the neighbor rule.")
             return
@@ -134,10 +136,7 @@ def build_attempt(board, yindex, xindex, response):
 """At the start of a turn, for every corner that is built, check the adjacent tiles.
 If the tile's dice value matches the dice roll, add the corresponding terrain resource
 to the corresponding player."""
-def gather_resources(board, player, response):
-    dice_value = random.randint(1, 6) + random.randint(1, 6)
-    print("Dice value: " + str(dice_value))
-
+def gather_resources(board, player, dice_value, response):
     for Corner in board.corners.all():
         if Corner.building > 0:
             for Tile in board.get_neighbor_tiles(Corner):
