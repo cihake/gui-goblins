@@ -12,12 +12,12 @@ class Board(models.Model):
 
     """Initialization; takes the game_key and coordinates"""
     @classmethod
-    def initialize(cls, game_key, corner_rows, corner_cols, tile_rows, tile_cols):
+    def initialize(cls, game_key):
         board = cls.objects.create(game_key=game_key)
 
         corners = []
-        for y in range(corner_rows):
-            for x in range(corner_cols):
+        for y in range(15):
+            for x in range(8):
                 corner = Corner(yindex=y, xindex=x, building=0)
                 corners.append(corner)
         Corner.objects.bulk_create(corners)
@@ -42,8 +42,8 @@ class Board(models.Model):
             [0, 0, 0, 0, 0, 0, 0],
         ]
         tiles = []
-        for y in range(tile_rows):
-            for x in range(tile_cols):
+        for y in range(7):
+            for x in range(7):
                 terrain = tile_terrain[y][x]
                 dice = tile_dice[y][x]
                 tile = Tile(yindex=y, xindex=x, terrain=terrain, dice=dice)
@@ -84,20 +84,20 @@ class Board(models.Model):
         # Get an intermediate "corners" model
         corner_model = self.corners.through._meta.get_field('corner').remote_field.model
         corners = corner_model.objects.filter(board=self)  # Query all corner objects related to this board
-        ymax = corners.aggregate(max_y=models.Max('yindex'))['max_y']
-        xmax = corners.aggregate(max_x=models.Max('xindex'))['max_x']
         neighbors = []
         # All have these neighbors.
-        if y > 0: neighbors.append(corners.get(yindex=y-1, xindex=x))
-        if y < ymax: neighbors.append(corners.get(yindex=y+1, xindex=x))
+        if corners.filter(yindex=y-1, xindex=x).exists():
+            neighbors.append(corners.get(yindex=y-1, xindex=x))
+        if corners.filter(yindex=y+1, xindex=x).exists():
+            neighbors.append(corners.get(yindex=y+1, xindex=x))
         # Determine the unique neighbor
-        if y % 4 == 0 and y < ymax and x > 0:
+        if y % 4 == 0 and corners.filter(yindex=y+1, xindex=x-1).exists():
             neighbors.append(corners.get(yindex=y+1, xindex=x-1))
-        elif y % 4 == 1 and y > 0 and x < ymax:
+        elif y % 4 == 1 and corners.filter(yindex=y-1, xindex=x+1).exists():
             neighbors.append(corners.get(yindex=y-1, xindex=x+1))
-        elif y % 4 == 2 and y < ymax and x < xmax:
+        elif y % 4 == 2 and corners.filter(yindex=y+1, xindex=x+1).exists():
             neighbors.append(corners.get(yindex=y+1, xindex=x+1))
-        elif y % 4 == 3 and y > 0 and x > 0:
+        elif y % 4 == 3 and corners.filter(yindex=y-1, xindex=x-1).exists():
             neighbors.append(corners.get(yindex=y-1, xindex=x-1))
 
         self.print_neighbor_corners(neighbors)
@@ -114,18 +114,14 @@ class Board(models.Model):
         y = math.floor(yindex / 2)
         # There are four offsets, and each lacks one of them.
         neighbors = []
-        neighbors.append(tiles.get(yindex=y, xindex=x))
-        if y > 0: neighbors.append(tiles.get(yindex=y-1, xindex=x))
-        if x > 0: neighbors.append(tiles.get(yindex=y, xindex=x-1))
-        if y > 0 and x > 0: neighbors.append(tiles.get(yindex=y-1, xindex=x-1))
-        if yindex % 4 == 0 and tiles.get(yindex=y, xindex=x) in neighbors:
-            neighbors.remove(tiles.get(yindex=y, xindex=x))
-        elif yindex % 4 == 1 and tiles.get(yindex=y-1, xindex=x-1) in neighbors:
-            neighbors.remove(tiles.get(yindex=y-1, xindex=x-1))
-        elif yindex % 4 == 2 and tiles.get(yindex=y, xindex=x-1) in neighbors:
-            neighbors.remove(tiles.get(yindex=y, xindex=x-1))
-        elif yindex % 4 == 3 and tiles.get(yindex=y-1, xindex=x) in neighbors:
-            neighbors.remove(tiles.get(yindex=y-1, xindex=x))
+        if yindex % 4 != 0 and tiles.filter(yindex=y, xindex=x).exists():
+            neighbors.append(tiles.get(yindex=y, xindex=x))
+        if yindex % 4 != 1 and tiles.filter(yindex=y-1, xindex=x-1).exists():
+            neighbors.append(tiles.get(yindex=y-1, xindex=x-1))
+        if yindex % 4 != 2 and tiles.filter(yindex=y, xindex=x-1).exists():
+            neighbors.append(tiles.get(yindex=y, xindex=x-1))
+        if yindex % 4 != 3 and tiles.filter(yindex=y-1, xindex=x).exists():
+            neighbors.append(tiles.get(yindex=y-1, xindex=x))
 
         self.print_neighbor_tiles(neighbors)
         
