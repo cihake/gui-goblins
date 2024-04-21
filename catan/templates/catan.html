@@ -43,6 +43,14 @@
                 top: 45%;
                 left: 85%;
             }
+            /* announcer positioning */
+            .announcer {
+                position: absolute;
+                top: 15%;
+                left: 1%;
+                width: 22%;
+                height: 5%;
+            }
             /* Styling for dropdown menus */
             .menu-container {
                 position: fixed;
@@ -84,6 +92,7 @@
         <button class="clear_database">Erase database objects (debug)</button>
         <button class="clear_data">Clear session (debug)</button>
 
+        <div class="announcer"></div>
         <div class="menu-container" id="player1_inventory"></div>
 
         <!--*************************************************************************-->
@@ -150,6 +159,9 @@
                         headers: {'X-CSRFToken': csrftoken},
                         
                         success: function(response) {
+                            // Display a message
+                            $('.announcer').html(response['announcement'].replace(/\n/g, '<br>'));
+
                             update_inventories(response)
                         }
                     });
@@ -175,6 +187,9 @@
                         headers: {'X-CSRFToken': csrftoken},
 
                         success: function(response) {
+                            // Display a message
+                            $('.announcer').html(response['announcement'].replace(/\n/g, '<br>'));
+
                             // Draw a circle if the corner was successfully built on
                             if (response['build_success'] == 1) {
                                 draw_building(response, clicked_circle, corner_positions, xindex, yindex);
@@ -201,7 +216,8 @@
                         headers: {'X-CSRFToken': csrftoken},
 
                         success: function(response) {
-                            
+                            // Display a message
+                            $('.announcer').html(response['announcement'].replace(/\n/g, '<br>'));
                         }
                     });
                 });

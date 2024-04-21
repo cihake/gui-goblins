@@ -41,6 +41,7 @@ def catan_view(request):
         input = request.POST.get('input')
         print("input: " + input)
         response = {}
+        response['announcement'] = ""
 
         # Reset data
         if input == "clear_data":
@@ -59,7 +60,6 @@ def catan_view(request):
             yindex = request.POST.get('yindex')
             xindex = request.POST.get('xindex')
             build_attempt(board, yindex, xindex, response)
-            print(response['build_response'])
         
         elif input == "end_turn":
             dice_value = random.randint(1, 6) + random.randint(1, 6)
@@ -72,6 +72,7 @@ def catan_view(request):
         send_inventories(player1, response)
         game.save()
         board.save()
+        print(response['announcement'])
         return JsonResponse(response)
     
     # Initial HTTP request, page render

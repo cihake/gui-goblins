@@ -6,7 +6,7 @@ def build_attempt(board, yindex, xindex, response):
     # Check if already built
     if corner_to_build.building == 1:
         response['build_success'] = -1
-        response['build_response'] = "That corner already has a building on it."
+        response['announcement'] = "That corner already has a building on it."
         return
     
     # Land check
@@ -19,7 +19,7 @@ def build_attempt(board, yindex, xindex, response):
             touching_land = True
     if touching_land == False:
         response['build_success'] = -2
-        response['build_response'] = "The building must be near land."
+        response['announcement'] = "The building must be near land."
         return
     
     # Neighbors check
@@ -28,15 +28,14 @@ def build_attempt(board, yindex, xindex, response):
         building = Corner.building
         if building != 0:
             response['build_success'] = -3
-            response['build_response'] = ("You must build at least two intersections"
-            "away from another building, as per the neighbor rule.")
+            response['announcement'] = "The building cannot be adjacent to another building."
             return
     
     # Successful build
     corner_to_build.building = 1
     corner_to_build.save()
     response['build_success'] = 1
-    response['build_response'] = "Built successfully"
+    response['announcement'] = "Built successfully."
     return
 
 
@@ -52,16 +51,21 @@ def gather_resources(board, player, dice_value, response):
                     if terrain == "pasture":
                         player.wool += 1
                         print("Wool gathered")
+                        response['announcement'] += "Wool gathered\n"
                     elif terrain == "fields":
                         player.grain += 1
                         print("Grain gathered")
+                        response['announcement'] += "Grain gathered\n"
                     elif terrain == "forest":
                         player.lumber += 1
                         print("Lumber gathered")
+                        response['announcement'] += "Lumber gathered\n"
                     elif terrain == "hills":
                         player.brick += 1
                         print("Brick gathered")
+                        response['announcement'] += "Brick gathered\n"
                     elif terrain == "mountains":
                         player.ore += 1
                         print("Ore gathered")
+                        response['announcement'] += "Ore gathered\n"
     print(player.__str__())
