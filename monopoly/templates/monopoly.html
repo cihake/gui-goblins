@@ -31,7 +31,6 @@
                 border: none; border-radius: 5px; cursor: pointer;
             }
             /* Positioning for each button */
-            /* Positioning for each button */
             .clear_data {
                 top: 0%;
                 left: 0%;
@@ -43,6 +42,14 @@
             .dice_roll {
                 top: 55%;
                 left: 85%;
+            }
+            /* announcer positioning */
+            .announcer {
+                position: absolute;
+                top: 15%;
+                left: 1%;
+                width: 22%;
+                height: 5%;
             }
         </style>
     </head>
@@ -60,6 +67,7 @@
         <button class="dice_roll">Roll dice</button>
         <button class="clear_database">Erase database objects (debug)</button>
         <button class="clear_data">Clear session (debug)</button>
+        <div class="announcer"></div>
         
         <!--*************************************************************************-->
         <!--JavaScript for input-->
@@ -119,6 +127,9 @@
                         headers: {'X-CSRFToken': csrftoken},
                         
                         success: function(response) {
+                            // Display a message
+                            $('.announcer').html(response['announcement'].replace(/\n/g, '<br>'));
+
                             // Alter the piece's position
                             var player1_space = response['player1_space']
                             var player1_money = response['player1_money']

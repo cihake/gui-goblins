@@ -54,6 +54,8 @@ def monopoly_view(request):
 
         # Move the player
         elif input == "dice_roll":
+            response['announcement'] = ""
+
             dice_value = random.randint(1, 6) + random.randint(1, 6)
             print("Dice value: " + str(dice_value))
             player1.space += dice_value
@@ -62,10 +64,11 @@ def monopoly_view(request):
             if player1.space >= 39:
                 player1.space -= 39
                 player1.money += 200
+                response['announcement'] += "Pass GO! Collect $200\n"
             
             # Respond to the landed space
             response['space_type'] = "No type"
-            response['announcement'] = "No message"
+            
             respond_to_space(game, board, property_deck, player1, response)
             print(response['announcement'])
 

@@ -28,6 +28,8 @@ def respond_to_property(game, landed_property, player, response):
         player.money -= buy_price
         landed_property.player = player.ordinal
         landed_property.save()
+        response['announcement'] += landed_property.name + " bought for $" + str(buy_price) + "\n"
     else:
         rent_price = int(landed_property.rents.split(',')[0])
         player.money += rent_price
+        response['announcement'] += "Collected $" + str(rent_price) + " rent on " + landed_property.name + "\n"
