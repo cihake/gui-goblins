@@ -6,7 +6,7 @@ def build_attempt(board, yindex, xindex, response):
     # Check if already built
     if corner_to_build.building == 1:
         response['build_success'] = -1
-        response['announcement'] = "That corner already has a building on it."
+        response['announcement'] += "That corner already has a building on it.\n"
         return
     
     # Land check
@@ -19,7 +19,7 @@ def build_attempt(board, yindex, xindex, response):
             touching_land = True
     if touching_land == False:
         response['build_success'] = -2
-        response['announcement'] = "The building must be near land."
+        response['announcement'] += "The building must be near land.\n"
         return
     
     # Neighbors check
@@ -28,14 +28,14 @@ def build_attempt(board, yindex, xindex, response):
         building = Corner.building
         if building != 0:
             response['build_success'] = -3
-            response['announcement'] = "The building cannot be adjacent to another building."
+            response['announcement'] += "The building cannot be adjacent to another building.\n"
             return
     
     # Successful build
     corner_to_build.building = 1
     corner_to_build.save()
     response['build_success'] = 1
-    response['announcement'] = "Built successfully."
+    response['announcement'] += "Built successfully\n"
     return
 
 

@@ -48,7 +48,7 @@
                 position: absolute;
                 top: 15%;
                 left: 1%;
-                width: 22%;
+                width: 23%;
                 height: 5%;
             }
             /* Styling for dropdown menus */
@@ -85,6 +85,8 @@
                 height="1000" />
                 <g id="corners" height="1000"></g>
                 <g id="tiles" height="1000"></g>
+                <circle id="build_indicator" cx="0" cy="0" r="20"
+                stroke="yellow" stroke-width="3" fill="transparent"></circle>
             </g>
             <text id="wintext" x="110%" y="8%"> Player 1 wins!</text>
         </svg>
@@ -190,6 +192,9 @@
                             // Display a message
                             $('.announcer').html(response['announcement'].replace(/\n/g, '<br>'));
 
+                            // Move the build indicator
+                            draw_build_indicator(response, clicked_circle, corner_positions, xindex, yindex);
+
                             // Draw a circle if the corner was successfully built on
                             if (response['build_success'] == 1) {
                                 draw_building(response, clicked_circle, corner_positions, xindex, yindex);
@@ -270,7 +275,7 @@
                         tile_positions[x][y] = [xpos, ypos];
                         var circle_data = x + "," + y;
                         create_data_circle("tiles", circle_data, xpos, ypos, 70, "transparent");
-                        create_circle("tile_marker", xpos, ypos, 3, "black")
+                        //create_circle("tile_marker", xpos, ypos, 3, "black")
                     }
                 }
             }
@@ -297,6 +302,16 @@
                 var xpos = corner_positions[xindex][yindex][0];
                 var ypos = corner_positions[xindex][yindex][1];
                 create_group_circle("corners", xpos, ypos, 20, "red");
+                clicked_circle.appendTo('#corners');
+            }
+            
+            // Function to draw a build indicator
+            function draw_build_indicator(response, clicked_circle, corner_positions, xindex, yindex) {
+                var xpos = corner_positions[xindex][yindex][0];
+                var ypos = corner_positions[xindex][yindex][1];
+                $('#build_indicator').show();
+                $('#build_indicator').attr('cx', xpos);
+                $('#build_indicator').attr('cy', ypos);
                 clicked_circle.appendTo('#corners');
             }
 

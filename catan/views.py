@@ -64,6 +64,7 @@ def catan_view(request):
         elif input == "end_turn":
             dice_value = random.randint(1, 6) + random.randint(1, 6)
             print("Dice value: " + str(dice_value))
+            response['announcement'] += "Dice roll: " + str(dice_value) + "\n"
             gather_resources(board, player1, dice_value, response)
             player1.save()
             game.turn += 1
