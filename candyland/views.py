@@ -32,7 +32,7 @@ def candyland_view(request):
         request.session['position'] += 1  # Increment position
 
         if request.session['position'] >= 132 and input_data == 'win':
-            coin_balance += 15  # Add 15 coins for winning
+            coin_balance += 300  # Add 15 coins for winning
             Coin.objects.filter(user=request.user).update(amount=coin_balance)
 
         return JsonResponse({'echo': input_data})

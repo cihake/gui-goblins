@@ -23,7 +23,7 @@
                 max-width: 100%; max-height: 100%;
             }
             text {
-                font-family: Arial, sans-serif; font-size: 30px; fill: black;;
+                font-family: Arial, sans-serif; font-size: 30px; fill: black;
             }
             button {
                 position: absolute; padding: 10px 20px;
@@ -34,6 +34,27 @@
             .dice_roll {
                 top: 55%;
                 left: 80%;
+            }
+            /* Styling for the cards */
+            #card-container {
+                position: absolute;
+                width: 150px;
+                height: 200px;
+                right: 9%;
+                top: 10%;
+                border: 1px solid black;
+            }
+            #card-deck {
+                position: absolute;
+                width: 150px; height: 200px;
+                right: 9%; top: 55%;
+                border: 2px solid black;
+                background-color: pink;
+                display: flex; justify-content: center; align-items: center;
+                text-align: center;
+                font-family: Garamond, serif;
+                font-size: 40px;
+                color: red;
             }
         </style>
     </head>
@@ -48,12 +69,16 @@
             <text id="wintext" x="100%" y="8%"> Player 1 wins!</text>
         </svg>
         <button class="dice_roll">Roll dice</button>
-        
-        <!--xlink:href="{% static 'CandyLand.jpg' %}"-->
-        <!--<button>Click</button>-->
+
+        <svg id="card-container">
+            
+        </svg>
+        <div id="card-deck">
+            <div id="back-text">Candy<br><br>Land</text>
+        </div>
         
         <!--*************************************************************************-->
-        <!--JavaScript for input-->
+        <!--JavaScript for setup and input-->
         <script>
             // Run once the document has loaded
             $(document).ready(function() {
@@ -65,6 +90,7 @@
                 var ycoords = [0, 923, 931, 938, 949, 955, 956, 954, 944, 936, 932, 930, 931, 938, 947, 953, 957, 951, 935, 902, 867, 844, 838, 849, 859, 862, 856, 829, 794, 772, 768, 775, 781, 767, 736, 702, 688, 685, 690, 701, 718, 743, 765, 786, 807, 823, 839, 849, 849, 845, 833, 820, 799, 772, 739, 703, 670, 644, 622, 607, 602, 603, 608, 617, 625, 630, 635, 639, 635, 633, 626, 613, 602, 590, 575, 560, 545, 526, 507, 488, 455, 424, 424, 449, 472, 492, 498, 488, 471, 437, 402, 385, 384, 382, 380, 355, 321, 301, 290, 284, 284, 291, 299, 313, 329, 346, 369, 393, 421, 448, 473, 492, 512, 524, 537, 543, 546, 538, 525, 493, 459, 428, 406, 392, 384, 384, 383, 379, 369, 355, 336, 317, 282];
                 var scale = 1000 / 1000;
                 $('#wintext').hide();
+                $('#card-deck').hide();
                 var player1_space = 1;
 
                 // Convert the absolute coordinates to relative coordinates, draw players
@@ -74,87 +100,102 @@
                 }
                 create_circle("piece1", xcoords[1], ycoords[1], 15, "black");
 
-                // Register a dice roll
-                $('.dice_roll').click(function() {
-        $.ajax({
-            url: '/candyland/',
-            type: 'POST',
-            data: {
-                'input': 'dice_roll',
-            },
-            headers: {'X-CSRFToken': csrftoken},
-            success: function(response) {
-                var dice_value = roll_dice();
-                player1_space += dice_value;
-                
-                // Check if the player has won
-                if (player1_space >= 132) {
+                // Register a card deck click
+                $('#card-deck').click(function() {
                     $.ajax({
                         url: '/candyland/',
                         type: 'POST',
                         data: {
-                            'input': 'win',
-                            'user_id': userId,
+                            'input': 'dice_roll',
                         },
                         headers: {'X-CSRFToken': csrftoken},
                         success: function(response) {
-                            alert('Congratulations! You won the game and received 15 coins!');
+                            $('#card-container').show();
                         }
                     });
-                } else {
-                    // Update the player's position on the board
-                    $('#piece1').attr("cx", xcoords[player1_space]);
-                    $('#piece1').attr("cy", ycoords[player1_space]);
-                }
-            }
-        });
-    });
-});
+                });
+
+                // Register a dice roll
+                $('.dice_roll').click(function() {
+                    $.ajax({
+                        url: '/candyland/',
+                        type: 'POST',
+                        data: {
+                            'input': 'dice_roll',
+                        },
+                        headers: {'X-CSRFToken': csrftoken},
+                        success: function(response) {
+                            var dice_value = roll_dice();
+                            player1_space += dice_value;
+                            
+                            // Check if the player has won
+                            if (player1_space >= 132) {
+                                $.ajax({
+                                    url: '/candyland/',
+                                    type: 'POST',
+                                    data: {
+                                        'input': 'win',
+                                        'user_id': userId,
+                                    },
+                                    headers: {'X-CSRFToken': csrftoken},
+                                    success: function(response) {
+                                        alert('Congratulations! You won the game and received 15 coins!');
+                                    }
+                                });
+                            } else {
+                                // Update the player's position on the board
+                                $('#piece1').attr("cx", xcoords[player1_space]);
+                                $('#piece1').attr("cy", ycoords[player1_space]);
+                            }
+                        }
+                    });
+                });
+            });
         </script>
         <!--*************************************************************************-->
         <!--JavaScript functions-->
         <script>
             // Function to create a circle dynamically using SVG
             function create_circle(id, x, y, radius, color) {
-                    var svgNS = "http://www.w3.org/2000/svg";
-                    var circle = document.createElementNS(svgNS, "circle");
-                    circle.setAttributeNS(null, "id", id);
-                    circle.setAttributeNS(null, "cx", x);
-                    circle.setAttributeNS(null, "cy", y);
-                    circle.setAttributeNS(null, "r", radius);
-                    circle.setAttributeNS(null, "fill", color);
-                    document.getElementById("board").appendChild(circle);
-                }
+                var svgNS = "http://www.w3.org/2000/svg";
+                var circle = document.createElementNS(svgNS, "circle");
+                circle.setAttributeNS(null, "id", id);
+                circle.setAttributeNS(null, "cx", x);
+                circle.setAttributeNS(null, "cy", y);
+                circle.setAttributeNS(null, "r", radius);
+                circle.setAttributeNS(null, "fill", color);
+                document.getElementById("board").appendChild(circle);
+            }
 
-                // Function to simulate a dice roll
-                function roll_dice() {
-                    var die1 = Math.floor(Math.random() * (6 - 1 + 1)) + 1;
-                    var die2 = Math.floor(Math.random() * (6 - 1 + 1)) + 1;
-                    return die1 + die2;
-                }
+            // Function to simulate a dice roll
+            function roll_dice() {
+                var die1 = Math.floor(Math.random() * (6 - 1 + 1)) + 1;
+                var die2 = Math.floor(Math.random() * (6 - 1 + 1)) + 1;
+                return die1 + die2;
+            }
 
-                // Function to declare a winner
-                function declare_winner(player) {
-                    $('#wintext').text("Player " + player + " wins!");
-                    $('#wintext').show();
+            // Function to declare a winner
+            function declare_winner(player) {
+                $('#wintext').text("Player " + player + " wins!");
+                $('#wintext').show();
 
-                }
+            }
 
-                // Function to get the CSRF token
-                function getCookie(name) {
-                    var cookieValue = null;
-                    if (document.cookie && document.cookie !== '') {
-                        var cookies = document.cookie.split(';');
-                        for (var i = 0; i < cookies.length; i++) {
-                            var cookie = cookies[i].trim();
-                            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                                break;
-                            }
+            // Function to get the CSRF token
+            function getCookie(name) {
+                var cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    var cookies = document.cookie.split(';');
+                    for (var i = 0; i < cookies.length; i++) {
+                        var cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
                         }
                     }
-                    return cookieValue;
                 }
+                return cookieValue;
+            }
         </script>
        <script>
         // Show a popup message indicating that the user has been charged 10 coins
