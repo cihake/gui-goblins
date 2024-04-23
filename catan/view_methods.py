@@ -87,3 +87,11 @@ def gather_resources(board, player, dice_value, response):
                         print("Ore gathered")
                         response['announcement'] += "Ore gathered\n"
     print(player.__str__())
+
+
+"""Check for if a player can afford to build / buy something"""
+def can_afford(player, input, response):
+    if input == "build_settlement":
+        if (player.wool > 0 and player.grain > 0 and player.lumber > 0 and player.brick > 0):
+            return True
+        else: return False
