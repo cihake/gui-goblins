@@ -79,6 +79,11 @@ def catan_view(request):
                     player1.wool -= 1; player1.grain -= 1; player1.lumber -= 1; player1.brick -= 1
                     player1.save()
                     game.build_flag = 0
+                    # Victory condition: 10 buildings
+                    response['number_buildings'] = 0
+                    for Corner in board.corners.all():
+                        if Corner.building > 0:
+                            response['number_buildings'] += 1
         
         # Tile clicked
         elif input == "tile":
@@ -97,6 +102,7 @@ def catan_view(request):
             
         # Sava game data, return response
         send_inventories(player1, response)
+        send_flags(game, response)
         game.save()
         board.save()
         print(response['announcement'])
@@ -119,3 +125,8 @@ def send_inventories(player, response):
     } for player in players]
 
     response['players_data'] = players_data
+
+
+def send_flags(game, response):
+    response['setup_flag'] = game.setup_flag
+    response['build_flag'] = game.build_flag

@@ -92,7 +92,7 @@
                 <!--<circle id="build_indicator" cx="0" cy="0" r="20"
                 stroke="yellow" stroke-width="3" fill="transparent"></circle>-->
             </g>
-            <text id="wintext" x="110%" y="8%"> Player 1 wins!</text>
+            <text id="wintext" x="110%" y="80%"> Player 1 wins!</text>
         </svg>
         <button class="end_turn">Gather resources</button>
         <button class="build_settlement">Build settlement</button>
@@ -130,6 +130,11 @@
                 // Initial announcement
                 $('.announcer').html("Game setup; all players place their "
                 + "two starting settlements.");
+
+                // Hide elements until players finish setting up
+                $('.end_turn').hide();
+                $('.build_settlement').hide();
+                $('#player1_inventory').hide();
 
                 // Erasure functions
                 // Dump cache
@@ -219,6 +224,18 @@
                             if (response['build_success'] == 1) {
                                 draw_building(response, clicked_circle, corner_positions, xindex, yindex);
                                 update_inventories(response); // Update player inventories
+                                
+                                // Victory condition: 10 buildings
+                                if (response['number_buildings'] >= 10) {
+                                    declare_winner(1)
+                                }
+                            }
+
+                            // Reveal elements after setup
+                            if (response['setup_flag'] == 0 && $('.end_turn').is(':hidden')) {
+                                $('.end_turn').show();
+                                $('.build_settlement').show();
+                                $('#player1_inventory').show();
                             }
                         }
                     });
@@ -311,10 +328,10 @@
                     $('#player' + player.ordinal + '_lumber').text("lumber " + player.lumber);
                     $('#player' + player.ordinal + '_brick').text("brick " + player.brick);
                     $('#player' + player.ordinal + '_ore').text("ore " + player.ore);
-                    player_inventory = [player.wool, player.grain, player.lumber, player.brick, player.ore]
+                    /*player_inventory = [player.wool, player.grain, player.lumber, player.brick, player.ore]
                     for (var i = 0; i < player_inventory.length; i++) {
                         if (player_inventory[i] >= 10) {declare_winner(player.ordinal)}
-                    }
+                    }*/
                 });
             }
 
