@@ -5,7 +5,7 @@ from .models.player import Player
 from .models.board import Board
 from .models.corner import Corner
 from .models.tile import Tile
-from .view_methods import build_attempt, gather_resources, handle_setup
+from .view_methods import build_attempt, gather_resources, handle_setup, can_afford
 
 class CatanTests(TestCase):
     def test(self):
@@ -132,3 +132,11 @@ class CatanTests(TestCase):
         gather_resources(board, player1, dice_value, response)
         player1.save()
         self.assertTrue(player1.lumber == 1)
+
+        """afford method test"""
+        # Cannot afford a settlement
+        player1.wool=0; player1.grain=0; player1.lumber=0; player1.brick=0; player1.ore=0; player1.save()
+        self.assertFalse(can_afford(player1, "build_settlement", response))
+        # Can afford a settlement
+        player1.wool=1; player1.grain=1; player1.lumber=1; player1.brick=1; player1.ore=0; player1.save()
+        self.assertTrue(can_afford(player1, "build_settlement", response))
