@@ -55,18 +55,25 @@ def catan_view(request):
         elif input == "unload":
             request.session['game_key'] = "no key"
         
+        # Build settlement button
+        elif input == "build_settlement":
+            game.build_flag = 1
+            response['announcement'] += "Build where?\n"
+        
         # Corner clicked
         elif input == "corner":
             yindex = request.POST.get('yindex')
             xindex = request.POST.get('xindex')
             build_attempt(board, yindex, xindex, response)
         
+        # End turn, gather resources
         elif input == "end_turn":
             dice_value = random.randint(1, 6) + random.randint(1, 6)
             print("Dice value: " + str(dice_value))
             response['announcement'] += "Dice roll: " + str(dice_value) + "\n"
             gather_resources(board, player1, dice_value, response)
             player1.save()
+            game.build_flag = 0
             game.turn += 1
             
         # Sava game data, return response
