@@ -5,14 +5,14 @@ from .models.player import Player
 from .models.board import Board
 from .models.corner import Corner
 from .models.tile import Tile
-from .view_methods import build_attempt, gather_resources
+from .view_methods import build_attempt, gather_resources, handle_setup
 
 class CatanTests(TestCase):
     def test(self):
         dummy_key = uuid.uuid4()
-        game = Game.objects.create(game_key=dummy_key)
+        game = Game.objects.create(game_key=dummy_key, number_players=1)
         board = Board.initialize(dummy_key)
-        player1 = Player.objects.create(game_key=dummy_key, ordinal=1)
+        player1 = Player.objects.create(game_key=dummy_key, ordinal=1, starting_settlements=2)
         
         """neighbor method tests"""
         corner = board.corners.get(yindex=3, xindex=4, building=0)
@@ -86,33 +86,40 @@ class CatanTests(TestCase):
         build_attempt(board, corner1.yindex, corner1.xindex, response)
         self.assertTrue(response['build_success'] == 1)
         # already built
-        corner1.building = 1
-        corner1.save()
+        corner1.building = 1; corner1.save()
         build_attempt(board, corner1.yindex, corner1.xindex, response)
         self.assertTrue(response['build_success'] == -1)
         # neighbor rule violation
-        corner1.building = 0
-        corner1.save()
-        corner2.building = 1
-        corner2.save()
+        corner1.building = 0; corner1.save(); corner2.building = 1; corner2.save()
         build_attempt(board, corner1.yindex, corner1.xindex, response)
         print("Build success: " + str(response['build_success']))
         self.assertTrue(response['build_success'] == -3)
-        corner1.building = 0
-        corner1.save()
-        corner2.building = 0
-        corner2.save()
+        corner1.building = 0; corner1.save(); corner2.building = 0; corner2.save()
+
+        """Game setup test (one player)"""
+        # build mistake test
+        response['announcement'] = ""; corner1.building = 1; corner1.save()
+        handle_setup(game, board, player1, corner1.yindex, corner1.xindex, response)
+        game.save(); player1.save()
+        self.assertTrue(game.setup_flag == 1 and player1.starting_settlements == 2)
+        # Successful build 1
+        response['announcement'] = ""; corner1.building = 0; corner1.save()
+        handle_setup(game, board, player1, corner1.yindex, corner1.xindex, response)
+        game.save(); player1.save()
+        self.assertTrue(game.setup_flag == 1 and player1.starting_settlements == 1)
+        # Final successful build
+        response['announcement'] = ""; corner1.building = 0; corner1.save()
+        handle_setup(game, board, player1, corner1.yindex, corner1.xindex, response)
+        game.save(); player1.save()
+        self.assertTrue(game.setup_flag == 0 and player1.starting_settlements == 0)
 
         """harvest method tests"""
         corner1 = board.corners.get(yindex=4, xindex=4)
-        corner1.building = 1
-        corner1.save()
+        corner1.building = 1; corner1.save()
         corner2 = board.corners.get(yindex=6, xindex=4)
-        corner2.building = 1
-        corner2.save()
+        corner2.building = 1; corner2.save()
         corner3 = board.corners.get(yindex=9, xindex=4)
-        corner3.building = 1
-        corner3.save()
+        corner3.building = 1; corner3.save()
         dice_value = 8
         gather_resources(board, player1, dice_value, response)
         player1.save()
@@ -125,4 +132,3 @@ class CatanTests(TestCase):
         gather_resources(board, player1, dice_value, response)
         player1.save()
         self.assertTrue(player1.lumber == 1)
-        

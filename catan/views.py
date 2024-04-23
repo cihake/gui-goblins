@@ -7,7 +7,7 @@ from .models.player import Player
 from .models.board import Board
 from .models.corner import Corner
 from .models.tile import Tile
-from .view_methods import build_attempt, gather_resources
+from .view_methods import build_attempt, gather_resources, handle_setup
 
 def catan_view(request):
     # Load game key, or create one if none in session and valueless
@@ -23,9 +23,9 @@ def catan_view(request):
     
     # Create game objects if none match the key
     if not Game.objects.filter(game_key=game_key).exists():
-        game = Game.objects.create(game_key=game_key)
+        game = Game.objects.create(game_key=game_key, number_players=1)
         board = Board.initialize(game_key)
-        player1 = Player.objects.create(game_key=game_key, ordinal=1)
+        player1 = Player.objects.create(game_key=game_key, ordinal=1, starting_settlements=2)
         game.save()
         board.save()
         player1.save()
@@ -41,7 +41,7 @@ def catan_view(request):
         input = request.POST.get('input')
         print("input: " + input)
         response = {}
-        response['announcement'] = ""
+        response['announcement'] = "Player " + str(player1.ordinal) + "\n"
 
         # Reset data
         if input == "clear_data":
@@ -55,7 +55,7 @@ def catan_view(request):
         elif input == "unload":
             request.session['game_key'] = "no key"
         
-        # Build settlement button
+        # Build settlement button; also checks for sufficient resources
         elif input == "build_settlement":
             game.build_flag = 1
             response['announcement'] += "Build where?\n"
@@ -64,8 +64,18 @@ def catan_view(request):
         elif input == "corner":
             yindex = request.POST.get('yindex')
             xindex = request.POST.get('xindex')
-            build_attempt(board, yindex, xindex, response)
+            # Setup phase
+            if game.setup_flag != 0:
+                handle_setup(game, board, player1, yindex, xindex, response)
+            # Settlement building mode
+            if game.build_flag == 1:
+                build_attempt(board, yindex, xindex, response)
         
+        # Tile clicked
+        elif input == "tile":
+            if game.setup_flag != 0:
+                response['announcement'] += "Remaining settlements: " + str(player1.starting_settlements) + "\n"
+
         # End turn, gather resources
         elif input == "end_turn":
             dice_value = random.randint(1, 6) + random.randint(1, 6)

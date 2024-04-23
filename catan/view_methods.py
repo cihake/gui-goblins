@@ -1,8 +1,26 @@
+"""Game setup; players place their starter buildings"""
+def handle_setup(game, board, player, yindex, xindex, response):
+    build_attempt(board, yindex, xindex, response)
+    # Respond to successful build
+    if response['build_success'] == 1:
+        player.starting_settlements -= 1
+        player.save()
+        # Try to progress
+        if player.starting_settlements > 0:
+            response['announcement'] += "Remaining settlements: " + str(player.starting_settlements) + "\n"
+        else:
+            game.setup_flag = 0
+            response['announcement'] += "Setup finished, all settlements are placed.\n"
+    # Respond to unsuccessful build
+    else:
+        response['announcement'] += "Remaining settlements: " + str(player.starting_settlements) + "\n"
+    print(response['announcement'])
+
+
 """The corner is buildable if it isn't build, its corner neighbors aren't built,
 and at least one of its neighbors is a land tile"""
 def build_attempt(board, yindex, xindex, response):
     corner_to_build = board.corners.get(yindex=yindex, xindex=xindex)
-    
     # Check if already built
     if corner_to_build.building == 1:
         response['build_success'] = -1
