@@ -89,9 +89,14 @@ def gather_resources(board, player, dice_value, response):
     print(player.__str__())
 
 
-"""Check for if a player can afford to build / buy something"""
+"""Check for if a player can afford to build / buy something.
+A settlement costs wool, grain, lumber, and brick, a road costs lumber and brick."""
 def can_afford(player, input, response):
     if input == "build_settlement":
         if (player.wool > 0 and player.grain > 0 and player.lumber > 0 and player.brick > 0):
+            return True
+        else: return False
+    elif input == "build_road":
+        if (player.lumber > 0 and player.brick > 0):
             return True
         else: return False
