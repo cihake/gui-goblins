@@ -127,6 +127,10 @@
                 add_menu_item("player1_inventory", "player1_ore", "ore 0");
                 add_menu_item("player1_inventory", "player1_title", "player 1");
 
+                // Initial announcement
+                $('.announcer').html("Game setup; all players place their "
+                + "two starting buildings.");
+
                 // Erasure functions
                 // Dump cache
                 $('.clear_data').click(function() {
