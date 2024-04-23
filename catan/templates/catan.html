@@ -43,6 +43,10 @@
                 top: 45%;
                 left: 85%;
             }
+            .build_settlement {
+                top: 5%;
+                left: 85%;
+            }
             /* announcer positioning */
             .announcer {
                 position: absolute;
@@ -85,12 +89,14 @@
                 height="1000" />
                 <g id="corners" height="1000"></g>
                 <g id="tiles" height="1000"></g>
-                <circle id="build_indicator" cx="0" cy="0" r="20"
-                stroke="yellow" stroke-width="3" fill="transparent"></circle>
+                <!--<circle id="build_indicator" cx="0" cy="0" r="20"
+                stroke="yellow" stroke-width="3" fill="transparent"></circle>-->
             </g>
             <text id="wintext" x="110%" y="8%"> Player 1 wins!</text>
         </svg>
         <button class="end_turn">Gather resources</button>
+        <button class="build_settlement">Build settlement</button>
+
         <button class="clear_database">Erase database objects (debug)</button>
         <button class="clear_data">Clear session (debug)</button>
 
@@ -150,21 +156,33 @@
                     });
                 });
 
+                // Build buttons
+                // Register the "build settlement" button
+                $('.build_settlement').click(function() {
+                    $.ajax({
+                        url: '/catan/',
+                        type: 'POST',
+                        data: {'input': 'build_settlement'},
+                        headers: {'X-CSRFToken': csrftoken},
+                        success: function(response) { 
+                            announce(response); // Print response
+                        }
+                    });
+                });
+
                 // Register the "end turn" button
                 $('.end_turn').click(function() {
                     $.ajax({
                         url: '/catan/',
                         type: 'POST',
-                        data: {
-                            'input': 'end_turn',
-                        },
+                        data: {'input': 'end_turn'},
                         headers: {'X-CSRFToken': csrftoken},
                         
                         success: function(response) {
                             // Display a message
-                            $('.announcer').html(response['announcement'].replace(/\n/g, '<br>'));
+                            announce(response);
 
-                            update_inventories(response)
+                            update_inventories(response);
                         }
                     });
                 });
@@ -190,10 +208,10 @@
 
                         success: function(response) {
                             // Display a message
-                            $('.announcer').html(response['announcement'].replace(/\n/g, '<br>'));
+                            announce(response);
 
                             // Move the build indicator
-                            draw_build_indicator(response, clicked_circle, corner_positions, xindex, yindex);
+                            //draw_build_indicator(response, clicked_circle, corner_positions, xindex, yindex);
 
                             // Draw a circle if the corner was successfully built on
                             if (response['build_success'] == 1) {
@@ -222,7 +240,7 @@
 
                         success: function(response) {
                             // Display a message
-                            $('.announcer').html(response['announcement'].replace(/\n/g, '<br>'));
+                            announce(response);
                         }
                     });
                 });
@@ -335,6 +353,7 @@
                 circle.setAttributeNS(null, "cy", y);
                 circle.setAttributeNS(null, "r", radius);
                 circle.setAttributeNS(null, "fill", color);
+                circle.setAttributeNS(null, "stroke", "black");
                 document.getElementById(group_id).appendChild(circle);
             }
 
@@ -363,6 +382,11 @@
             function declare_winner(player) {
                 $('#wintext').text("Player " + player + " wins!");
                 $('#wintext').show();
+            }
+
+            // Function to display an announcement
+            function announce(response) {
+                $('.announcer').html(response['announcement'].replace(/\n/g, '<br>'));
             }
 
             // Function to get the CSRF token
