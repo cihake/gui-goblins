@@ -129,7 +129,7 @@
 
                 // Initial announcement
                 $('.announcer').html("Game setup; all players place their "
-                + "two starting buildings.");
+                + "two starting settlements.");
 
                 // Erasure functions
                 // Dump cache
@@ -183,10 +183,8 @@
                         headers: {'X-CSRFToken': csrftoken},
                         
                         success: function(response) {
-                            // Display a message
-                            announce(response);
-
-                            update_inventories(response);
+                            announce(response); // Display a message
+                            update_inventories(response); // Update player inventories
                         }
                     });
                 });
@@ -220,6 +218,7 @@
                             // Draw a circle if the corner was successfully built on
                             if (response['build_success'] == 1) {
                                 draw_building(response, clicked_circle, corner_positions, xindex, yindex);
+                                update_inventories(response); // Update player inventories
                             }
                         }
                     });

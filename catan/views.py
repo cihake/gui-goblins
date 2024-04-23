@@ -7,7 +7,7 @@ from .models.player import Player
 from .models.board import Board
 from .models.corner import Corner
 from .models.tile import Tile
-from .view_methods import build_attempt, gather_resources, handle_setup
+from .view_methods import build_attempt, gather_resources, handle_setup, can_afford
 
 def catan_view(request):
     # Load game key, or create one if none in session and valueless
@@ -57,8 +57,13 @@ def catan_view(request):
         
         # Build settlement button; also checks for sufficient resources
         elif input == "build_settlement":
-            game.build_flag = 1
-            response['announcement'] += "Build where?\n"
+            if can_afford(player1, input, response):
+                game.build_flag = 1
+                response['announcement'] = "Build where?\n"
+            else:
+                response['announcement'] = ("Not enough resources.\n"
+                + "A settlement costs one each of brick, lumber, wool, and grain.")
+                
         
         # Corner clicked
         elif input == "corner":
@@ -67,9 +72,13 @@ def catan_view(request):
             # Setup phase
             if game.setup_flag != 0:
                 handle_setup(game, board, player1, yindex, xindex, response)
-            # Settlement building mode
+            # Settlement building mode; costs resources; price checked at "build" button
             if game.build_flag == 1:
                 build_attempt(board, yindex, xindex, response)
+                if response['build_success'] == 1:
+                    player1.wool -= 1; player1.grain -= 1; player1.lumber -= 1; player1.brick -= 1
+                    player1.save()
+                    game.build_flag = 0
         
         # Tile clicked
         elif input == "tile":
