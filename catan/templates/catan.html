@@ -47,6 +47,10 @@
                 top: 5%;
                 left: 85%;
             }
+            .build_road {
+                top: 14%;
+                left: 85%;
+            }
             /* announcer positioning */
             .announcer {
                 position: absolute;
@@ -94,8 +98,10 @@
             </g>
             <text id="wintext" x="110%" y="80%"> Player 1 wins!</text>
         </svg>
+        
         <button class="end_turn">Gather resources</button>
         <button class="build_settlement">Build settlement</button>
+        <button class="build_road">Build road</button>
 
         <button class="clear_database">Erase database objects (debug)</button>
         <button class="clear_data">Clear session (debug)</button>
@@ -172,6 +178,18 @@
                         url: '/catan/',
                         type: 'POST',
                         data: {'input': 'build_settlement'},
+                        headers: {'X-CSRFToken': csrftoken},
+                        success: function(response) { 
+                            announce(response); // Print response
+                        }
+                    });
+                });
+                // Register the "build road" button
+                $('.build_road').click(function() {
+                    $.ajax({
+                        url: '/catan/',
+                        type: 'POST',
+                        data: {'input': 'build_road'},
                         headers: {'X-CSRFToken': csrftoken},
                         success: function(response) { 
                             announce(response); // Print response

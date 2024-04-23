@@ -55,7 +55,8 @@ def catan_view(request):
         elif input == "unload":
             request.session['game_key'] = "no key"
         
-        # Build settlement button; also checks for sufficient resources
+        # Build buttons; each checks for sufficient resources
+        # Build settlement button
         elif input == "build_settlement":
             if can_afford(player1, input, response):
                 game.build_flag = 1
@@ -63,7 +64,14 @@ def catan_view(request):
             else:
                 response['announcement'] = ("Not enough resources.\n"
                 + "A settlement costs one each of brick, lumber, wool, and grain.")
-                
+        # Build road button
+        elif input == "build_road":
+            if True: #can_afford(player1, input, response):
+                game.build_flag = 2 # Road start
+                response['announcement'] = "Build where?\n"
+            else:
+                response['announcement'] = ("Not enough resources.\n"
+                + "A road costs one unit of brick and lumber.")
         
         # Corner clicked
         elif input == "corner":

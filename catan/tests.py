@@ -140,3 +140,9 @@ class CatanTests(TestCase):
         # Can afford a settlement
         player1.wool=1; player1.grain=1; player1.lumber=1; player1.brick=1; player1.ore=0; player1.save()
         self.assertTrue(can_afford(player1, "build_settlement", response))
+        # Cannot afford a road
+        player1.wool=0; player1.grain=0; player1.lumber=0; player1.brick=0; player1.ore=0; player1.save()
+        self.assertFalse(can_afford(player1, "build_road", response))
+        # Can afford a road
+        player1.wool=0; player1.grain=0; player1.lumber=1; player1.brick=1; player1.ore=0; player1.save()
+        self.assertTrue(can_afford(player1, "build_road", response))
