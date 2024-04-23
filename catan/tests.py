@@ -74,6 +74,7 @@ class CatanTests(TestCase):
         
         """build attempt method tests"""
         response = {}
+        response['announcement'] = ""
 
         # not touching land
         corner = board.corners.get(yindex=0, xindex=0)
