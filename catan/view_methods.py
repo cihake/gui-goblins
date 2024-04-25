@@ -1,5 +1,6 @@
 """Game setup; players place their starter buildings"""
 def handle_setup(game, board, player, yindex, xindex, response):
+    response['build_type'] = "settlement"
     build_attempt(board, yindex, xindex, response)
     # Respond to successful build
     if response['build_success'] == 1:

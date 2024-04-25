@@ -93,8 +93,7 @@
                 height="1000" />
                 <g id="corners" height="1000"></g>
                 <g id="tiles" height="1000"></g>
-                <!--<circle id="build_indicator" cx="0" cy="0" r="20"
-                stroke="yellow" stroke-width="3" fill="transparent"></circle>-->
+                <!--<circle id="build_indicator" cx="0" cy="0" r="20" stroke="yellow" stroke-width="3" fill="transparent"></circle>-->
             </g>
             <text id="wintext" x="110%" y="80%"> Player 1 wins!</text>
         </svg>
@@ -235,12 +234,17 @@
                             // Display a message
                             announce(response);
 
-                            // Move the build indicator
-                            //draw_build_indicator(response, clicked_circle, corner_positions, xindex, yindex);
-
-                            // Draw a circle if the corner was successfully built on
-                            if (response['build_success'] == 1) {
-                                draw_building(response, clicked_circle, corner_positions, xindex, yindex);
+                            // Draw if the corner was successfully built on
+                            if (response && response['build_success'] == 1) {
+                                console.log("Build type: " + response['build_type']);
+                                // Draw a settlement
+                                if (response['build_type'] == "settlement") {
+                                    draw_building(response, clicked_circle, corner_positions, xindex, yindex);
+                                }
+                                // Draw a road
+                                else if (response['build_type'] == "road") {
+                                    draw_road(response, clicked_circle, corner_positions, xindex, yindex)
+                                }
                                 update_inventories(response); // Update player inventories
                                 
                                 // Victory condition: 10 buildings
@@ -360,6 +364,21 @@
                 create_group_circle("corners", xpos, ypos, 20, "red");
                 clicked_circle.appendTo('#corners');
             }
+
+            // Function to draw a road between two corners, along an edge
+            function draw_road(response, clicked_circle, corner_positions, xindex, yindex) {
+                var road_start = response['road_start'].split(',');
+                console.log("Road start: " + road_start[1].toString() + "," + road_start[0].toString() +
+                "; Road end: " + xindex.toString() + "," + yindex.toString())
+                var x1 = corner_positions[road_start[1]][road_start[0]][0];
+                var y1 = corner_positions[road_start[1]][road_start[0]][1];
+                var x2 = corner_positions[xindex][yindex][0];
+                var y2 = corner_positions[xindex][yindex][1];
+                console.log("(drawing) Road start: " + x1.toString() + "," + y1.toString() +
+                "; Road end: " + x2.toString() + "," + y2.toString());
+                create_group_line("corners", x1, y1, x2, y2, "red", 12);
+                clicked_circle.appendTo('#corners');
+            }
             
             // Function to draw a build indicator
             function draw_build_indicator(response, clicked_circle, corner_positions, xindex, yindex) {
@@ -405,6 +424,20 @@
                 circle.setAttributeNS(null, "r", radius);
                 circle.setAttributeNS(null, "fill", color);
                 document.getElementById(group_id).appendChild(circle);
+            }
+
+            // Function to create a line with a specific group
+            function create_group_line(group_id, x1, y1, x2, y2, color, width) {
+                var svgNS = "http://www.w3.org/2000/svg";
+                var line = document.createElementNS(svgNS, "line");
+                line.setAttributeNS(null, "id", "road");
+                line.setAttributeNS(null, "x1", x1);
+                line.setAttributeNS(null, "y1", y1);
+                line.setAttributeNS(null, "x2", x2);
+                line.setAttributeNS(null, "y2", y2);
+                var style = "stroke:" + color + ";stroke-width:" + width.toString();
+                line.setAttributeNS(null, "style", style);
+                document.getElementById(group_id).appendChild(line);
             }
 
             // Function to add items to a dropdown menu

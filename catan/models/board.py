@@ -9,6 +9,7 @@ class Board(models.Model):
     game_key = models.UUIDField(unique=True)
     corners = models.ManyToManyField('Corner', related_name='board')
     tiles = models.ManyToManyField('Tile', related_name='board')
+    road_start = models.CharField(max_length=100, null=True)
 
     """Initialization; takes the game_key and coordinates"""
     @classmethod
