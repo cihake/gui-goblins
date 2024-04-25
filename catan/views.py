@@ -40,6 +40,8 @@ def catan_view(request):
         # Get input, initialize response
         input = request.POST.get('input')
         print("input: " + input)
+        # In addition to announcements and game data, the response has several flags:
+        # build_success, build_type
         response = {}
         response['announcement'] = "Player " + str(player1.ordinal) + "\n"
 
@@ -82,6 +84,7 @@ def catan_view(request):
                 handle_setup(game, board, player1, yindex, xindex, response)
             # Settlement building mode; costs resources; price checked at "build" button
             if game.build_flag == 1:
+                response['build_type'] = "settlement"
                 build_attempt(board, yindex, xindex, response)
                 if response['build_success'] == 1:
                     player1.wool -= 1; player1.grain -= 1; player1.lumber -= 1; player1.brick -= 1
@@ -92,6 +95,17 @@ def catan_view(request):
                     for Corner in board.corners.all():
                         if Corner.building > 0:
                             response['number_buildings'] += 1
+            # Road building mode; two-step process
+            elif game.build_flag == 2 or game.build_flag == 3:
+                if game.build_flag == 2:
+                    response['build_type'] = "road"
+                    board.road_start = str(yindex) + "," + str(xindex)
+                    game.build_flag = 3
+                elif game.build_flag == 3:
+                    response['build_type'] = "road"
+                    response['road_start'] = board.road_start
+                    response['build_success'] = 1
+                    game.build_flag = 0
         
         # Tile clicked
         elif input == "tile":
