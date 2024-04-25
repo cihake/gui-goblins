@@ -7,7 +7,7 @@ from .models.player import Player
 from .models.board import Board
 from .models.corner import Corner
 from .models.tile import Tile
-from .view_methods import build_attempt, gather_resources, handle_setup, can_afford
+from .view_methods import build_attempt, gather_resources, handle_setup, can_afford, handle_road_build
 
 def catan_view(request):
     # Load game key, or create one if none in session and valueless
@@ -97,15 +97,8 @@ def catan_view(request):
                             response['number_buildings'] += 1
             # Road building mode; two-step process
             elif game.build_flag == 2 or game.build_flag == 3:
-                if game.build_flag == 2:
-                    response['build_type'] = "road"
-                    board.road_start = str(yindex) + "," + str(xindex)
-                    game.build_flag = 3
-                elif game.build_flag == 3:
-                    response['build_type'] = "road"
-                    response['road_start'] = board.road_start
-                    response['build_success'] = 1
-                    game.build_flag = 0
+                handle_road_build(game, board, player1, yindex, xindex, response)
+                
         
         # Tile clicked
         elif input == "tile":

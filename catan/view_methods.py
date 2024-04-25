@@ -58,6 +58,49 @@ def build_attempt(board, yindex, xindex, response):
     return
 
 
+"""A road must be along the edge next to a land tile and not overlap another road.
+Additionally, it must start at one of the player's own buildings or roads.
+The road is built in two phases: start and end, which are across user interactions,
+requiring data to be stored."""
+def handle_road_build (game, board, player, yindex, xindex, response):
+    # Land check
+    corner_to_build = board.corners.get(yindex=yindex, xindex=xindex)
+    neighbor_tiles = board.get_neighbor_tiles(corner_to_build)
+    touching_land = False
+    for Tile in neighbor_tiles:
+        terrain = Tile.terrain
+        if (terrain == "forest" or terrain == "pasture" or terrain == "fields" or terrain == "hills" or terrain == "mountains"):
+            touching_land = True
+    if touching_land == False:
+        response['build_success'] = -1
+        response['announcement'] += "The road must begin and end along a land tile.\n"
+        return
+    
+    # Road start
+    if game.build_flag == 2:
+        response['build_type'] = "road_start"
+        if corner_to_build.building == 0: # Check building
+            response['announcement'] += "The road must begin at one of your own buildings or roads.\n"
+            return
+        else:
+            board.road_start = str(yindex) + "," + str(xindex)
+            game.build_flag = 3 # Successful road start
+            response['announcement'] = "Where to?"
+            return
+    
+    # Road end
+    elif game.build_flag == 3:
+        response['build_type'] = "road_end"
+        response['road_start'] = board.road_start
+        response['build_success'] = 1
+        game.build_flag = 0
+        response['announcement'] += "Built successfully\n"
+        return
+    """if game.build_flag == 2:
+        if corner_to_build.building == 0: # Check building
+            if corner_to_build"""
+
+
 """At the start of a turn, for every corner that is built, check the adjacent tiles.
 If the tile's dice value matches the dice roll, add the corresponding terrain resource
 to the corresponding player."""
