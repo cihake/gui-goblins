@@ -19,7 +19,7 @@ class Board(models.Model):
         corners = []
         for y in range(15):
             for x in range(8):
-                corner = Corner(yindex=y, xindex=x, building=0)
+                corner = Corner(yindex=y, xindex=x, building=0, player=0, roads="")
                 corners.append(corner)
         Corner.objects.bulk_create(corners)
         board.corners.add(*corners)
