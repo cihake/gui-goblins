@@ -75,24 +75,44 @@ def handle_road_build (game, board, player, yindex, xindex, response):
         response['build_success'] = -1
         response['announcement'] += "The road must begin and end along a land tile.\n"
         return
-    
+
     # Road start
     if game.build_flag == 2:
         response['build_type'] = "road_start"
-        if corner_to_build.building == 0: # Check building
-            response['announcement'] += "The road must begin at one of your own buildings or roads.\n"
-            return
-        else:
+        response['build_success'] = 0
+        # Building check
+        if corner_to_build.building != 0:
+             response['build_success'] = 1
+        # Road check
+        elif len(corner_to_build.roads) > 0:
+            response['build_success'] = 1
+        # Successful build
+        if response['build_success'] == 1:
             board.road_start = str(yindex) + "," + str(xindex)
-            game.build_flag = 3 # Successful road start
+            game.build_flag = 3
             response['announcement'] = "Where to?"
             return
+        else: # Unsuccessful build
+            response['build_success'] = -2
+            response['announcement'] += "The road must begin at one of your own buildings or roads.\n"
+            return
+        
     
     # Road end
     elif game.build_flag == 3:
+        # Successful build
         response['build_type'] = "road_end"
         response['road_start'] = board.road_start
         response['build_success'] = 1
+        # Save road on corners
+        road_start = board.road_start.split(',')
+        starting_corner = board.corners.get(yindex=road_start[0], xindex=road_start[1])
+        starting_corner.roads += str(player.ordinal) + ","
+        print(starting_corner.__str__())
+        starting_corner.save()
+        corner_to_build.roads += str(player.ordinal) + ","
+        print(corner_to_build.__str__())
+        corner_to_build.save()
         game.build_flag = 0
         response['announcement'] += "Built successfully\n"
         return

@@ -321,7 +321,7 @@
                         else if (y % 4 == 1 || y % 4 == 2) { xpos = firstpos[0] + hlength * (1 + x * 2); }
                         corner_positions[x][y] = [xpos, ypos];
                         var circle_data = x + "," + y;
-                        create_data_circle("corners", circle_data, xpos, ypos, 30, "transparent");
+                        create_data_circle("corners", circle_data, xpos, ypos, 30, "black");
                     }
                 }
                 // Tiles
@@ -361,7 +361,7 @@
             function draw_building(response, clicked_circle, corner_positions, xindex, yindex) {
                 var xpos = corner_positions[xindex][yindex][0];
                 var ypos = corner_positions[xindex][yindex][1];
-                create_group_circle("corners", xpos, ypos, 20, "red");
+                create_group_circle("corners", "building", xpos, ypos, 20, "red");
                 clicked_circle.appendTo('#corners');
             }
 
@@ -374,10 +374,10 @@
                 var y1 = corner_positions[road_start[1]][road_start[0]][1];
                 var x2 = corner_positions[xindex][yindex][0];
                 var y2 = corner_positions[xindex][yindex][1];
-                console.log("(drawing) Road start: " + x1.toString() + "," + y1.toString() +
-                "; Road end: " + x2.toString() + "," + y2.toString());
+                console.log("(drawing) Road start: " + x1.toString() + "," + y1.toString() + "; Road end: " + x2.toString() + "," + y2.toString());
                 create_group_line("corners", x1, y1, x2, y2, "red", 12);
-                clicked_circle.appendTo('#corners');
+                $('.building').appendTo('#corners');
+                $('.data_circle').appendTo('#corners');
             }
             
             // Function to draw a build indicator
@@ -403,9 +403,10 @@
             }
 
             // Function to create a circle with a specific group
-            function create_group_circle(group_id, x, y, radius, color) {
+            function create_group_circle(group_id, class_id, x, y, radius, color) {
                 var svgNS = "http://www.w3.org/2000/svg";
                 var circle = document.createElementNS(svgNS, "circle");
+                circle.setAttributeNS(null, "class", class_id);
                 circle.setAttributeNS(null, "cx", x);
                 circle.setAttributeNS(null, "cy", y);
                 circle.setAttributeNS(null, "r", radius);
@@ -418,6 +419,7 @@
             function create_data_circle(group_id, data_id, x, y, radius, color) {
                 var svgNS = "http://www.w3.org/2000/svg";
                 var circle = document.createElementNS(svgNS, "circle");
+                circle.setAttributeNS(null, "class", "data_circle");
                 circle.setAttributeNS(null, "data-id", data_id);
                 circle.setAttributeNS(null, "cx", x);
                 circle.setAttributeNS(null, "cy", y);
