@@ -124,23 +124,26 @@ def handle_road_build (game, board, player, yindex, xindex, response):
         
         # Overlap check
         if len(board.existing_roads) > 0:
-            existing_roads = board.existing_roads.split(';')
+            new_start = board.road_start
+            new_end = yindex + "," + xindex
+            existing_roads = board.existing_roads.strip(';').split(';')
             for road in existing_roads:
                 road_points = road.split(',')
+                print("Road:", road)
+                print("Road points:", road_points)
+                old_start = road_points[0] + "," + road_points[1]
+                old_end = road_points[2] + "," + road_points[3]
                 # Since the points can be in either order, compare the points individually
-                if (road_points[0] == yindex and road_points[1] == xindex and
-                    road_points[2] == road_start[0] and road_points[3] == road_start[1] or
-                    road_points[0] == road_start[0] and road_points[1] == road_start[1] and
-                    road_points[2] == yindex and road_points[3] == xindex):
+                if new_start == old_start and new_end == old_end or new_start == old_end and new_end == old_start:
                     response['build_success'] = -4
                     game.build_flag = 2
                     response['announcement'] = "The road cannot overlap another road.\n"
                     return
 
         # Successful build
-        board.existing_roads += (str(road_start[0]) + "," + str(road_start[1]) + "," +
-                                 str(yindex) + "," + str(xindex) + ";")
-        response['road_start'] = board.road_start
+        road = (str(road_start[0]) + "," + str(road_start[1]) + "," + str(yindex) + "," + str(xindex) + ";")
+        board.existing_roads += road
+        response['road'] = road
         response['build_success'] = 1
         # Save road on corners
         starting_corner.roads += str(player.ordinal) + ","
