@@ -243,7 +243,7 @@
                                 }
                                 // Draw a road
                                 else if (response['build_type'] == "road_end") {
-                                    draw_road(response, clicked_circle, corner_positions, xindex, yindex)
+                                    draw_road(response, corner_positions)
                                 }
                                 update_inventories(response); // Update player inventories
                                 
@@ -366,16 +366,19 @@
             }
 
             // Function to draw a road between two corners, along an edge
-            function draw_road(response, clicked_circle, corner_positions, xindex, yindex) {
-                var road_start = response['road_start'].split(',');
-                console.log("Road start: " + road_start[1].toString() + "," + road_start[0].toString() +
-                "; Road end: " + xindex.toString() + "," + yindex.toString())
-                var x1 = corner_positions[road_start[1]][road_start[0]][0];
-                var y1 = corner_positions[road_start[1]][road_start[0]][1];
-                var x2 = corner_positions[xindex][yindex][0];
-                var y2 = corner_positions[xindex][yindex][1];
+            function draw_road(response, corner_positions) {
+                var road = response['road'].replace(';', '').split(',');
+                console.log("Road start: " + road[1].toString() + "," + road[0].toString() +
+                "; Road end: " + road[3].toString() + "," + road[2].toString());
+                var x1 = corner_positions[road[1]][road[0]][0];
+                var y1 = corner_positions[road[1]][road[0]][1];
+                var x2 = corner_positions[road[3]][road[2]][0];
+                var y2 = corner_positions[road[3]][road[2]][1];
                 console.log("(drawing) Road start: " + x1.toString() + "," + y1.toString() + "; Road end: " + x2.toString() + "," + y2.toString());
-                create_group_line("corners", x1, y1, x2, y2, "red", 12);
+                adjusted_road = adjust_points(x1, y1, x2, y2, 0.1);
+                console.log(adjusted_road);
+                x1=adjusted_road[0]; y1=adjusted_road[1]; x2=adjusted_road[2]; y2=adjusted_road[3];
+                create_group_line("corners", x1, y1, x2, y2, "red", 14);
                 $('.building').appendTo('#corners');
                 $('.data_circle').appendTo('#corners');
             }
@@ -440,6 +443,15 @@
                 var style = "stroke:" + color + ";stroke-width:" + width.toString();
                 line.setAttributeNS(null, "style", style);
                 document.getElementById(group_id).appendChild(line);
+            }
+
+            // Function to move points closer together
+            function adjust_points(x1, y1, x2, y2, factor) {
+                newx1 = x1 + (x2 - x1) * factor;
+                newy1 = y1 + (y2 - y1) * factor;
+                newx2 = x2 + (x1 - x2) * factor;
+                newy2 = y2 + (y1 - y2) * factor;
+                return [newx1, newy1, newx2, newy2];
             }
 
             // Function to add items to a dropdown menu

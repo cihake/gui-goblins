@@ -44,6 +44,8 @@ def catan_view(request):
         # build_success, build_type
         response = {}
         response['announcement'] = "Player " + str(player1.ordinal) + "\n"
+        if game.setup_flag == 0:
+            response['announcement'] += "Turn: " + str(game.turn) + "\n"
 
         # Reset data
         if input == "clear_data":
