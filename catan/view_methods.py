@@ -1,7 +1,7 @@
 """Game setup; players place their starter buildings"""
 def handle_setup(game, board, player, yindex, xindex, response):
     response['build_type'] = "settlement"
-    build_attempt(board, yindex, xindex, response)
+    build_attempt(game, board, player, yindex, xindex, response)
     # Respond to successful build
     if response['build_success'] == 1:
         player.starting_settlements -= 1
@@ -20,7 +20,7 @@ def handle_setup(game, board, player, yindex, xindex, response):
 
 """The corner is buildable if it isn't build, its corner neighbors aren't built,
 and at least one of its neighbors is a land tile"""
-def build_attempt(board, yindex, xindex, response):
+def build_attempt(game, board, player, yindex, xindex, response):
     corner_to_build = board.corners.get(yindex=yindex, xindex=xindex)
     # Check if already built
     if corner_to_build.building == 1:
@@ -48,6 +48,13 @@ def build_attempt(board, yindex, xindex, response):
         if building != 0:
             response['build_success'] = -3
             response['announcement'] += "The building cannot be adjacent to another building.\n"
+            return
+    
+    # Road check, if not in setup phase
+    if game.setup_flag == 0:
+        if len(corner_to_build.roads) == 0:
+            response['build_success'] = -4
+            response['announcement'] += "Outside of setup phase, the building must connect to one of your own roads.\n"
             return
     
     # Successful build
@@ -111,6 +118,7 @@ def handle_road_build (game, board, player, yindex, xindex, response):
                 adjacent = True
         if not adjacent:
             response['build_success'] = -3
+            game.build_flag = 2
             response['announcement'] += "The road must be along an edge, from one corner to the next.\n"
             return
         
@@ -125,6 +133,7 @@ def handle_road_build (game, board, player, yindex, xindex, response):
                     road_points[0] == road_start[0] and road_points[1] == road_start[1] and
                     road_points[2] == yindex and road_points[3] == xindex):
                     response['build_success'] = -4
+                    game.build_flag = 2
                     response['announcement'] = "The road cannot overlap another road.\n"
                     return
 
@@ -140,6 +149,9 @@ def handle_road_build (game, board, player, yindex, xindex, response):
         corner_to_build.roads += str(player.ordinal) + ","
         print(corner_to_build.__str__())
         corner_to_build.save()
+        # Charge player
+        player.lumber -= 1; player.brick -= 1
+        player.save()
         game.build_flag = 0
         response['announcement'] += "Built successfully\n"
         return
