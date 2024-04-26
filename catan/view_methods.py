@@ -100,13 +100,40 @@ def handle_road_build (game, board, player, yindex, xindex, response):
     
     # Road end
     elif game.build_flag == 3:
-        # Successful build
         response['build_type'] = "road_end"
+        # Neighbor check
+        road_start = board.road_start.split(',')
+        starting_corner = board.corners.get(yindex=road_start[0], xindex=road_start[1])
+        adjacent = False
+        neighbor_corners = board.get_neighbor_corners(corner_to_build)
+        for Corner in neighbor_corners:
+            if Corner.yindex == starting_corner.yindex and Corner.xindex == starting_corner.xindex:
+                adjacent = True
+        if not adjacent:
+            response['build_success'] = -3
+            response['announcement'] += "The road must be along an edge, from one corner to the next.\n"
+            return
+        
+        # Overlap check
+        if len(board.existing_roads) > 0:
+            existing_roads = board.existing_roads.split(';')
+            for road in existing_roads:
+                road_points = road.split(',')
+                # Since the points can be in either order, compare the points individually
+                if (road_points[0] == yindex and road_points[1] == xindex and
+                    road_points[2] == road_start[0] and road_points[3] == road_start[1] or
+                    road_points[0] == road_start[0] and road_points[1] == road_start[1] and
+                    road_points[2] == yindex and road_points[3] == xindex):
+                    response['build_success'] = -4
+                    response['announcement'] = "The road cannot overlap another road.\n"
+                    return
+
+        # Successful build
+        board.existing_roads += (str(road_start[0]) + "," + str(road_start[1]) + "," +
+                                 str(yindex) + "," + str(xindex) + ";")
         response['road_start'] = board.road_start
         response['build_success'] = 1
         # Save road on corners
-        road_start = board.road_start.split(',')
-        starting_corner = board.corners.get(yindex=road_start[0], xindex=road_start[1])
         starting_corner.roads += str(player.ordinal) + ","
         print(starting_corner.__str__())
         starting_corner.save()
@@ -116,9 +143,6 @@ def handle_road_build (game, board, player, yindex, xindex, response):
         game.build_flag = 0
         response['announcement'] += "Built successfully\n"
         return
-    """if game.build_flag == 2:
-        if corner_to_build.building == 0: # Check building
-            if corner_to_build"""
 
 
 """At the start of a turn, for every corner that is built, check the adjacent tiles.
