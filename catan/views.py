@@ -68,7 +68,7 @@ def catan_view(request):
                 + "A settlement costs one each of brick, lumber, wool, and grain.")
         # Build road button
         elif input == "build_road":
-            if True: #can_afford(player1, input, response):
+            if can_afford(player1, input, response):
                 game.build_flag = 2 # Road start
                 response['announcement'] = "Build where?\n"
             else:
@@ -85,7 +85,7 @@ def catan_view(request):
             # Settlement building mode; costs resources; price checked at "build" button
             if game.build_flag == 1:
                 response['build_type'] = "settlement"
-                build_attempt(board, yindex, xindex, response)
+                build_attempt(game, board, player1, yindex, xindex, response)
                 if response['build_success'] == 1:
                     player1.wool -= 1; player1.grain -= 1; player1.lumber -= 1; player1.brick -= 1
                     player1.save()
