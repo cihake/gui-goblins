@@ -68,7 +68,7 @@
             </g>
             <text id="wintext" x="100%" y="8%"> Player 1 wins!</text>
         </svg>
-        <button class="card_draw">Roll dice</button>
+        <button class="card_draw">Draw a card</button>
 
         <svg id="card-container">
             
@@ -115,7 +115,7 @@
                     });
                 });
 
-                // Register a dice roll
+                // Register a card draw
                 $('.card_draw').click(function() {
                     $.ajax({
                         url: '/candyland/',
@@ -125,8 +125,8 @@
                         },
                         headers: {'X-CSRFToken': csrftoken},
                         success: function(response) {
-                            var dice_value = roll_dice();
-                            player1_space += dice_value;
+                            var card_value = draw_card();
+                            player1_space += card_value;
                             
                             // Check if the player has won
                             if (player1_space >= 132) {
@@ -167,8 +167,8 @@
                 document.getElementById("board").appendChild(circle);
             }
 
-            // Function to simulate a dice roll
-            function roll_dice() {
+            // Function to simulate a card draw
+            function draw_card() {
                 var die1 = Math.floor(Math.random() * (6 - 1 + 1)) + 1;
                 var die2 = Math.floor(Math.random() * (6 - 1 + 1)) + 1;
                 return die1 + die2;
