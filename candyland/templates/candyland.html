@@ -31,7 +31,7 @@
                 border: none; border-radius: 5px; cursor: pointer;
             }
             /* Positioning for each button */
-            .dice_roll {
+            .card_draw {
                 top: 55%;
                 left: 80%;
             }
@@ -68,7 +68,7 @@
             </g>
             <text id="wintext" x="100%" y="8%"> Player 1 wins!</text>
         </svg>
-        <button class="dice_roll">Roll dice</button>
+        <button class="card_draw">Roll dice</button>
 
         <svg id="card-container">
             
@@ -106,7 +106,7 @@
                         url: '/candyland/',
                         type: 'POST',
                         data: {
-                            'input': 'dice_roll',
+                            'input': 'card_draw',
                         },
                         headers: {'X-CSRFToken': csrftoken},
                         success: function(response) {
@@ -116,12 +116,12 @@
                 });
 
                 // Register a dice roll
-                $('.dice_roll').click(function() {
+                $('.card_draw').click(function() {
                     $.ajax({
                         url: '/candyland/',
                         type: 'POST',
                         data: {
-                            'input': 'dice_roll',
+                            'input': 'card_draw',
                         },
                         headers: {'X-CSRFToken': csrftoken},
                         success: function(response) {
