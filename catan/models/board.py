@@ -10,11 +10,13 @@ class Board(models.Model):
     corners = models.ManyToManyField('Corner', related_name='board')
     tiles = models.ManyToManyField('Tile', related_name='board')
     road_start = models.CharField(max_length=100, null=True)
+    existing_roads = models.CharField(max_length=10000, null=True)
 
     """Initialization; takes the game_key and coordinates"""
     @classmethod
     def initialize(cls, game_key):
         board = cls.objects.create(game_key=game_key)
+        board.existing_roads = ""
 
         corners = []
         for y in range(15):
