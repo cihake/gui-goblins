@@ -32,11 +32,14 @@
 	<!-- page content ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 	{% block content %}
 	<div class="container">
+		<!-- main page heading -->
 		<h1 class="mt-5 mb-4 text-center">Your Coin Balance</h1>
-		<div class="card text-center mx-auto" style="width: 18rem;">
+		<!-- card -->
+		<div class="card text-center text-white bg-secondary mb-3" style="max-width: 20rem;">
+			<div class="card-header">Hello, {{ coin.user.username }}!</div>
 			<div class="card-body">
-				<h5 class="card-title">Hello, {{ coin.user.username }}!</h5>
-				<p class="card-text">Your current coin balance is: {{ coin.amount }}</p>
+				<h4 class="card-title">Your current coin balance is: {{ coin.amount }}</h4>
+				<p class="card-text">Want more coins? Play more games!</p>
 			</div>
 		</div>
 	</div>
