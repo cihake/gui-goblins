@@ -11,7 +11,6 @@
 	{% block styles %}
 	<link rel="stylesheet" href="https://bootswatch.com/5/solar/bootstrap.css">
 	<style>
-		
 		/* page container */
 		.container {
 			max-width: 800px;
@@ -21,30 +20,51 @@
 		}
 
 		/* images */
-		.image { margin-bottom: 20px; }
-		.image img { width: 100%; border: 3px solid #6bff6b; border-radius: 10px; cursor: pointer; }
-		.image-title { font-weight: bold; }
-		
+		.image {
+			margin-bottom: 20px;
+		}
+
+		.image img {
+			width: 100%;
+			border: 3px solid #6bff6b;
+			border-radius: 10px;
+			cursor: pointer;
+		}
+
+		.image-title {
+			font-weight: bold;
+		}
+
 		/* ads */
-		#randomAd { margin-bottom: 20px; }
-		.ad-image { width: 50%; border: 3px solid #6bff6b; border-radius: 10px; }
+		#randomAd {
+			margin-bottom: 20px;
+		}
+
+		.ad-image {
+			width: 50%;
+			border: 3px solid #6bff6b;
+			border-radius: 10px;
+		}
 
 		/* footer */
-		.footer { margin-top: 50px; }
+		.footer {
+			margin-top: 50px;
+		}
 	</style>
 	{% endblock styles %}
 </head>
 
 <!-- load page content -->
+
 <body>
 	{% block content %}
-	
+
 	<!-- click sound -->
 	<audio id="clickSound">
 		<source src="{% static 'StockClick.mp3' %}" type="audio/mp3">
 		Sound Effect by UNIVERSFIELD from Pixabay
 	</audio>
-	
+
 	<!-- background music (why the hell is it so loud?) -->
 	<audio autoplay>
 		<source src="{% static 'StockMusic.mp3' %}" type="audio/mpeg">
@@ -77,7 +97,7 @@
 			<a href="{% url 'leaderboard' %}" onclick="playClickSound()">Leaderboard</a> |
 		</p>
 		{% endif %}
-		
+
 		<!-- space for ads -->
 		<div id="randomAd">
 			<a id="adLink" href="#" target="_blank">
@@ -116,18 +136,11 @@
 			</div>
 		</div>
 		<!-- footer -->
-		<hr>
-		<div class="footer">
-			<p>
-				<a href="github.com/cihake/gui-goblins/" onclick="playClickSound()">GitHub</a> |
-				<a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" onclick="playClickSound()">Fun</a> |
-				<a href="{% url 'credits' %}" onclick="playClickSound()">About</a>
-			</p>
-			<p>GoblinEnclave.com | 2024</p>
-		</div>
 	</div>
+	{% endblock content %}
 
 	<!-- sound FX + ads -->
+	{% block scripts %}
 	<script>
 		// play sounds
 		function playClickSound() {
@@ -206,6 +219,7 @@
 			}
 		});
 	</script>
-	{% endblock content %}
+	{% endblock scripts %}
 </body>
+
 </html>
