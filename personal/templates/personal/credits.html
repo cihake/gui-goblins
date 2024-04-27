@@ -58,34 +58,11 @@
 	<!-- page content -->
 	<div class="container">
 
-		{% if request.user.is_authenticated %}
-		<!-- site navigation (user) -->
-		<p>
-			<a href="{% url 'home' %}" onclick="playClickSound()">Home</a> |
-			<a href="{% url 'store' %}" onclick="playClickSound()">Store</a> |
-			<a href="{% url 'credits' %}" onclick="playClickSound()">Credits</a> |
-			<a href="{% url 'leaderboard' %}" onclick="playClickSound()">Leaderboard</a> |
-			<a href="{% url 'coins' %}" onclick="playClickSound()">Coins</a> |
-			<a href="{% url 'account' %}" onclick="playClickSound()">Account</a> |
-			<a href="{% url 'logout' %}" onclick="playClickSound()">Logout</a>
-		</p>
-
-		{% else %}
-		<!-- site navigation (guest) -->
-		<p>
-			<a href="{% url 'home' %}" onclick="playClickSound()">Home</a> |
-			<a href="{% url 'register' %}" onclick="playClickSound()">Register</a> |
-			<a href="{% url 'login' %}" onclick="playClickSound()">Login</a> |
-			<a href="{% url 'credits' %}" onclick="playClickSound()">Credits</a> |
-			<a href="{% url 'leaderboard' %}" onclick="playClickSound()">Leaderboard</a> |
-		</p>
-		{% endif %}
-
 		<!-- main content -->
 		<h1>Credits</h1>
 		<p>This webpage can be credited to the efforts of Anthony Ramos, Eva Cihak, and Nathan Young.</p>
-		<p>For the low price of 1 bitcoin, you can support these prospective web developers in their journey to fame and
-			fortune.</p>
+		<p><small>For the low price of 1 bitcoin, you can support these prospective web developers in their journey to fame and
+			fortune.</small></p>
 		{% endblock content %}
 
 		<!-- sound FX + ads -->
