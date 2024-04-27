@@ -1,40 +1,57 @@
-<!-- leaderboard.html -->
+<!--~~~ LEADERBOARD.HTML ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
+	Last edit on 04/27/24 (16:25) by @cihake
+	
+	NOTE:	The contents of this template extend the 'base.html' master
+			template. Please review base.html, its content blocks, and its
+			included snippets before modifying this file. This will help
+			prevent duplicate/conflicting elements and rendering issues.
 
+	This is the template for the "Leaderboard" page. It is accessible to both
+	guest users and authorized accounts. It lists all created accounts, sorted
+	by their total number of wins.
+<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+{% extends 'base.html' %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leaderboard</title>
-    <!-- Add Bootstrap CSS stylesheet link -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        /* Add any additional custom styles here */
-    </style>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- page title -->
+	<title>{% block title %}Leaderboard | TheGoblinEnclave{% endblock title %}</title>
+	<!-- internal styles / stylesheets -->
+	{% block styles %}
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+	{% endblock styles %}
 </head>
 <body>
-    <div class="container">
-        <h1 class="mt-5 mb-4">Leaderboard</h1>
-        <table class="table table-striped table-bordered">
-            <thead class="table-dark">
-                <tr>
-                    <th scope="col">Rank</th>
-                    <th scope="col">Username</th>
-                    <th scope="col">Wins</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for entry in leaderboard %}
-                    <tr>
-                        <td>{{ forloop.counter }}</td> <!-- Display the rank -->
-                        <td>{{ entry.user.username }}</td> <!-- Display the username -->
-                        <td>{{ entry.score }}</td> <!-- Display the wins -->
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    <!-- Add Bootstrap JS scripts here if needed -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+	<!-- page content
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+	{% block content %}
+	<div class="container">
+		<h1 class="mt-5 mb-4">Leaderboard</h1>
+		<table class="table table-striped table-bordered">
+			<thead class="table-dark">
+				<tr>
+					<th scope="col">Rank</th>
+					<th scope="col">Username</th>
+					<th scope="col">Wins</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for entry in leaderboard %}
+				<tr>
+					<td>{{ forloop.counter }}</td>		<!-- Displays rank -->
+					<td>{{ entry.user.username }}</td>	<!-- Displays username -->
+					<td>{{ entry.score }}</td>			<!-- Displays wins -->
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+	<!-- Add Bootstrap JS scripts here if needed -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+	{% endblock content %}
 </body>
 </html>
