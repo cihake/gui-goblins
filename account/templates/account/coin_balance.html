@@ -1,25 +1,45 @@
+<!--~~~ COIN_BALANCE.HTML ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
+	Last edit on 04/27/24 (16:25) by @cihake
+	
+	NOTE:	The contents of this template extend the 'base.html' master
+			template. Please review base.html, its content blocks, and its
+			included snippets before modifying this file. This will help
+			prevent duplicate/conflicting elements and rendering issues.
+
+	This is the template for the "Coins" page. This page becomes accessible
+	once a user is logged into their account. It displays a user's coin balance.
+<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+{% extends 'base.html' %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Coin Balance</title>
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- page title -->
+	<title>{% block title %}Coins | TheGoblinEnclave{% endblock title %}</title>
+	<!-- internal styles / stylesheets -->
+	{% block styles %}
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+	{% endblock styles %}
 </head>
 <body>
-    <div class="container">
-        <h1 class="mt-5 mb-4 text-center">Your Coin Balance</h1>
-        <div class="card text-center mx-auto" style="width: 18rem;">
-            <div class="card-body">
-                <h5 class="card-title">Hello, {{ coin.user.username }}!</h5>
-                <p class="card-text">Your current coin balance is: {{ coin.amount }}</p>
-            </div>
-        </div>
-    </div>
-    <!-- Bootstrap JS -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+	<!-- page content ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+	{% block content %}
+	<div class="container">
+		<h1 class="mt-5 mb-4 text-center">Your Coin Balance</h1>
+		<div class="card text-center mx-auto" style="width: 18rem;">
+			<div class="card-body">
+				<h5 class="card-title">Hello, {{ coin.user.username }}!</h5>
+				<p class="card-text">Your current coin balance is: {{ coin.amount }}</p>
+			</div>
+		</div>
+	</div>
+	<!-- Bootstrap JS -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+	{% endblock content %}
 </body>
 </html>
