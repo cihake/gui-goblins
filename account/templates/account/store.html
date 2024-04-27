@@ -22,24 +22,17 @@
 	<title>{% block title %}Store | TheGoblinEnclave{% endblock title %}</title>
 	<!-- internal styles / stylesheets -->
 	{% block styles %}
+	<link rel="stylesheet" href="https://bootswatch.com/5/solar/bootstrap.css">
 	<style>
-		body { font-family: Arial, sans-serif; background-color: #ffffff; color: #000000; margin: 0; padding: 0; }
-		.container { max-width: 800px; margin: 50px auto; padding: 0 20px; }
-		
+		/* body { font-family: Arial, sans-serif; background-color: #ffffff; color: #000000; margin: 0; padding: 0; } */
+		.container { max-width: 800px; margin: 0 auto; padding: 20px; text-align: center; }
 		.coin-item { border: 1px solid #000000; border-radius: 5px; padding: 20px; margin-bottom: 20px; }
 		.coin-name { font-size: 20px; font-weight: bold; margin-bottom: 10px; }
 		.coin-price { font-size: 18px; margin-bottom: 10px; }
 		.coin-image { margin-right: 20px; width: 100px; height: auto; } /* Adjust width as needed; height maintains aspect ratio */
-		
 		.buy-button {
-			background-color: #000000;
-			color: #ffffff;
-			border: none;
-			border-radius: 5px;
-			padding: 10px 20px;
-			font-size: 16px;
-			cursor: pointer;
-			transition: background-color 0.3s;
+			background-color: #000000; color: #ffffff; border: none; border-radius: 5px;
+			padding: 10px 20px; font-size: 16px; cursor: pointer; transition: background-color 0.3s;
 		}
 		.buy-button:hover { background-color: #333333; }
 	</style>
