@@ -1,3 +1,15 @@
+<!--~~~ SITENAV.HTML ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
+	Last edit on 04/27/24 (14:12) by @cihake
+	
+	IMPORTANT:	Changes made to this file will modify ANY/ALL templates that
+				'extend' base.html. Exercise caution!
+	
+	The below code snippets are elements used frequently throughout the website.
+	Any template extending 'base.html' will automatically have the following
+	lines of code appended to it, as base.html 'includes' this file and all of
+	its contents.
+<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
 {% if request.user.is_authenticated %}
 <!-- site navigation (user) -->
 <p style="margin-bottom: 50px; text-align: center;">
