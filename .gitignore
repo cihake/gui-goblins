@@ -127,6 +127,8 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+# Eva's local venv folder
+project
 
 # Spyder project settings
 .spyderproject
