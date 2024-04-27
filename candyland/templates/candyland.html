@@ -2,210 +2,239 @@
 <!DOCTYPE html>
 
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Candyland</title>
-        <!--Access the jQuery library-->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        
-        <!--Define the CSS style for content-->
-        <style>
-            html, body {
-                margin: 0; padding: 0; height: 100%; overflow: visible;
-            }
-            #svg-container {
-                width: 100vw; height: 100vh;
-                display: flex; justify-content: center; align-items: center;
-            }
-            #board {
-                width: auto; height: auto; /*Maintain aspect ratio*/
-                max-width: 100%; max-height: 100%;
-            }
-            text {
-                font-family: Arial, sans-serif; font-size: 30px; fill: black;
-            }
-            button {
-                position: absolute; padding: 10px 20px;
-                background-color: #007bff; color: white;
-                border: none; border-radius: 5px; cursor: pointer;
-            }
-            /* Positioning for each button */
-            .card_draw {
-                top: 55%;
-                left: 80%;
-            }
-            /* Styling for the cards */
-            #card-container {
-                position: absolute;
-                width: 150px;
-                height: 200px;
-                right: 9%;
-                top: 10%;
-                border: 1px solid black;
-            }
-            #card-deck {
-                position: absolute;
-                width: 150px; height: 200px;
-                right: 9%; top: 55%;
-                border: 2px solid black;
-                background-color: pink;
-                display: flex; justify-content: center; align-items: center;
-                text-align: center;
-                font-family: Garamond, serif;
-                font-size: 40px;
-                color: red;
-            }
-        </style>
-    </head>
-    <!--*************************************************************************-->
-    <body>
-        <svg id="svg-container" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid meet">
-            <!--The game board-->
-            <g id="board" height="1000">
-                <image id="board_image" xlink:href="{% static 'CandyLand.jpg' %}"
-                height="1000" />
-            </g>
-            <text id="wintext" x="100%" y="8%"> Player 1 wins!</text>
-        </svg>
-        <button class="card_draw">Draw a card</button>
 
-        <svg id="card-container">
-            
-        </svg>
-        <div id="card-deck">
-            <div id="back-text">Candy<br><br>Land</text>
-        </div>
-        
-        <!--*************************************************************************-->
-        <!--JavaScript for setup and input-->
-        <script>
-            // Run once the document has loaded
-            $(document).ready(function() {
-                // Get CSRF token, mandatory security for AJAX
-                var csrftoken = getCookie('csrftoken');
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Candyland</title>
+	<!--Access the jQuery library-->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-                // Initialize
-                var xcoords = [0, 86, 120, 154, 188, 222, 257, 292, 326, 360, 395, 430, 464, 498, 532, 566, 601, 636, 666, 675, 663, 638, 604, 571, 538, 503, 470, 445, 448, 479, 513, 549, 582, 614, 628, 612, 580, 547, 513, 482, 450, 424, 398, 370, 340, 310, 278, 245, 210, 176, 143, 110, 84, 62, 46, 46, 59, 80, 107, 138, 173, 209, 241, 278, 310, 345, 381, 415, 450, 487, 519, 551, 586, 618, 649, 682, 713, 743, 772, 801, 816, 793, 758, 733, 708, 678, 644, 612, 582, 569, 581, 612, 647, 681, 720, 743, 731, 701, 668, 634, 599, 564, 529, 499, 466, 437, 410, 385, 362, 342, 317, 286, 257, 226, 193, 158, 123, 88, 58, 37, 43, 58, 85, 119, 153, 187, 222, 257, 290, 323, 353, 382, 393];
-                var ycoords = [0, 923, 931, 938, 949, 955, 956, 954, 944, 936, 932, 930, 931, 938, 947, 953, 957, 951, 935, 902, 867, 844, 838, 849, 859, 862, 856, 829, 794, 772, 768, 775, 781, 767, 736, 702, 688, 685, 690, 701, 718, 743, 765, 786, 807, 823, 839, 849, 849, 845, 833, 820, 799, 772, 739, 703, 670, 644, 622, 607, 602, 603, 608, 617, 625, 630, 635, 639, 635, 633, 626, 613, 602, 590, 575, 560, 545, 526, 507, 488, 455, 424, 424, 449, 472, 492, 498, 488, 471, 437, 402, 385, 384, 382, 380, 355, 321, 301, 290, 284, 284, 291, 299, 313, 329, 346, 369, 393, 421, 448, 473, 492, 512, 524, 537, 543, 546, 538, 525, 493, 459, 428, 406, 392, 384, 384, 383, 379, 369, 355, 336, 317, 282];
-                var scale = 1000 / 1000;
-                $('#wintext').hide();
-                $('#card-deck').hide();
-                var player1_space = 1;
+	<!--Define the CSS style for content-->
+	<style>
+		html,
+		body {
+			margin: 0;
+			padding: 0;
+			height: 100%;
+			overflow: visible;
+		}
 
-                // Convert the absolute coordinates to relative coordinates, draw players
-                for (var i = 0; i < xcoords.length; i ++) {
-                    xcoords[i] = xcoords[i] * scale;
-                    ycoords[i] = ycoords[i] * scale;
-                }
-                create_circle("piece1", xcoords[1], ycoords[1], 15, "black");
+		#svg-container {
+			width: 100vw;
+			height: 100vh;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
 
-                // Register a card deck click
-                $('#card-deck').click(function() {
-                    $.ajax({
-                        url: '/candyland/',
-                        type: 'POST',
-                        data: {
-                            'input': 'card_draw',
-                        },
-                        headers: {'X-CSRFToken': csrftoken},
-                        success: function(response) {
-                            $('#card-container').show();
-                        }
-                    });
-                });
+		#board {
+			width: auto;
+			height: auto;
+			/*Maintain aspect ratio*/
+			max-width: 100%;
+			max-height: 100%;
+		}
 
-                // Register a card draw
-                $('.card_draw').click(function() {
-                    $.ajax({
-                        url: '/candyland/',
-                        type: 'POST',
-                        data: {
-                            'input': 'card_draw',
-                        },
-                        headers: {'X-CSRFToken': csrftoken},
-                        success: function(response) {
-                            var card_value = draw_card();
-                            player1_space += card_value;
-                            
-                            // Check if the player has won
-                            if (player1_space >= 132) {
-                                $.ajax({
-                                    url: '/candyland/',
-                                    type: 'POST',
-                                    data: {
-                                        'input': 'win',
-                                        'user_id': userId,
-                                    },
-                                    headers: {'X-CSRFToken': csrftoken},
-                                    success: function(response) {
-                                        alert('Congratulations! You won the game and received 15 coins!');
-                                    }
-                                });
-                            } else {
-                                // Update the player's position on the board
-                                $('#piece1').attr("cx", xcoords[player1_space]);
-                                $('#piece1').attr("cy", ycoords[player1_space]);
-                            }
-                        }
-                    });
-                });
-            });
-        </script>
-        <!--*************************************************************************-->
-        <!--JavaScript functions-->
-        <script>
-            // Function to create a circle dynamically using SVG
-            function create_circle(id, x, y, radius, color) {
-                var svgNS = "http://www.w3.org/2000/svg";
-                var circle = document.createElementNS(svgNS, "circle");
-                circle.setAttributeNS(null, "id", id);
-                circle.setAttributeNS(null, "cx", x);
-                circle.setAttributeNS(null, "cy", y);
-                circle.setAttributeNS(null, "r", radius);
-                circle.setAttributeNS(null, "fill", color);
-                document.getElementById("board").appendChild(circle);
-            }
+		text {
+			font-family: Arial, sans-serif;
+			font-size: 30px;
+			fill: black;
+		}
 
-            // Function to simulate a card draw
-            function draw_card() {
-                var die1 = Math.floor(Math.random() * (6 - 1 + 1)) + 1;
-                var die2 = Math.floor(Math.random() * (6 - 1 + 1)) + 1;
-                return die1 + die2;
-            }
+		button {
+			position: absolute;
+			padding: 10px 20px;
+			background-color: #007bff;
+			color: white;
+			border: none;
+			border-radius: 5px;
+			cursor: pointer;
+		}
 
-            // Function to declare a winner
-            function declare_winner(player) {
-                $('#wintext').text("Player " + player + " wins!");
-                $('#wintext').show();
+		/* Positioning for each button */
+		.card_draw {
+			top: 55%;
+			left: 80%;
+		}
 
-            }
+		/* Styling for the cards */
+		#card-container {
+			position: absolute;
+			width: 150px;
+			height: 200px;
+			right: 9%;
+			top: 10%;
+			border: 1px solid black;
+		}
 
-            // Function to get the CSRF token
-            function getCookie(name) {
-                var cookieValue = null;
-                if (document.cookie && document.cookie !== '') {
-                    var cookies = document.cookie.split(';');
-                    for (var i = 0; i < cookies.length; i++) {
-                        var cookie = cookies[i].trim();
-                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                            break;
-                        }
-                    }
-                }
-                return cookieValue;
-            }
-        </script>
-       <script>
-        // Show a popup message indicating that the user has been charged 10 coins
-        window.onload = function() {
-            alert('You have been charged 10 coins to play Candyland.');
-        };
-    </script>
-<script>
-    var userId = {{ user.id }};
-</script>
+		#card-deck {
+			position: absolute;
+			width: 150px;
+			height: 200px;
+			right: 9%;
+			top: 55%;
+			border: 2px solid black;
+			background-color: pink;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			text-align: center;
+			font-family: Garamond, serif;
+			font-size: 40px;
+			color: red;
+		}
+	</style>
+</head>
+<!--*************************************************************************-->
 
-    </body>
+<body>
+	<svg id="svg-container" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid meet">
+		<!--The game board-->
+		<g id="board" height="1000">
+			<image id="board_image" xlink:href="{% static 'CandyLand.jpg' %}" height="1000" />
+		</g>
+		<text id="wintext" x="100%" y="8%"> Player 1 wins!</text>
+	</svg>
+	<button class="card_draw">Draw a card</button>
+
+	<svg id="card-container">
+
+	</svg>
+	<div id="card-deck">
+		<div id="back-text">Candy<br><br>Land</text>
+		</div>
+
+		<!--*************************************************************************-->
+		<!--JavaScript for setup and input-->
+		<script>
+			// Run once the document has loaded
+			$(document).ready(function () {
+				// Get CSRF token, mandatory security for AJAX
+				var csrftoken = getCookie('csrftoken');
+
+				// Initialize
+				var xcoords = [0, 86, 120, 154, 188, 222, 257, 292, 326, 360, 395, 430, 464, 498, 532, 566, 601, 636, 666, 675, 663, 638, 604, 571, 538, 503, 470, 445, 448, 479, 513, 549, 582, 614, 628, 612, 580, 547, 513, 482, 450, 424, 398, 370, 340, 310, 278, 245, 210, 176, 143, 110, 84, 62, 46, 46, 59, 80, 107, 138, 173, 209, 241, 278, 310, 345, 381, 415, 450, 487, 519, 551, 586, 618, 649, 682, 713, 743, 772, 801, 816, 793, 758, 733, 708, 678, 644, 612, 582, 569, 581, 612, 647, 681, 720, 743, 731, 701, 668, 634, 599, 564, 529, 499, 466, 437, 410, 385, 362, 342, 317, 286, 257, 226, 193, 158, 123, 88, 58, 37, 43, 58, 85, 119, 153, 187, 222, 257, 290, 323, 353, 382, 393];
+				var ycoords = [0, 923, 931, 938, 949, 955, 956, 954, 944, 936, 932, 930, 931, 938, 947, 953, 957, 951, 935, 902, 867, 844, 838, 849, 859, 862, 856, 829, 794, 772, 768, 775, 781, 767, 736, 702, 688, 685, 690, 701, 718, 743, 765, 786, 807, 823, 839, 849, 849, 845, 833, 820, 799, 772, 739, 703, 670, 644, 622, 607, 602, 603, 608, 617, 625, 630, 635, 639, 635, 633, 626, 613, 602, 590, 575, 560, 545, 526, 507, 488, 455, 424, 424, 449, 472, 492, 498, 488, 471, 437, 402, 385, 384, 382, 380, 355, 321, 301, 290, 284, 284, 291, 299, 313, 329, 346, 369, 393, 421, 448, 473, 492, 512, 524, 537, 543, 546, 538, 525, 493, 459, 428, 406, 392, 384, 384, 383, 379, 369, 355, 336, 317, 282];
+				var scale = 1000 / 1000;
+				$('#wintext').hide();
+				$('#card-deck').hide();
+				var player1_space = 1;
+
+				// Convert the absolute coordinates to relative coordinates, draw players
+				for (var i = 0; i < xcoords.length; i++) {
+					xcoords[i] = xcoords[i] * scale;
+					ycoords[i] = ycoords[i] * scale;
+				}
+				create_circle("piece1", xcoords[1], ycoords[1], 15, "black");
+
+				// Register a card deck click
+				$('#card-deck').click(function () {
+					$.ajax({
+						url: '/candyland/',
+						type: 'POST',
+						data: {
+							'input': 'card_draw',
+						},
+						headers: { 'X-CSRFToken': csrftoken },
+						success: function (response) {
+							$('#card-container').show();
+						}
+					});
+				});
+
+				// Register a card draw
+				$('.card_draw').click(function () {
+					$.ajax({
+						url: '/candyland/',
+						type: 'POST',
+						data: {
+							'input': 'card_draw',
+						},
+						headers: { 'X-CSRFToken': csrftoken },
+						success: function (response) {
+							var card_value = draw_card();
+							player1_space += card_value;
+
+							// Check if the player has won
+							if (player1_space >= 132) {
+								$.ajax({
+									url: '/candyland/',
+									type: 'POST',
+									data: {
+										'input': 'win',
+										'user_id': userId,
+									},
+									headers: { 'X-CSRFToken': csrftoken },
+									success: function (response) {
+										alert('Congratulations! You won the game and received 15 coins!');
+									}
+								});
+							} else {
+								// Update the player's position on the board
+								$('#piece1').attr("cx", xcoords[player1_space]);
+								$('#piece1').attr("cy", ycoords[player1_space]);
+							}
+						}
+					});
+				});
+			});
+		</script>
+		<!--*************************************************************************-->
+		<!--JavaScript functions-->
+		<script>
+			// Function to create a circle dynamically using SVG
+			function create_circle(id, x, y, radius, color) {
+				var svgNS = "http://www.w3.org/2000/svg";
+				var circle = document.createElementNS(svgNS, "circle");
+				circle.setAttributeNS(null, "id", id);
+				circle.setAttributeNS(null, "cx", x);
+				circle.setAttributeNS(null, "cy", y);
+				circle.setAttributeNS(null, "r", radius);
+				circle.setAttributeNS(null, "fill", color);
+				document.getElementById("board").appendChild(circle);
+			}
+
+			// Function to simulate a card draw
+			function draw_card() {
+				var die1 = Math.floor(Math.random() * (6 - 1 + 1)) + 1;
+				var die2 = Math.floor(Math.random() * (6 - 1 + 1)) + 1;
+				return die1 + die2;
+			}
+
+			// Function to declare a winner
+			function declare_winner(player) {
+				$('#wintext').text("Player " + player + " wins!");
+				$('#wintext').show();
+
+			}
+
+			// Function to get the CSRF token
+			function getCookie(name) {
+				var cookieValue = null;
+				if (document.cookie && document.cookie !== '') {
+					var cookies = document.cookie.split(';');
+					for (var i = 0; i < cookies.length; i++) {
+						var cookie = cookies[i].trim();
+						if (cookie.substring(0, name.length + 1) === (name + '=')) {
+							cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+							break;
+						}
+					}
+				}
+				return cookieValue;
+			}
+		</script>
+		<script>
+			// Show a popup message indicating that the user has been charged 10 coins
+			window.onload = function () {
+				alert('You have been charged 10 coins to play Candyland.');
+			};
+		</script>
+		<script>
+			var userId = {{ user.id }};
+		</script>
+
+</body>
+
 </html>

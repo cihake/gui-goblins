@@ -3,199 +3,230 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FunGames.com</title>
-    <link rel="stylesheet" href="https://bootswatch.com/5/solar/bootstrap.css">
-    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css"
-        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous"> -->
-    <style>
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            text-align: center;
-        }
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>GoblinEnclave.com</title>
+	<link rel="stylesheet" href="https://bootswatch.com/5/solar/bootstrap.css">
+	<style>
 
-        .image {
-            margin-bottom: 20px;
-        }
+		/* loading animation */
+		svg {
+			width: 3.25em;
+			transform-origin: center;
+			animation: rotate4 2s linear infinite;
+		}
+		circle {
+			fill: none;
+			stroke: hsl(214, 97%, 59%);
+			stroke-width: 2;
+			stroke-dasharray: 1, 200;
+			stroke-dashoffset: 0;
+			stroke-linecap: round;
+			animation: dash4 1.5s ease-in-out infinite;
+		}
+		@keyframes rotate4 {
+			100% { transform: rotate(360deg); }
+		}
+		@keyframes dash4 {
+			0% { stroke-dasharray: 1, 200; stroke-dashoffset: 0; }
+			50% { stroke-dasharray: 90, 200; stroke-dashoffset: -35px; }
+			100% { stroke-dashoffset: -125px; }
+		}
 
-        .image img {
-            width: 100%;
-            border: 3px solid #ff6b6b;
-            border-radius: 10px;
-            cursor: pointer;
-        }
+		/* page container */
+		.container {
+			max-width: 800px;
+			margin: 0 auto;
+			padding: 20px;
+			text-align: center;
+		}
 
-        .image-title {
-            font-weight: bold;
-        }
+		/* images */
+		.image { margin-bottom: 20px; }
+		.image img { width: 100%; border: 3px solid #6bff6b; border-radius: 10px; cursor: pointer; }
+		.image-title { font-weight: bold; }
+		
+		/* ads */
+		#randomAd { margin-bottom: 20px; }
+		.ad-image { width: 50%; border: 3px solid #6bff6b; border-radius: 10px; }
 
-        #randomAd {
-            margin-bottom: 20px;
-        }
+		/* footer */
+		.footer { margin-top: 50px; }
 
-        .ad-image {
-            width: 50%;
-            border: 3px solid #6bff6b;
-            border-radius: 10px;
-        }
-
-        .footer {
-            margin-top: 50px;
-        }
-    </style>
+	</style>
 </head>
 
+<!-- load page content -->
 <body>
-    <audio id="clickSound">
-        <source src="{% static 'StockClick.mp3' %}" type="audio/mp3">
-        Sound Effect by UNIVERSFIELD from Pixabay
-    </audio>
-    <audio autoplay>
-        <source src="{% static 'StockMusic.mp3' %}" type="audio/mpeg">
-        Music by | e s c p | escp-music.bandcamp.com
-    </audio>
+	<!-- fake loading animation lol -->
+	<svg viewBox="25 25 50 50"><circle r="20" cy="50" cx="50"></circle></svg>
+	
+	<!-- click sound -->
+	<audio id="clickSound">
+		<source src="{% static 'StockClick.mp3' %}" type="audio/mp3">
+		Sound Effect by UNIVERSFIELD from Pixabay
+	</audio>
+	
+	<!-- background music (why the hell is it so loud?) -->
+	<audio autoplay>
+		<source src="{% static 'StockMusic.mp3' %}" type="audio/mpeg">
+		Music by | e s c p | escp-music.bandcamp.com
+	</audio>
 
-    <div class="container">
-        {% if request.user.is_authenticated %}
-        <p>
-            <a href="{% url 'home' %}" onclick="playClickSound()">Home</a> |
-            <a href="{% url 'account' %}" onclick="playClickSound()">Account</a> |
-            <a href="{% url 'logout' %}" onclick="playClickSound()">Logout</a> |
-            <a href="{% url 'credits' %}" onclick="playClickSound()">Credits</a> |
-            <a href="{% url 'coins' %}" onclick="playClickSound()">Coins</a> |
-            <a href="{% url 'leaderboard' %}" onclick="playClickSound()">Leaderboard</a> |
-            <a href="{% url 'store' %}" onclick="playClickSound()">Store</a> |
-        </p>
-        <p>Hello, {{request.user.username}}</p>
-        {% else %}
-        <p>
-            <a href="{% url 'home' %}" onclick="playClickSound()">Home</a> |
-            <a href="{% url 'register' %}" onclick="playClickSound()">Register</a> |
-            <a href="{% url 'login' %}" onclick="playClickSound()">Login</a> |
-            <a href="{% url 'credits' %}" onclick="playClickSound()">Credits</a> |
-            <a href="{% url 'leaderboard' %}" onclick="playClickSound()">Leaderboard</a> |
-        </p>
-        {% endif %}
+	<!-- page content -->
+	<div class="container">
 
-        <div id="randomAd">
-            <a id="adLink" href="#" target="_blank">
-                <img class="ad-image" id="adImage" src="" alt="Ad">
-            </a>
-        </div>
+		{% if request.user.is_authenticated %}
+		<!-- site navigation (user) -->
+		<p>
+			<a href="{% url 'home' %}" onclick="playClickSound()">Home</a> |
+			<a href="{% url 'account' %}" onclick="playClickSound()">Account</a> |
+			<a href="{% url 'logout' %}" onclick="playClickSound()">Logout</a> |
+			<a href="{% url 'credits' %}" onclick="playClickSound()">Credits</a> |
+			<a href="{% url 'coins' %}" onclick="playClickSound()">Coins</a> |
+			<a href="{% url 'leaderboard' %}" onclick="playClickSound()">Leaderboard</a> |
+			<a href="{% url 'store' %}" onclick="playClickSound()">Store</a> |
+		</p>
+		<p>Hello, {{request.user.username}}</p>
 
-        <div class="row">
-            <div class="col-md-4">
-                <div class="image">
-                    <a href="monopoly">
-                        <img src="{% static 'Monopoly.jpg' %}" alt="Monopoly">
-                    </a>
-                    <p class="image-title">Monopoly</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="image">
-                    <a href="candyland">
-                        <img src="{% static 'Candyland.jpg' %}" alt="Candyland">
-                    </a>
-                    <p class="image-title">Candyland</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="image">
-                    <a href="catan">
-                        <img src="{% static 'SettlersOfCatan.jpg' %}" alt="Settlers of Catan">
-                    </a>
-                    <p class="image-title">Settlers of Catan</p>
-                </div>
-            </div>
-        </div>
+		{% else %}
+		<!-- site navigation (guest) -->
+		<p>
+			<a href="{% url 'home' %}" onclick="playClickSound()">Home</a> |
+			<a href="{% url 'register' %}" onclick="playClickSound()">Register</a> |
+			<a href="{% url 'login' %}" onclick="playClickSound()">Login</a> |
+			<a href="{% url 'credits' %}" onclick="playClickSound()">Credits</a> |
+			<a href="{% url 'leaderboard' %}" onclick="playClickSound()">Leaderboard</a> |
+		</p>
+		{% endif %}
+		
+		<!-- space for ads -->
+		<div id="randomAd">
+			<a id="adLink" href="#" target="_blank">
+				<img class="ad-image" id="adImage" src="" alt="Ad">
+			</a>
+		</div>
+		<div class="row">
+			<!-- Monopoly game container -->
+			<div class="col-md-4">
+				<div class="image">
+					<a href="monopoly">
+						<img src="{% static 'Monopoly.jpg' %}" alt="Monopoly">
+					</a>
+					<p class="image-title">Monopoly</p>
+				</div>
+			</div>
 
-        <hr>
+			<!-- Candy Land game container -->
+			<div class="col-md-4">
+				<div class="image">
+					<a href="candyland">
+						<img src="{% static 'Candyland.jpg' %}" alt="Candyland">
+					</a>
+					<p class="image-title">Candyland</p>
+				</div>
+			</div>
 
-        <div class="footer">
-            <p>AwesomeGames.com | 2024</p>
-        </div>
-    </div>
+			<!-- Settlers of Catan game container -->
+			<div class="col-md-4">
+				<div class="image">
+					<a href="catan">
+						<img src="{% static 'SettlersOfCatan.jpg' %}" alt="Settlers of Catan">
+					</a>
+					<p class="image-title">Settlers of Catan</p>
+				</div>
+			</div>
+		</div>
+		<!-- footer -->
+		<hr>
+		<div class="footer">
+			<p>GoblinEnclave.com | 2024</p>github.com/cihake/gui-goblins/
+		</div>
+	</div>
 
-    <script>
-        function playClickSound() {
-            var clickSound = document.getElementById('clickSound');
-            if (clickSound.paused) {
-                clickSound.play();
-            } else {
-                clickSound.currentTime = 0;
-            }
-        }
+	<!-- more scripts uh -->
+	<script>
+		// TODO: UH
+	</script>
+	<!-- sound FX + ads -->
+	<script>
+		// play sounds
+		function playClickSound() {
+			var clickSound = document.getElementById('clickSound');
+			if (clickSound.paused) {
+				clickSound.play();
+			} else {
+				clickSound.currentTime = 0;
+			}
+		}
 
-        var ads = [
-            { imageUrl: "{% static 'HammerAd.png' %}", destinationUrl: 'https://hammersource.com/' },
-            { imageUrl: "{% static 'BurgerAd.png' %}", destinationUrl: 'https://www.bk.com/' },
-            { imageUrl: "{% static 'GameAd.jpg' %}", destinationUrl: 'https://gamestop.com/' },
-            { imageUrl: "{% static 'CalculatorAd.jpg' %}", destinationUrl: 'https://www.ti.com/' },
-            { imageUrl: "{% static 'PencilAd.jpg' %}", destinationUrl: 'https://pencils.com/pages/custom-pencils' },
-            { imageUrl: "{% static 'ReesesAd.jpg' %}", destinationUrl: 'https://www.hersheyland.com/reeses' },
-            { imageUrl: "{% static 'VacuumAd.jpg' %}", destinationUrl: 'https://www.sharkclean.com/' },
-            { imageUrl: "{% static 'TVAd.jpg' %}", destinationUrl: 'https://www.bestbuy.com/' },
-            { imageUrl: "{% static 'CardboardBoxAd.jpg' %}", destinationUrl: 'https://www.amazon.com/' },
-            { imageUrl: "{% static 'BananaAd.jpg' %}", destinationUrl: 'http://www.bananas.org/' },
-        ];
+		var ads = [
+			{ imageUrl: "{% static 'AdHammer.png' %}", destinationUrl: 'https://hammersource.com/' },
+			{ imageUrl: "{% static 'AdBurger.png' %}", destinationUrl: 'https://www.bk.com/' },
+			{ imageUrl: "{% static 'AdGame.jpg' %}", destinationUrl: 'https://gamestop.com/' },
+			{ imageUrl: "{% static 'AdCalculator.jpg' %}", destinationUrl: 'https://www.ti.com/' },
+			{ imageUrl: "{% static 'AdPencil.jpg' %}", destinationUrl: 'https://pencils.com/pages/custom-pencils' },
+			{ imageUrl: "{% static 'AdReeses.jpg' %}", destinationUrl: 'https://www.hersheyland.com/reeses' },
+			{ imageUrl: "{% static 'AdVacuum.jpg' %}", destinationUrl: 'https://www.sharkclean.com/' },
+			{ imageUrl: "{% static 'AdTV.jpg' %}", destinationUrl: 'https://www.bestbuy.com/' },
+			{ imageUrl: "{% static 'AdCardboardBox.jpg' %}", destinationUrl: 'https://www.amazon.com/' },
+			{ imageUrl: "{% static 'AdBanana.jpg' %}", destinationUrl: 'http://www.bananas.org/' },
+		];
+		/* display new ad on page reload */
+		function displayRandomAd() {
+			var randomIndex = Math.floor(Math.random() * ads.length);
+			var ad = ads[randomIndex];
+			document.getElementById('adImage').src = ad.imageUrl;
+			document.getElementById('adLink').href = ad.destinationUrl;
+		}
+		window.onload = function () {
+			displayRandomAd();
+		};
+	</script>
+	<!-- scawy backend scawy -->
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+			const buyButtons = document.querySelectorAll('.buy-button');
+			buyButtons.forEach(button => {
+				button.addEventListener('click', function () {
+					const coinId = this.parentElement.dataset.coinId;
+					const coinPrice = parseFloat(this.parentElement.dataset.coinPrice);
+					buyCoin(coinId, coinPrice);
+				});
+			});
 
-        function displayRandomAd() {
-            var randomIndex = Math.floor(Math.random() * ads.length);
-            var ad = ads[randomIndex];
-            document.getElementById('adImage').src = ad.imageUrl;
-            document.getElementById('adLink').href = ad.destinationUrl;
-        }
+			function buyCoin(coinId, coinPrice) {
+				// Send a request to the backend to update the user's coin balance
+				fetch(`/buy-coin/${coinId}/`, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						'X-CSRFToken': getCookie('csrftoken')
+					},
+					body: JSON.stringify({ price: coinPrice })
+				})
+					.then(response => {
+						if (response.ok) {
+							// Coin purchased successfully, update UI or show a message
+							alert('Coin purchased successfully!');
+						} else {
+							// Handle errors
+							alert('Failed to purchase coin.');
+						}
+					})
+					.catch(error => {
+						console.error('Error:', error);
+					});
+			}
 
-        window.onload = function() {
-            displayRandomAd();
-        };
-    </script>
-     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const buyButtons = document.querySelectorAll('.buy-button');
-            buyButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const coinId = this.parentElement.dataset.coinId;
-                    const coinPrice = parseFloat(this.parentElement.dataset.coinPrice);
-                    buyCoin(coinId, coinPrice);
-                });
-            });
-
-            function buyCoin(coinId, coinPrice) {
-                // Send a request to the backend to update the user's coin balance
-                fetch(`/buy-coin/${coinId}/`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': getCookie('csrftoken')
-                    },
-                    body: JSON.stringify({ price: coinPrice })
-                })
-                .then(response => {
-                    if (response.ok) {
-                        // Coin purchased successfully, update UI or show a message
-                        alert('Coin purchased successfully!');
-                    } else {
-                        // Handle errors
-                        alert('Failed to purchase coin.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-            }
-
-            function getCookie(name) {
-                const value = `; ${document.cookie}`;
-                const parts = value.split(`; ${name}=`);
-                if (parts.length === 2) return parts.pop().split(';').shift();
-            }
-        });
-    </script>
+			// yummy coomkie
+			function getCookie(name) {
+				const value = `; ${document.cookie}`;
+				const parts = value.split(`; ${name}=`);
+				if (parts.length === 2) return parts.pop().split(';').shift();
+			}
+		});
+	</script>
 </body>
 
 </html>
