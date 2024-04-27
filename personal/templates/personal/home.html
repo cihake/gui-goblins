@@ -71,6 +71,7 @@
 
 		{% if request.user.is_authenticated %}
 		<h2>Welcome back, <em>{{request.user.username}}</em>!</h2>
+		{% endif %}
 
 		<!-- space for ads -->
 		<div id="randomAd">
@@ -78,6 +79,7 @@
 				<img class="ad-image" id="adImage" src="" alt="Ad">
 			</a>
 		</div>
+		<!-- game containers -->
 		<div class="row">
 			<!-- Monopoly game container -->
 			<div class="col-md-4">
@@ -109,7 +111,6 @@
 				</div>
 			</div>
 		</div>
-		<!-- footer -->
 	</div>
 	{% endblock content %}
 
