@@ -32,31 +32,33 @@
 <body>
 	<!-- page content ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 	{% block content %}
-	<h2>Register</h2>
-	<!-- Creates a form that submits data using the POST method;
-		'{% csrf_token %}' is a security measure to prevent CSRF attacks -->
-	<form method="post">{% csrf_token %}
+	<div class="container">
+		<h2>Register</h2>
+		<!-- Creates a form that submits data using the POST method;
+			'{% csrf_token %}' is a security measure to prevent CSRF attacks -->
+		<form method="post">{% csrf_token %}
 
-		<!-- Loops through registration form fields & displays them iteratively -->
-		{% for field in registration_form %}
-		<p>
-			{{field.label_tag}}	<!-- Displays the form field label -->
-			{{field}}			<!-- Displays the form field -->
-			
-			<!-- Checks field for associated help text & displays it, if any-->
-			{% if field.help_text %}
-			<small style="color: grey;">{{field.help_text}}</small>
-			{% endif %}
-			
-			<!-- Iterates thru registration form fields & displays errors, if any -->
-			{% for error in field.errors %}
-			<p style="color:red;">{{error}}</p>
+			<!-- Loops through registration form fields & displays them iteratively -->
+			{% for field in registration_form %}
+			<p>
+				{{field.label_tag}}	<!-- Displays the form field label -->
+				{{field}}			<!-- Displays the form field -->
+				
+				<!-- Checks field for associated help text & displays it, if any-->
+				{% if field.help_text %}
+				<small style="color: grey;">{{field.help_text}}</small>
+				{% endif %}
+				
+				<!-- Iterates thru registration form fields & displays errors, if any -->
+				{% for error in field.errors %}
+				<p style="color:red;">{{error}}</p>
+				{% endfor %}
+			</p>
 			{% endfor %}
-		</p>
-		{% endfor %}
-		
-		<button type="submit">Register</button>
-	</form>
+			
+			<button type="submit">Register</button>
+		</form>
+	</div>
 	{% endblock content %}
 </body>
 </html>
