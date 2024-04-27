@@ -1,28 +1,102 @@
 <!--~~~ SITENAV.HTML ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	Last edit on 04/27/24 (14:12) by @cihake
+	Last edit on 04/27/24 (17:50) by @cihake
 	
 	IMPORTANT:	Changes made to this file will modify ANY/ALL templates that
 				'extend' base.html. Exercise caution!
 	
-	The below code snippets are elements used frequently throughout the website.
-	Any template extending 'base.html' will automatically have the following
-	lines of code appended to it, as base.html 'includes' this file and all of
-	its contents.
+	The below code is a responsive, "sticky" site navigation bar which is used
+	throughout the website. Navigate to the bottom of this file for detailed
+	info on this element's layout/configuration.
 <~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 
 {% load static %}
-<!-- site navigation (user) -->
+<div class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark">
+	<div class="container">
+		<a href="{% url 'home' %}" class="navbar-brand" onclick="playClickSound()">TheGoblinEnclave</a>
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="{% url '#' %}navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarColor01">
+			<ul class="navbar-nav me-auto">
+				<li class="nav-item">
+					<a class="nav-link active" href="{% url 'home' %}">Home
+						<span class="visually-hidden">(current)</span>
+					</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="{% url 'credits' %}" onclick="playClickSound()">Credits</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="{% url 'leaderboard' %}" onclick="playClickSound()">Leaderboard</a>
+				</li>
+				{% if request.user.is_authenticated %} <!-- (user is logged into account) -->
+				<li class="nav-item">
+					<a class="nav-link" href="{% url 'store' %}" onclick="playClickSound()">Store</a>
+				</li>
+				<li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="{% url '#' %}" role="button" aria-haspopup="true" aria-expanded="false">Account</a>
+					<div class="dropdown-menu">
+						<a class="dropdown-item disabled" href="#" onclick="playClickSound()">Profile</a>
+						<a class="dropdown-item" href="{% url 'coins' %}" onclick="playClickSound()">Balance</a>
+						<a class="dropdown-item" href="{% url 'account' %}" onclick="playClickSound()">Manage Account</a>
+						<div class="dropdown-divider"></div>
+						<a class="dropdown-item" href="{% url 'logout' %}" onclick="playClickSound()">Logout</a>
+					</div>
+				</li>
+				{% else %} <!-- (user is logged out or has no registered account; guest) -->
+				<li class="nav-item">
+					<a class="nav-link" href="{% url 'register' %}" onclick="playClickSound()">Register</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="{% url 'login' %}" onclick="playClickSound()">Login</a>
+				</li>
+				{% endif %}
+			</ul>
+			<!-- fake search bar go brrr -->
+			<form class="d-flex">
+				<input class="form-control me-sm-2" type="search" placeholder="Search">
+				<button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+			</form>
+		</div>
+	</div>
+</nav>
+
+<!-- commented-out old nav:
 <p style="margin-bottom: 50px; text-align: center;">
 	<a href="{% url 'home' %}" onclick="playClickSound()">Home</a> |
 	<a href="{% url 'credits' %}" onclick="playClickSound()">Credits</a> |
 	<a href="{% url 'leaderboard' %}" onclick="playClickSound()">Leaderboard</a> |
-	{% if request.user.is_authenticated %} <!-- (user is logged into account) -->
+	{% if request.user.is_authenticated %}
 	<a href="{% url 'store' %}" onclick="playClickSound()">Store</a> |
 	<a href="{% url 'coins' %}" onclick="playClickSound()">Coins</a> |
 	<a href="{% url 'account' %}" onclick="playClickSound()">Account</a> |
 	<a href="{% url 'logout' %}" onclick="playClickSound()">Logout</a>
-	{% else %} <!-- (user is logged out or has no registered account; guest) -->
+	{% else %}
 	<a href="{% url 'register' %}" onclick="playClickSound()">Register</a> |
 	<a href="{% url 'login' %}" onclick="playClickSound()">Login</a>
 	{% endif %}
-</p>
+</p> -->
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
+	This navbar has the following layout for registered accounts:
+
+		BRAND				(url 'home')
+		HOME				(url 'home')
+		CREDITS				(url 'credits')
+		LEADERBOARD			(url 'leaderboard')
+		STORE				(url 'store')
+		ACCOUNT				(toggle dropdown)
+			VIEW BALANCE	(url 'coins')
+			MANAGE ACCOUNTS	(url 'account')
+			---
+			LOGOUT			(url 'logout')
+
+	For guest users, there are a few differences (namely, there are no 'store'
+	or 'account' options; these are replaced with links to 'register'/'login'):
+
+		BRAND				(url 'home')
+		HOME				(url 'home')
+		CREDITS				(url 'credits')
+		LEADERBOARD			(url 'leaderboard')
+		REGISTER			(url 'register')
+		LOGIN				(url 'login')
+<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
