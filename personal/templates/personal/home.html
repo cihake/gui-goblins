@@ -1,78 +1,48 @@
+<!--~~~ HOME.HTML ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
+	Last edit on 04/27/24 (16:25) by @cihake
+	
+	NOTE:	The contents of this template extend the 'base.html' master
+			template. Please review base.html, its content blocks, and its
+			included snippets before modifying this file. This will help
+			prevent duplicate/conflicting elements and rendering issues.
+
+	This template serves as the site's home/landing page. The page includes
+	space for ads, body text, and (of course) the board game containers. Users
+	who are logged into their account will see a personalized "welcome message".
+<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
 {% extends 'base.html' %}
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- page title -->
 	<title>{% block title %}Home | TheGoblinEnclave{% endblock title %}</title>
+	<!-- internal styles / stylesheets -->
 	{% block styles %}
 	<link rel="stylesheet" href="https://bootswatch.com/5/solar/bootstrap.css">
 	<style>
-		/* page container */
-		.container {
-			max-width: 800px;
-			margin: 0 auto;
-			padding: 20px;
-			text-align: center;
-		}
-
-		/* images */
-		.image {
-			margin-bottom: 20px;
-		}
-
-		.image img {
-			width: 100%;
-			border: 3px solid #6bff6b;
-			border-radius: 10px;
-			cursor: pointer;
-		}
-
-		.image-title {
-			font-weight: bold;
-		}
-
-		/* ads */
-		#randomAd {
-			margin-bottom: 20px;
-		}
-
-		.ad-image {
-			width: 50%;
-			border: 3px solid #6bff6b;
-			border-radius: 10px;
-		}
+		.container { max-width: 800px; margin: 0 auto; padding: 20px; text-align: center; }
+		.image { margin-bottom: 20px; }
+		.image img { width: 100%; border: 3px solid #6bff6b; border-radius: 10px; cursor: pointer; }
+		.image-title { font-weight: bold; }
+		#randomAd { margin-bottom: 20px; }
+		.ad-image { width: 50%; border: 3px solid #6bff6b; border-radius: 10px; }
 	</style>
 	{% endblock styles %}
 </head>
-
-<!-- load page content -->
-
 <body>
+	<!-- page content ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 	{% block content %}
-
-	<!-- click sound -->
-	<audio id="clickSound">
-		<source src="{% static 'StockClick.mp3' %}" type="audio/mp3">
-		Sound Effect by UNIVERSFIELD from Pixabay
-	</audio>
-
-	<!-- background music (why the hell is it so loud?) -->
-	<audio autoplay>
-		<source src="{% static 'StockMusic.mp3' %}" type="audio/mpeg">
-		Music by | e s c p | escp-music.bandcamp.com
-	</audio>
-
-	<!-- page content -->
 	<div class="container">
-
+		<!-- landing page welcome message -->
 		{% if request.user.is_authenticated %}
-		<h2>Welcome back, <em>{{request.user.username}}</em>!</h2>
+		<h2>Welcome back, <em class="text-primary">{{request.user.username}}!</em></h2>
+		{% else %}
+		<h2>Welcome to The Goblin Enclave!</h2>
 		{% endif %}
-
 		<!-- space for ads -->
 		<div id="randomAd">
 			<a id="adLink" href="#" target="_blank">
@@ -90,7 +60,6 @@
 					<p class="image-title">Monopoly</p>
 				</div>
 			</div>
-
 			<!-- Candy Land game container -->
 			<div class="col-md-4">
 				<div class="image">
@@ -100,7 +69,6 @@
 					<p class="image-title">Candyland</p>
 				</div>
 			</div>
-
 			<!-- Settlers of Catan game container -->
 			<div class="col-md-4">
 				<div class="image">
@@ -113,88 +81,5 @@
 		</div>
 	</div>
 	{% endblock content %}
-
-	<!-- sound FX + ads -->
-	{% block scripts %}
-	<script>
-		// play sounds
-		function playClickSound() {
-			var clickSound = document.getElementById('clickSound');
-			if (clickSound.paused) {
-				clickSound.play();
-			} else {
-				clickSound.currentTime = 0;
-			}
-		}
-
-		var ads = [
-			{ imageUrl: "{% static 'AdHammer.png' %}", destinationUrl: 'https://hammersource.com/' },
-			{ imageUrl: "{% static 'AdBurger.png' %}", destinationUrl: 'https://www.bk.com/' },
-			{ imageUrl: "{% static 'AdGame.jpg' %}", destinationUrl: 'https://gamestop.com/' },
-			{ imageUrl: "{% static 'AdCalculator.jpg' %}", destinationUrl: 'https://www.ti.com/' },
-			{ imageUrl: "{% static 'AdPencil.jpg' %}", destinationUrl: 'https://pencils.com/pages/custom-pencils' },
-			{ imageUrl: "{% static 'AdReeses.jpg' %}", destinationUrl: 'https://www.hersheyland.com/reeses' },
-			{ imageUrl: "{% static 'AdVacuum.jpg' %}", destinationUrl: 'https://www.sharkclean.com/' },
-			{ imageUrl: "{% static 'AdTV.jpg' %}", destinationUrl: 'https://www.bestbuy.com/' },
-			{ imageUrl: "{% static 'AdCardboardBox.jpg' %}", destinationUrl: 'https://www.amazon.com/' },
-			{ imageUrl: "{% static 'AdBanana.jpg' %}", destinationUrl: 'http://www.bananas.org/' },
-		];
-		/* display new ad on page reload */
-		function displayRandomAd() {
-			var randomIndex = Math.floor(Math.random() * ads.length);
-			var ad = ads[randomIndex];
-			document.getElementById('adImage').src = ad.imageUrl;
-			document.getElementById('adLink').href = ad.destinationUrl;
-		}
-		window.onload = function () {
-			displayRandomAd();
-		};
-	</script>
-	<!-- scawy backend scawy -->
-	<script>
-		document.addEventListener('DOMContentLoaded', function () {
-			const buyButtons = document.querySelectorAll('.buy-button');
-			buyButtons.forEach(button => {
-				button.addEventListener('click', function () {
-					const coinId = this.parentElement.dataset.coinId;
-					const coinPrice = parseFloat(this.parentElement.dataset.coinPrice);
-					buyCoin(coinId, coinPrice);
-				});
-			});
-
-			function buyCoin(coinId, coinPrice) {
-				// Send a request to the backend to update the user's coin balance
-				fetch(`/buy-coin/${coinId}/`, {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-						'X-CSRFToken': getCookie('csrftoken')
-					},
-					body: JSON.stringify({ price: coinPrice })
-				})
-					.then(response => {
-						if (response.ok) {
-							// Coin purchased successfully, update UI or show a message
-							alert('Coin purchased successfully!');
-						} else {
-							// Handle errors
-							alert('Failed to purchase coin.');
-						}
-					})
-					.catch(error => {
-						console.error('Error:', error);
-					});
-			}
-
-			// yummy coomkie
-			function getCookie(name) {
-				const value = `; ${document.cookie}`;
-				const parts = value.split(`; ${name}=`);
-				if (parts.length === 2) return parts.pop().split(';').shift();
-			}
-		});
-	</script>
-	{% endblock scripts %}
 </body>
-
 </html>
