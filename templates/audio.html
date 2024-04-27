@@ -1,21 +1,23 @@
-<!--~~~ FOOTER.HTML ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
+<!--~~~ AUDIO.HTML ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
 	Last edit on 04/27/24 (14:11) by @cihake
 	
 	IMPORTANT:	Changes made to this file will modify ANY/ALL templates that
 				'extend' base.html. Exercise caution!
-
+	
 	The below code snippets are elements used frequently throughout the website.
 	Any template extending 'base.html' will automatically have the following
 	lines of code appended to it, as base.html 'includes' this file and all of
 	its contents.
 <~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 
-<hr>
-<div style="margin-top: 50px; text-align: center;">
-	<p>
-		<a href="https://github.com/cihake/gui-goblins/" onclick="playClickSound()">GitHub</a> |
-		<a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" onclick="playClickSound()">Fun</a> |
-		<a href="{% url 'credits' %}" onclick="playClickSound()">About</a>
-	</p>
-	<p>TheGoblinEnclave.com | 2024</p>
-</div>
+<!-- click sound -->
+<audio id="clickSound">
+	<source src="{% static 'StockClick.mp3' %}" type="audio/mp3">
+	Sound Effect by UNIVERSFIELD from Pixabay
+</audio>
+
+<!-- background music (why the hell is it so loud?) -->
+<audio autoplay>
+	<source src="{% static 'StockMusic.mp3' %}" type="audio/mpeg">
+	Music by | e s c p | escp-music.bandcamp.com
+</audio>
