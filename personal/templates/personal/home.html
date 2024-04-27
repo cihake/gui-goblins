@@ -39,7 +39,7 @@
 	<div class="container">
 		<!-- landing page welcome message -->
 		{% if request.user.is_authenticated %}
-		<h2>Welcome back, <em class="text-primary">{{request.user.username}}!</em></h2>
+		<h2>Welcome back, <em class="text-primary">{{request.user.username}}</em>!</h2>
 		{% else %}
 		<h2>Welcome to The Goblin Enclave!</h2>
 		{% endif %}
