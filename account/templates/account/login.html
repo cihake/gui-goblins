@@ -32,38 +32,40 @@
 <body>
 	<!-- page content ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 	{% block content %}
-	<h2>Login</h2>
-	<!-- Creates a form that submits data using the POST method;
-		'{% csrf_token %}' is a security measure to prevent CSRF attacks -->
-	<form method="post">{% csrf_token %}
+	<div class="container">
+		<h2>Login</h2>
+		<!-- Creates a form that submits data using the POST method;
+			'{% csrf_token %}' is a security measure to prevent CSRF attacks -->
+		<form method="post">{% csrf_token %}
 
-		<!-- Loops through login form fields & displays them iteratively -->
-		{% for field in login_form %}
-		<p>
-			{{field.label_tag}}	<!-- Displays the form field label -->
-			{{field}}			<!-- Displays the form field -->
+			<!-- Loops through login form fields & displays them iteratively -->
+			{% for field in login_form %}
+			<p>
+				{{field.label_tag}}	<!-- Displays the form field label -->
+				{{field}}			<!-- Displays the form field -->
 
-			<!-- Checks field for associated help text & displays it, if any-->
-			{% if field.help_text %}
-			<small style="color: grey;">{{field.help_text}}</small>
+				<!-- Checks field for associated help text & displays it, if any-->
+				{% if field.help_text %}
+				<small style="color: grey;">{{field.help_text}}</small>
+				{% endif %}
+			</p>
+			{% endfor %}
+
+			<!-- Iterates thru login form fields & displays errors, if any -->
+			{% for field in login_form %}
+			{% for error in field.errors %}
+			<p style="color:red;">{{error}}</p>
+			{% endfor %}
+			{% endfor %}
+
+			<!-- Checks any non-field errors in the login form & displays them, if any -->
+			{% if login_form.non_field_errors %}
+			<div style="color:red;"><p>{{login_form.non_field_errors}}</p></div>
 			{% endif %}
-		</p>
-		{% endfor %}
-
-		<!-- Iterates thru login form fields & displays errors, if any -->
-		{% for field in login_form %}
-		{% for error in field.errors %}
-		<p style="color:red;">{{error}}</p>
-		{% endfor %}
-		{% endfor %}
-
-		<!-- Checks any non-field errors in the login form & displays them, if any -->
-		{% if login_form.non_field_errors %}
-		<div style="color:red;"><p>{{login_form.non_field_errors}}</p></div>
-		{% endif %}
-		
-		<button type="submit">Login</button> <!-- Form submit button -->
-	</form>
+			
+			<button type="submit">Login</button> <!-- Form submit button -->
+		</form>
+	</div>
 	{% endblock content %}
 </body>
 </html>
