@@ -7,7 +7,7 @@
 
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>{% block title %}GoblinEnclave.com{% endblock title %}</title>
+	<title>{% block title %}Home | TheGoblinEnclave{% endblock title %}</title>
 	{% block styles %}
 	<link rel="stylesheet" href="https://bootswatch.com/5/solar/bootstrap.css">
 	<style>
@@ -80,7 +80,7 @@
 			<a href="{% url 'account' %}" onclick="playClickSound()">Account</a> |
 			<a href="{% url 'logout' %}" onclick="playClickSound()">Logout</a>
 		</p>
-		<p>Hello, {{request.user.username}}</p>
+		<h2>Hello, {{request.user.username}}</h2>
 
 		{% else %}
 		<!-- site navigation (guest) -->
