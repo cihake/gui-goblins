@@ -13,7 +13,8 @@
 		svg {
 			width: 3.25em;
 			transform-origin: center;
-			animation: rotate4 2s linear infinite;
+			animation:	rotation 2s linear 3;
+						/* fade-out 2s linear 1 */
 		}
 		circle {
 			fill: none;
@@ -22,16 +23,20 @@
 			stroke-dasharray: 1, 200;
 			stroke-dashoffset: 0;
 			stroke-linecap: round;
-			animation: dash4 1.5s ease-in-out infinite;
+			animation: dash 1.5s ease-in-out 3;
 		}
-		@keyframes rotate4 {
+		@keyframes rotation {
 			100% { transform: rotate(360deg); }
 		}
-		@keyframes dash4 {
+		@keyframes dash {
 			0% { stroke-dasharray: 1, 200; stroke-dashoffset: 0; }
 			50% { stroke-dasharray: 90, 200; stroke-dashoffset: -35px; }
 			100% { stroke-dashoffset: -125px; }
 		}
+		/* @keyframes fade-out {
+			from { opacity: 1 }
+			to { opacity: 0 }
+		} */
 
 		/* page container */
 		.container {
@@ -59,7 +64,7 @@
 <!-- load page content -->
 <body>
 	<!-- fake loading animation lol -->
-	<svg viewBox="25 25 50 50"><circle r="20" cy="50" cx="50"></circle></svg>
+	<svg id=loading viewBox="25 25 50 50"><circle r="20" cy="50" cx="50"></circle></svg>
 	
 	<!-- click sound -->
 	<audio id="clickSound">
@@ -80,12 +85,12 @@
 		<!-- site navigation (user) -->
 		<p>
 			<a href="{% url 'home' %}" onclick="playClickSound()">Home</a> |
-			<a href="{% url 'account' %}" onclick="playClickSound()">Account</a> |
-			<a href="{% url 'logout' %}" onclick="playClickSound()">Logout</a> |
-			<a href="{% url 'credits' %}" onclick="playClickSound()">Credits</a> |
-			<a href="{% url 'coins' %}" onclick="playClickSound()">Coins</a> |
-			<a href="{% url 'leaderboard' %}" onclick="playClickSound()">Leaderboard</a> |
 			<a href="{% url 'store' %}" onclick="playClickSound()">Store</a> |
+			<a href="{% url 'credits' %}" onclick="playClickSound()">Credits</a> |
+			<a href="{% url 'leaderboard' %}" onclick="playClickSound()">Leaderboard</a> |
+			<a href="{% url 'coins' %}" onclick="playClickSound()">Coins</a> |
+			<a href="{% url 'account' %}" onclick="playClickSound()">Account</a> |
+			<a href="{% url 'logout' %}" onclick="playClickSound()">Logout</a>
 		</p>
 		<p>Hello, {{request.user.username}}</p>
 
@@ -140,13 +145,21 @@
 		<!-- footer -->
 		<hr>
 		<div class="footer">
-			<p>GoblinEnclave.com | 2024</p>github.com/cihake/gui-goblins/
+			<p>
+				<a href="github.com/cihake/gui-goblins/" onclick="playClickSound()">GitHub</a> |
+				<a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" onclick="playClickSound()">Fun</a> |
+				<a href="{% url 'credits' %}" onclick="playClickSound()">About</a>
+			</p>
+			<p>GoblinEnclave.com | 2024</p>
 		</div>
 	</div>
 
-	<!-- more scripts uh -->
+	<!-- loading thingy -->
 	<script>
 		// TODO: UH
+		function hide() {
+			document.getElementById("loading").style.visibility = "hidden";
+		}
 	</script>
 	<!-- sound FX + ads -->
 	<script>
