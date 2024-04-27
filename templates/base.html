@@ -3,9 +3,11 @@
 <html lang="en">
 
 <head>
+
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>GoblinEnclave.com</title>
+	<title>{% block title %}GoblinEnclave.com{% endblock title %}</title>
+	{% block styles %}
 	<link rel="stylesheet" href="https://bootswatch.com/5/solar/bootstrap.css">
 	<style>
 		
@@ -28,12 +30,13 @@
 
 		/* footer */
 		.footer { margin-top: 50px; }
-
 	</style>
+	{% endblock styles %}
 </head>
 
 <!-- load page content -->
 <body>
+	{% block content %}
 	
 	<!-- click sound -->
 	<audio id="clickSound">
@@ -202,6 +205,6 @@
 			}
 		});
 	</script>
+	{% endblock content %}
 </body>
-
 </html>
