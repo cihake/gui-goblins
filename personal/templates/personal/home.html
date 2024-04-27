@@ -37,6 +37,8 @@
 	<!-- page content ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 	{% block content %}
 	<div class="container">
+		<!-- main page heading -->
+		<h1 class="mt-5 mb-4">Home</h1>
 		<!-- landing page welcome message -->
 		{% if request.user.is_authenticated %}
 		<h2>Welcome back, <em class="text-primary">{{request.user.username}}</em>!</h2>
