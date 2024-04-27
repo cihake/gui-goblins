@@ -1,59 +1,67 @@
-<!-- 
-    Extends the 'base.html' template, inheriting its structure and styles.
--->
-<!-- 
-    This block defines the main content section of the page. 
-    Any content placed within this block will replace the corresponding 
-    block in the 'base.html' template.
--->
-{% block content %}
-<!-- 
-    Displays a heading for the registration section of the page.
--->
-<h2>Register</h2>
-    <!-- 
-        Creates a form that submits data using the POST method.
-        {% csrf_token %} is a security measure to prevent Cross-Site Request Forgery (CSRF) attacks.
-    -->
-<form method="post">{% csrf_token %}
-        <!-- 
-            Loops through each field in the registration form.
-            Iterates over all form fields to display them.
-        -->	
-	{% for field in registration_form %}
+<!--~~~ REGISTER.HTML ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
+	Last edit on 04/27/24 (16:25) by @cihake
+	
+	NOTE:	The contents of this template extend the 'base.html' master
+			template. Please review base.html, its content blocks, and its
+			included snippets before modifying this file. This will help
+			prevent duplicate/conflicting elements and rendering issues.
+
+	This is the template for the "Register" page. This page is accessible if
+	the current user is not logged into a account (i.e. a guest), displaying
+	the necessary fields for creating a new account. If this info doesn't
+	meet certain specifications, an error message is shown.
+<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+{% extends 'base.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- page title -->
+	<title>{% block title %}Register | TheGoblinEnclave{% endblock title %}</title>
+	<!-- internal styles / stylesheets -->
+	{% block styles %}
+	<link rel="stylesheet" href="https://bootswatch.com/5/solar/bootstrap.css">
+	<style>
+		.container {
+			max-width: 800px;
+			margin: 0 auto;
+			padding: 20px;
+			text-align: center;
+		}
+	</style>
+	{% endblock styles %}
+</head>
+<body>
+	<!-- page content ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+	{% block content %}
+	<h2>Register</h2>
+	<!-- Creates a form that submits data using the POST method;
+		'{% csrf_token %}' is a security measure to prevent CSRF attacks -->
+	<form method="post">{% csrf_token %}
+
+		<!-- Loops through registration form fields & displays them iteratively -->
+		{% for field in registration_form %}
 		<p>
-           <!-- 
-                Displays the label associated with the form field.
-            -->			
-			{{field.label_tag}}
-            <!-- 
-                Displays the form field itself.
-            -->
-			{{field}}
-                <!-- 
-                    Checks if the field has help text associated with it.
-                    If help text exists, it displays it in a small font with grey color.
-                -->
+			{{field.label_tag}}	<!-- Displays the form field label -->
+			{{field}}			<!-- Displays the form field -->
+			
+			<!-- Checks field for associated help text & displays it, if any-->
 			{% if field.help_text %}
-				<small style="color: grey;">{{field.help_text}}</small>
+			<small style="color: grey;">{{field.help_text}}</small>
 			{% endif %}
-                <!-- 
-                    Loops through each error associated with the form field.
-                    Displays any errors associated with the form field in red color.
-                -->
+			
+			<!-- Iterates thru registration form fields & displays errors, if any -->
 			{% for error in field.errors %}
-				<p style="color:red;">{{error}}</p>
+			<p style="color:red;">{{error}}</p>
 			{% endfor %}
 		</p>
-
-	{% endfor %}
-    <!-- 
-        Creates a submit button for the form.
-    -->
-	<button type="submit">Register</button>
-	
-</form>
-<!-- 
-    End of the 'content' block, which contains the form for user registration.
--->
-{% endblock content %}
+		{% endfor %}
+		
+		<button type="submit">Register</button>
+	</form>
+	{% endblock content %}
+</body>
+</html>
