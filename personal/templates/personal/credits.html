@@ -1,12 +1,129 @@
-
+{% extends 'base.html' %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Credits</title>
+
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>{% block title %}Credits | TheGoblinEnclave{% endblock title %}</title>
+	{% block styles %}
+	<link rel="stylesheet" href="https://bootswatch.com/5/solar/bootstrap.css">
+	<style>
+		/* page container */
+		.container {
+			max-width: 800px;
+			margin: 0 auto;
+			padding: 20px;
+			text-align: center;
+		}
+
+		/* images */
+		.image {
+			margin-bottom: 20px;
+		}
+
+		.image img {
+			width: 100%;
+			border: 3px solid #6bff6b;
+			border-radius: 10px;
+			cursor: pointer;
+		}
+
+		.image-title {
+			font-weight: bold;
+		}
+	</style>
+	{% endblock styles %}
 </head>
+
+<!-- load page content -->
+
 <body>
-    <h1>Credits</h1>
-    <p>This webpage can be credited to the efforts of Anthony Ramos, Eva Cihak, and Nathan Young. For the low price of 1 bitcoin, you can support these prospective web developers in their journey to fame and fortune. 
+	{% block content %}
+
+	<!-- click sound -->
+	<audio id="clickSound">
+		<source src="{% static 'StockClick.mp3' %}" type="audio/mp3">
+		Sound Effect by UNIVERSFIELD from Pixabay
+	</audio>
+
+	<!-- background music (why the hell is it so loud?) -->
+	<audio autoplay>
+		<source src="{% static 'StockMusic.mp3' %}" type="audio/mpeg">
+		Music by | e s c p | escp-music.bandcamp.com
+	</audio>
+
+	<!-- page content -->
+	<div class="container">
+
+		<!-- main content -->
+		<h1>Credits</h1>
+		<p>This webpage can be credited to the efforts of Anthony Ramos, Eva Cihak, and Nathan Young.</p>
+		<p><small>For the low price of 1 bitcoin, you can support these prospective web developers in their journey to fame and
+			fortune.</small></p>
+		{% endblock content %}
+
+		<!-- sound FX + ads -->
+		{% block scripts %}
+		<script>
+			// play sounds
+			function playClickSound() {
+				var clickSound = document.getElementById('clickSound');
+				if (clickSound.paused) {
+					clickSound.play();
+				} else {
+					clickSound.currentTime = 0;
+				}
+			}
+		</script>
+
+		<!-- scawy backend scawy -->
+		<script>
+			document.addEventListener('DOMContentLoaded', function () {
+				const buyButtons = document.querySelectorAll('.buy-button');
+				buyButtons.forEach(button => {
+					button.addEventListener('click', function () {
+						const coinId = this.parentElement.dataset.coinId;
+						const coinPrice = parseFloat(this.parentElement.dataset.coinPrice);
+						buyCoin(coinId, coinPrice);
+					});
+				});
+
+				function buyCoin(coinId, coinPrice) {
+					// Send a request to the backend to update the user's coin balance
+					fetch(`/buy-coin/${coinId}/`, {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+							'X-CSRFToken': getCookie('csrftoken')
+						},
+						body: JSON.stringify({ price: coinPrice })
+					})
+						.then(response => {
+							if (response.ok) {
+								// Coin purchased successfully, update UI or show a message
+								alert('Coin purchased successfully!');
+							} else {
+								// Handle errors
+								alert('Failed to purchase coin.');
+							}
+						})
+						.catch(error => {
+							console.error('Error:', error);
+						});
+				}
+
+				// yummy coomkie
+				function getCookie(name) {
+					const value = `; ${document.cookie}`;
+					const parts = value.split(`; ${name}=`);
+					if (parts.length === 2) return parts.pop().split(';').shift();
+				}
+			});
+		</script>
+		{% endblock scripts %}
 </body>
+
 </html>

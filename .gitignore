@@ -1,16 +1,6 @@
 # Eva's local repo gitignore
-project/pyvenv.cfg
-project/Scripts/activate
-project/Scripts/activate.bat
-project/Scripts/Activate.ps1
-project/Scripts/deactivate.bat
-project/Scripts/django-admin.exe
-project/Scripts/pip.exe
-project/Scripts/pip3.12.exe
-project/Scripts/pip3.exe
-project/Scripts/python.exe
-project/Scripts/pythonw.exe
-project/Scripts/sqlformat.exe
+*.pyc
+project/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

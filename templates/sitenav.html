@@ -1,0 +1,21 @@
+{% if request.user.is_authenticated %}
+<!-- site navigation (user) -->
+<p style="margin-bottom: 50px; text-align: center;">
+	<a href="{% url 'home' %}" onclick="playClickSound()">Home</a> |
+	<a href="{% url 'store' %}" onclick="playClickSound()">Store</a> |
+	<a href="{% url 'credits' %}" onclick="playClickSound()">Credits</a> |
+	<a href="{% url 'leaderboard' %}" onclick="playClickSound()">Leaderboard</a> |
+	<a href="{% url 'coins' %}" onclick="playClickSound()">Coins</a> |
+	<a href="{% url 'account' %}" onclick="playClickSound()">Account</a> |
+	<a href="{% url 'logout' %}" onclick="playClickSound()">Logout</a>
+</p>
+{% else %}
+<!-- site navigation (guest) -->
+<p style="margin-bottom: 50px; text-align: center;">
+	<a href="{% url 'home' %}" onclick="playClickSound()">Home</a> |
+	<a href="{% url 'register' %}" onclick="playClickSound()">Register</a> |
+	<a href="{% url 'login' %}" onclick="playClickSound()">Login</a> |
+	<a href="{% url 'credits' %}" onclick="playClickSound()">Credits</a> |
+	<a href="{% url 'leaderboard' %}" onclick="playClickSound()">Leaderboard</a>
+</p>
+{% endif %}
