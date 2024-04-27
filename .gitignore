@@ -1,5 +1,5 @@
 # Eva's local repo gitignore
-project
+# project
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
