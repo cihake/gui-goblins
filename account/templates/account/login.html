@@ -33,7 +33,8 @@
 	<!-- page content ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 	{% block content %}
 	<div class="container">
-		<h2>Login</h2>
+		<!-- main page heading -->
+		<h1 class="mt-5 mb-4">Login</h1>
 		<!-- Creates a form that submits data using the POST method;
 			'{% csrf_token %}' is a security measure to prevent CSRF attacks -->
 		<form method="post">{% csrf_token %}
