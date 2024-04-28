@@ -34,51 +34,49 @@
 	{% endblock styles %}
 </head>
 <body>
-	<!-- page content ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+	<!-- main header -->
+	{% block header %}Home{% endblock header %}
+	<!-- page content -->
 	{% block content %}
-	<div class="container">
-		<!-- main page heading -->
-		<h1 class="page-header">Home</h1>
-		<!-- landing page welcome message -->
-		{% if request.user.is_authenticated %}
-		<h2>Welcome back, <em class="text-primary">{{request.user.username}}</em>!</h2>
-		{% else %}
-		<h2>Welcome to The Goblin Enclave!</h2>
-		{% endif %}
-		<!-- space for ads -->
-		<div id="randomAd">
-			<a id="adLink" href="#" target="_blank">
-				<img class="ad-image" id="adImage" src="" alt="Ad">
-			</a>
+	<!-- landing page welcome message -->
+	{% if request.user.is_authenticated %}
+	<h2>Welcome back, <em class="text-primary">{{request.user.username}}</em>!</h2>
+	{% else %}
+	<h2>Welcome to The Goblin Enclave!</h2>
+	{% endif %}
+	<!-- space for ads -->
+	<div id="randomAd">
+		<a id="adLink" href="#" target="_blank">
+			<img class="ad-image" id="adImage" src="" alt="Ad">
+		</a>
+	</div>
+	<!-- game containers -->
+	<div class="row">
+		<!-- Monopoly game container -->
+		<div class="col-md-4">
+			<div class="image">
+				<a href="monopoly">
+					<img src="{% static 'Monopoly.jpg' %}" alt="Monopoly">
+				</a>
+				<p class="image-title">Monopoly</p>
+			</div>
 		</div>
-		<!-- game containers -->
-		<div class="row">
-			<!-- Monopoly game container -->
-			<div class="col-md-4">
-				<div class="image">
-					<a href="monopoly">
-						<img src="{% static 'Monopoly.jpg' %}" alt="Monopoly">
-					</a>
-					<p class="image-title">Monopoly</p>
-				</div>
+		<!-- Candy Land game container -->
+		<div class="col-md-4">
+			<div class="image">
+				<a href="candyland">
+					<img src="{% static 'Candyland.jpg' %}" alt="Candyland">
+				</a>
+				<p class="image-title">Candyland</p>
 			</div>
-			<!-- Candy Land game container -->
-			<div class="col-md-4">
-				<div class="image">
-					<a href="candyland">
-						<img src="{% static 'Candyland.jpg' %}" alt="Candyland">
-					</a>
-					<p class="image-title">Candyland</p>
-				</div>
-			</div>
-			<!-- Settlers of Catan game container -->
-			<div class="col-md-4">
-				<div class="image">
-					<a href="catan">
-						<img src="{% static 'SettlersOfCatan.jpg' %}" alt="Settlers of Catan">
-					</a>
-					<p class="image-title">Settlers of Catan</p>
-				</div>
+		</div>
+		<!-- Settlers of Catan game container -->
+		<div class="col-md-4">
+			<div class="image">
+				<a href="catan">
+					<img src="{% static 'SettlersOfCatan.jpg' %}" alt="Settlers of Catan">
+				</a>
+				<p class="image-title">Settlers of Catan</p>
 			</div>
 		</div>
 	</div>
