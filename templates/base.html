@@ -31,8 +31,10 @@
 	{% block styles %}{% endblock styles %}
 </head>
 <body>
-	{% include 'audio.html' %}		<!-- INCLUDE site audio (onclick/music) -->
-	{% include 'sitenav.html' %}	<!-- INCLUDE top navbar -->
+	<!-- INCLUDE site audio (onclick/music) -->
+	{% include 'audio.html' %}
+	<!-- INCLUDE top navbar -->
+	{% include 'sitenav.html' %}
 	<div class="container">
 		<div class="bs-docs-section page-header" id="banner">
 			<div class="row">
@@ -44,7 +46,9 @@
 						<div class="row">
 							<div class="col-md-1"></div>
 							<div class="col-md-10">
-								{% block content %}{% endblock content %}
+								<div style="padding-top: 20px">
+									{% block content %}{% endblock content %}
+								</div>
 							</div>
 							<div class="col-md-1"></div>
 						</div>
