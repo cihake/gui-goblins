@@ -19,7 +19,7 @@ class Board(models.Model):
         board.existing_roads = ""
 
         corners = []
-        for y in range(15):
+        for y in range(16):
             for x in range(8):
                 corner = Corner(yindex=y, xindex=x, building=0, player=0, roads="")
                 corners.append(corner)

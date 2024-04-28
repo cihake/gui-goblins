@@ -122,6 +122,7 @@
                 var corner_positions = [];
                 var tile_positions = [];
                 setup_board(corner_positions, tile_positions);
+                draw_board(corner_positions, tile_positions);
                 var building_count = 0;
 
                 // Set up player display
@@ -286,17 +287,6 @@
                         }
                     });
                 });
-
-                function draw_circle_grid(x=0, y=0) {
-                    x ++;
-                    if (x > 5) {
-                        x = 0;
-                        y ++;
-                    }
-                    if (y > 5) {return;}
-                    draw_circle(x, y);
-                    setTimeout(function() {draw_circle_grid(x, y)}, 400);
-                }
             });
         </script>
         <!--*************************************************************************-->
@@ -312,7 +302,7 @@
                 // Corners
                 for (var x = 0; x < 8; x++) { // Columns
                     corner_positions[x] = [];
-                    for (var y = 0; y < 15; y++) { // Rows
+                    for (var y = 0; y < 16; y++) { // Rows
                         var ypos = 0;
                         if (y % 2 == 0) { ypos = firstpos[1] + vlength * (Math.floor(y / 2) * 3); }
                         else { ypos = firstpos[1] + vlength * (1 + Math.floor(y / 2) * 3); }
@@ -335,9 +325,30 @@
                         tile_positions[x][y] = [xpos, ypos];
                         var circle_data = x + "," + y;
                         create_data_circle("tiles", circle_data, xpos, ypos, 70, "transparent");
-                        //create_circle("tile_marker", xpos, ypos, 3, "black")
+                        create_circle("tile_marker", xpos, ypos, 3, "black");
                     }
                 }
+            }
+
+            // SVG function to draw a custom game board
+            function draw_board(corner_positions, tile_positions) {
+                var x1=0, x2=0, x3=0, x4=0, x5=0, x6=0, y1=0, y2=0, y3=0, y4=0, y5=0, y6=0;
+                var tiles = [];
+                for (var x = 0; x < 7; x++) {
+                    for (var y = 0; y < 7; y++) {
+                        y1=y*2; y2=y*2+1; y3=y*2+2; y4=y*2+3; y5=y*2+2; y6=y*2+1;
+                        if (y % 2 == 0) {x1=x+1; x2=x+1; x3=x+1; x4=x+1; x5=x; x6=x;}
+                        else if (y % 2 == 1) {x1=x; x2=x+1; x3=x+1; x4=x; x5=x; x6=x;}
+                        var draw_positions = [corner_positions[x1][y1], corner_positions[x2][y2], corner_positions[x3][y3],
+                        corner_positions[x4][y4], corner_positions[x5][y5], corner_positions[x6][y6]];
+                        tiles.push(draw_tile(draw_positions));
+                    }
+                }
+                draw_tiles(tiles, 0);
+            }
+            function draw_tiles(tiles, i) {
+                document.getElementById("tiles").appendChild(tiles[i]);
+                setTimeout(function() {draw_tiles(tiles, i+1)}, 400);
             }
 
             // Function to update player inventory displays
@@ -350,11 +361,22 @@
                     $('#player' + player.ordinal + '_lumber').text("lumber " + player.lumber);
                     $('#player' + player.ordinal + '_brick').text("brick " + player.brick);
                     $('#player' + player.ordinal + '_ore').text("ore " + player.ore);
-                    /*player_inventory = [player.wool, player.grain, player.lumber, player.brick, player.ore]
+                    player_inventory = [player.wool, player.grain, player.lumber, player.brick, player.ore]
                     for (var i = 0; i < player_inventory.length; i++) {
                         if (player_inventory[i] >= 10) {declare_winner(player.ordinal)}
-                    }*/
+                    }
                 });
+            }
+
+            function draw_circle_grid(x=0, y=0) {
+                x ++;
+                if (x > 5) {
+                    x = 0;
+                    y ++;
+                }
+                if (y > 5) {return;}
+                draw_circle(x, y);
+                setTimeout(function() {draw_circle_grid(x, y)}, 400);
             }
 
             // Function to draw a building at a given position
@@ -391,6 +413,22 @@
                 $('#build_indicator').attr('cx', xpos);
                 $('#build_indicator').attr('cy', ypos);
                 clicked_circle.appendTo('#corners');
+            }
+
+            // Function to draw a tile
+            function draw_tile(draw_positions) {
+                var svgNS = "http://www.w3.org/2000/svg";
+                var polygon = document.createElementNS(svgNS, "polygon");
+                var points = ""
+                for (var i = 0; i < draw_positions.length; i++) {
+                    points += draw_positions[i][0].toString() + "," +
+                    draw_positions[i][1].toString() + " ";
+                }
+                var style = "fill:black;fill-opacity:10%;stroke:black;stroke-width:1";
+                polygon.setAttributeNS(null, "points", points);
+                polygon.setAttributeNS(null, "style", style);
+                return polygon;
+                //document.getElementById("tiles").appendChild(polygon);
             }
 
             // Function to create a circle dynamically using SVG
