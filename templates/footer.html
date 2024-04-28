@@ -1,5 +1,5 @@
 <!--~~~ FOOTER.HTML ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	Last edit on 04/27/24 (14:11) by @cihake
+	Last edit on 04/27/24 (20:23) by @cihake
 	
 	IMPORTANT:	Changes made to this file will modify ANY/ALL templates that
 				'extend' base.html. Exercise caution!
@@ -12,11 +12,13 @@
 
 {% load static %}
 <hr>
-<div style="margin-top: 50px; text-align: center;">
-	<p>
-		<a href="https://github.com/cihake/gui-goblins/" onclick="playClickSound()">GitHub</a> |
-		<a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" onclick="playClickSound()">Fun</a> |
-		<a href="{% url 'credits' %}" onclick="playClickSound()">About</a>
-	</p>
-	<p>TheGoblinEnclave.com | 2024</p>
+<div class="row">
+	<div style="margin-top: 50px; text-align: center;">
+		<p>
+			<a href="https://github.com/cihake/gui-goblins/" onclick="playClickSound()">GitHub</a> |
+			<a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" onclick="playClickSound()">Fun</a> |
+			<a href="{% url 'credits' %}" onclick="playClickSound()">About</a>
+		</p>
+		<p>TheGoblinEnclave.com | 2024</p>
+	</div>
 </div>
