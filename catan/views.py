@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 import uuid # unique key for games
-import random
+import random, json
 from .models.game import Game
 from .models.player import Player
 from .models.board import Board
@@ -125,9 +125,40 @@ def catan_view(request):
         print(response['announcement'])
         return JsonResponse(response)
     
-    # Initial HTTP request, page render
+    #*************************************************************************************
+    # Initial HTTP request, page render; pass drawing variables
     else:
-        return render(request, 'catan.html')
+        draw_data = {}
+        
+        # Pass terrains as colors
+        tile_colors = []
+        for y in range(7):
+            color_row = []
+            for x in range(7):
+                terrain = board.tiles.get(yindex=y, xindex=x).terrain
+                color = ""
+                if terrain == "empty": color = "none"
+                elif terrain == "water": color = "darkturquoise"
+                elif terrain == "desert": color = "gold"
+                elif terrain == "pasture": color = "chartreuse"
+                elif terrain == "fields": color = "goldenrod"
+                elif terrain == "forest": color = "forestgreen"
+                elif terrain == "hills": color = "sienna"
+                elif terrain == "mountains": color = "lightslategrey"
+                color_row.append(color)
+            tile_colors.append(color_row)
+        draw_data['tile_colors'] = tile_colors
+
+        # Pass dice values
+        tile_dice = []
+        for y in range(7):
+            dice_row = []
+            for x in range(7):
+                dice_row.append(board.tiles.get(yindex=y, xindex=x).dice)
+            tile_dice.append(dice_row)
+        draw_data['tile_dice'] = tile_dice
+        
+        return render(request, 'catan.html', {'draw_data': json.dumps(draw_data)})
 
 #*************************************************************************************
 def send_inventories(player, response):
