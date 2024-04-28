@@ -1,5 +1,5 @@
 <!--~~~ STORE.HTML ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	Last edit on 04/27/24 (16:25) by @cihake
+	Last edit on 04/27/24 (20:24) by @cihake
 	
 	NOTE:	The contents of this template extend the 'base.html' master
 			template. Please review base.html, its content blocks, and its
@@ -25,7 +25,7 @@
 	<link rel="stylesheet" href="https://bootswatch.com/5/solar/bootstrap.css">
 	<style>
 		/* body { font-family: Arial, sans-serif; background-color: #ffffff; color: #000000; margin: 0; padding: 0; } */
-		.container { max-width: 800px; margin: 0 auto; padding: 20px; text-align: center; }
+		/* .container { max-width: 800px; margin: 0 auto; padding: 20px; text-align: center; } */
 		.coin-item { border: 1px solid #000000; border-radius: 5px; padding: 20px; margin-bottom: 20px; }
 		.coin-name { font-size: 20px; font-weight: bold; margin-bottom: 10px; }
 		.coin-price { font-size: 18px; margin-bottom: 10px; }
@@ -39,11 +39,13 @@
 	{% endblock styles %}
 </head>
 <body>
-	<!-- page content ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+	<!-- main header -->
+	{% block header %}Store{% endblock header %}
+	<!-- page content -->
 	{% block content %}
-	<div class="container">
+	<div class="row">
 		<!-- main page heading -->
-		<h1 class="mt-5 mb-4">Store</h1>
+		<h1 class="page-header">Store</h1>
 		<div class="coin-item">
 			<img src="{% static 'GoldCoin.png' %}" alt="Gold Coin" class="coin-image">
 			<div class="coin-name">Gold Coin</div>
