@@ -1,5 +1,5 @@
 <!--~~~ BASE.HTML ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	Last edit on 04/27/24 (20:23) by @cihake
+	Last edit on 04/28/24 (01:03) by @cihake
 	
 	IMPORTANT:	Changes made to this file will modify ANY/ALL templates that
 				'extend' it. Exercise caution!
@@ -19,28 +19,31 @@
 	these to your template unless you'd like to include their contents in a
 	template which doesn't extand base.html.
 <~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<!-- LOAD: static content -->
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<!-- BLOCK for page title ("Home"/"Store"/etc.) -->
+	
+	<!-- BLOCK: page title ("Home"/"Store"/etc.) -->
 	<title>{% block title %}{% endblock title %}</title>
-	<!-- BLOCK for internal styles / stylesheets -->
+	
+	<!-- BLOCK: internal styles / stylesheets -->
 	{% block styles %}{% endblock styles %}
 </head>
 <body>
-	<!-- INCLUDE site audio (onclick/music) -->
+	<!-- INCLUDE: site audio (onclick/music) -->
 	{% include 'audio.html' %}
 
-	<!-- INCLUDE top navbar -->
+	<!-- INCLUDE: top navbar -->
 	{% include 'sitenav.html' %}
-
 	<div style="padding-top: 60px">
 		<div class="bs-docs-section page-header" id="banner">
 			<div class="row">
-				<div class="col-md-2">
+				<div class="col-md-2"><!-- ad space -->
 					<div id="randomAd">
 						<a id="adLink" href="#" target="_blank">
 							<img class="ad-image" id="adImage" src="" alt="Ad">
@@ -48,12 +51,14 @@
 					</div>
 				</div>
 				<aside class="col-lg-8">
-					<!-- BLOCK for page header -->
+
+					<!-- BLOCK: page header -->
 					<h1>{% block header %}{% endblock header %}</h1>
 					<div class="bs-docs-section">
 						<div class="row" style="padding-top: 10px">
 							<div class="col-md-10">
-								<!-- BLOCK for content (ads/images/etc.) -->
+
+								<!-- BLOCK: content (ads/images/etc.) -->
 								{% block content %}{% endblock content %}
 							</div>
 						</div>
@@ -64,7 +69,14 @@
 			</div>
 		</div>
 	</div>
-	{% include 'footer.html' %}		<!-- INCLUDE footer -->
-	{% include 'scripts.html' %}	<!-- INCLUDE scripts -->
+
+	<!-- INCLUDE: footer -->
+	{% include 'footer.html' %}
+
+	<!-- INCLUDE: scripts -->
+	{% include 'scripts.html' %}
+
+	<!-- BLOCK: additional/page-specific scripts -->
+	{% block scripts %}{% endblock scripts %}
 </body>
 </html>

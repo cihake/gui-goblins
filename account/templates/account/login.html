@@ -1,5 +1,5 @@
 <!--~~~ LOGIN.HTML ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	Last edit on 04/27/24 (20:24) by @cihake
+	Last edit on 04/28/24 (01:13) by @cihake
 	
 	NOTE:	The contents of this template extend the 'base.html' master
 			template. Please review base.html, its content blocks, and its
@@ -11,65 +11,61 @@
 	necessary login fields for inputting a user's credentials. If this info
 	doesn't match any database entries, an error message is shown.
 <~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
-
+<!-- EXTENDS: base.html (master template)-->
 {% extends 'base.html' %}
+
+<!-- LOAD: oad static content -->
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<!-- page title -->
-	<title>{% block title %}Login | TheGoblinEnclave{% endblock title %}</title>
-	<!-- internal styles / stylesheets -->
-	{% block styles %}
-	<link rel="stylesheet" href="https://bootswatch.com/5/solar/bootstrap.css">
-	<style>
-		.container { max-width: 800px; margin: 0 auto; padding: 20px; text-align: center; }
-	</style>
-	{% endblock styles %}
-</head>
-<body>
-	<!-- main header -->
-	{% block header %}Login{% endblock header %}
-	<!-- page content -->
-	{% block content %}
-	<div class="row">
-		<!-- main page heading -->
-		<h1 class="page-header">Login</h1>
-		<!-- Creates a form that submits data using the POST method;
-			'{% csrf_token %}' is a security measure to prevent CSRF attacks -->
-		<form method="post">{% csrf_token %}
 
-			<!-- Loops through login form fields & displays them iteratively -->
-			{% for field in login_form %}
-			<p>
-				{{field.label_tag}}	<!-- Displays the form field label -->
-				{{field}}			<!-- Displays the form field -->
+<!-- BLOCK: page title -->
+{% block title %}Login | TheGoblinEnclave{% endblock title %}
 
-				<!-- Checks field for associated help text & displays it, if any-->
-				{% if field.help_text %}
-				<small style="color: grey;">{{field.help_text}}</small>
-				{% endif %}
-			</p>
-			{% endfor %}
+<!-- BLOCK: internal styles / stylesheets -->
+{% block styles %}
+<link rel="stylesheet" href="https://bootswatch.com/5/solar/bootstrap.css">
+<style>
+	#randomAd { margin-bottom: 20px; }
+	.ad-image { width: 100%; border: 1px solid #6bff6b; border-radius: 2px; }
+</style>
+{% endblock styles %}
 
-			<!-- Iterates thru login form fields & displays errors, if any -->
-			{% for field in login_form %}
-			{% for error in field.errors %}
-			<p style="color:red;">{{error}}</p>
-			{% endfor %}
-			{% endfor %}
+<!-- BLOCK: main header -->
+{% block header %}Login{% endblock header %}
 
-			<!-- Checks any non-field errors in the login form & displays them, if any -->
-			{% if login_form.non_field_errors %}
-			<div style="color:red;"><p>{{login_form.non_field_errors}}</p></div>
+<!-- BLOCK: page content -->
+{% block content %}
+<div class="row">
+	<!-- Creates a form that submits data using the POST method;
+	'{% csrf_token %}' is a security measure to prevent CSRF attacks -->
+	<form method="post">{% csrf_token %}
+		<!-- Loops through login form fields & displays them iteratively -->
+		{% for field in login_form %}
+		<p>
+			<!-- Displays the form field label -->
+			{{field.label_tag}}
+			<!-- Displays the form field -->
+			{{field}}
+			<!-- Checks field for associated help text & displays it, if any-->
+			{% if field.help_text %}
+			<small style="color: grey;">{{field.help_text}}</small>
 			{% endif %}
-			
-			<!-- Form submit button -->
-			<button type="submit" class="btn btn-success">Login</button>
-		</form>
-	</div>
-	{% endblock content %}
-</body>
-</html>
+		</p>
+		{% endfor %}
+		<!-- Iterates thru login form fields & displays errors, if any -->
+		{% for field in login_form %}
+		{% for error in field.errors %}
+		<p style="color:red;">{{error}}</p>
+		{% endfor %}
+		{% endfor %}
+		<!-- Checks any non-field errors in the login form & displays them, if any -->
+		{% if login_form.non_field_errors %}
+		<div style="color:red;"><p>{{login_form.non_field_errors}}</p></div>
+		{% endif %}
+		<!-- Form submit button -->
+		<button type="submit" class="btn btn-success">Login</button>
+	</form>
+</div>
+{% endblock content %}
+
+<!-- BLOCK: additional/page-specific scripts -->
+{% block scripts %}{% endblock scripts %}

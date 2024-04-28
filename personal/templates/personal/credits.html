@@ -1,5 +1,5 @@
 <!--~~~ CREDITS.HTML ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	Last edit on 04/27/24 (20:23) by @cihake
+	Last edit on 04/28/24 (01:00) by @cihake
 	
 	NOTE:	The contents of this template extend the 'base.html' master
 			template. Please review base.html, its content blocks, and its
@@ -11,39 +11,32 @@
 	This is the template for the "Credits" page. It briefly lists website
 	contributors/developers.
 <~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
-
+<!-- EXTENDS: base.html (master template)-->
 {% extends 'base.html' %}
+
+<!-- LOAD: static content -->
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<!-- page title -->
-	<title>{% block title %}Credits | TheGoblinEnclave{% endblock title %}</title>
-	<!-- internal styles / stylesheets -->
-	{% block styles %}
-	<link rel="stylesheet" href="https://bootswatch.com/5/solar/bootstrap.css">
-	<style>
-		/* .container { max-width: 800px; margin: 50px auto; padding: 0 20px; text-align: center; } */
-	</style>
-	{% endblock styles %}
-</head>
-<body>
-	<!-- main header -->
-	{% block header %}Credits{% endblock header %}
-	<!-- page content -->
-	{% block content %}
-	<div class="container">
-		<!-- main page heading -->
-		<h1 class="page-header">Credits</h1>
-		<p>
-			This webpage can be credited to the efforts of Nathan Young, Eva Cihak, and Anthony Ramos.
-		</p>
-		<p><small>
-			For the low price of <i>1 bitcoin</i>, you can support these prospective web developers in their journey to fame and fortune.
-		</small></p>
-		{% endblock content %}
-	</div>
-</body>
-</html>
+
+<!-- BLOCK: page title -->
+{% block title %}Credits | TheGoblinEnclave{% endblock title %}
+
+<!-- BLOCK: internal styles / stylesheets -->
+{% block styles %}
+<link rel="stylesheet" href="https://bootswatch.com/5/solar/bootstrap.css">
+<style>
+	#randomAd { margin-bottom: 20px; }
+	.ad-image { width: 100%; border: 1px solid #6bff6b; border-radius: 2px; }
+</style>
+{% endblock styles %}
+
+<!-- BLOCK: main header -->
+{% block header %}Credits{% endblock header %}
+
+<!-- BLOCK: page content -->
+{% block content %}
+<p>This webpage can be credited to the efforts of Nathan Young, Eva Cihak, and Anthony Ramos.</p>
+<p><small>For the low price of <i>1 bitcoin</i>, you can support these prospective web developers in their journey to fame and fortune.</small></p>
+{% endblock content %}
+
+<!-- BLOCK: additional/page-specific scripts -->
+{% block scripts %}{% endblock scripts %}

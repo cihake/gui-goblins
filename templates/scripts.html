@@ -1,18 +1,22 @@
 <!--~~~ SCRIPTS.HTML ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	Last edit on 04/27/24 (14:12) by @cihake
+	Last edit on 04/28/24 (01:07) by @cihake
 	
 	IMPORTANT:	Changes made to this file will modify ANY/ALL templates that
 				'extend' base.html. Exercise caution!
 
+	TODO:		figure out how much of this can be moved to store.html
+
 	The below code snippets are scripts used frequently throughout the website.
-	Any template extending 'base.html' will automatically have the following
-	lines of code appended to it, as base.html 'includes' this file and all of
-	its contents.
+	Any templates extending 'base.html' will automatically have the following
+	lines of code appended to them, as base.html 'includes' this file and all
+	of its contents.
 <~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<!-- LOAD: static content -->
 {% load static %}
+
 <!-- style stuffs -->
 <script src="https://bootswatch.com/_vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://bootswatch.com/_vendor/prismjs/prism.js"  data-manual></script>
+<script src="https://bootswatch.com/_vendor/prismjs/prism.js" data-manual></script>
 <script src="https://bootswatch.com/_assets/js/custom.js"></script>
 
 <script> /* sound FX + ad stuff */
@@ -46,7 +50,8 @@
 	}
 	window.onload = function () { displayRandomAd(); };
 </script>
-<script> /* scawy backend scawy */
+
+<script>
 	document.addEventListener('DOMContentLoaded', function () {
 		const buyButtons = document.querySelectorAll('.buy-button');
 		buyButtons.forEach(button => {
@@ -67,18 +72,18 @@
 				},
 				body: JSON.stringify({ price: coinPrice })
 			})
-				.then(response => {
-					if (response.ok) {
-						// Coin purchased successfully, update UI or show a message
-						alert('Coin purchased successfully!');
-					} else {
-						// Handle errors
-						alert('Failed to purchase coin.');
-					}
-				})
-				.catch(error => {
-					console.error('Error:', error);
-				});
+			.then(response => {
+				if (response.ok) {
+					// Coin purchased successfully, update UI or show a message
+					alert('Coin purchased successfully!');
+				} else {
+					// Handle errors
+					alert('Failed to purchase coin.');
+				}
+			})
+			.catch(error => {
+				console.error('Error:', error);
+			});
 		}
 
 		// yummy coomkie

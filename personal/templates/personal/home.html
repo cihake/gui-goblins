@@ -1,5 +1,5 @@
 <!--~~~ HOME.HTML ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	Last edit on 04/27/24 (20:24) by @cihake
+	Last edit on 04/28/24 (01:00) by @cihake
 	
 	NOTE:	The contents of this template extend the 'base.html' master
 			template. Please review base.html, its content blocks, and its
@@ -10,14 +10,19 @@
 	space for ads, body text, and (of course) the board game containers. Users
 	who are logged into their account will see a personalized "welcome message".
 <~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<!-- EXTENDS: base.html (master template)-->
 {% extends 'base.html' %}
+
+<!-- LOAD: static content -->
 {% load static %}
-{% block title %}Home | TheGoblinEnclave{% endblock title %}</title>
-<!-- internal styles / stylesheets -->
+
+<!-- BLOCK: page title -->
+{% block title %}Home | TheGoblinEnclave{% endblock title %}
+
+<!-- BLOCK: internal styles / stylesheets -->
 {% block styles %}
 <link rel="stylesheet" href="https://bootswatch.com/5/solar/bootstrap.css">
 <style>
-	/* .container { max-width: 800px; margin: 0 auto; padding: 20px; text-align: center; } */
 	.image { margin-bottom: 20px; }
 	.image img { width: 100%; border: 3px solid #6bff6b; border-radius: 10px; cursor: pointer; }
 	.image-title { font-weight: bold; }
@@ -25,23 +30,21 @@
 	.ad-image { width: 100%; border: 1px solid #6bff6b; border-radius: 2px; }
 </style>
 {% endblock styles %}
-<!-- main header -->
+
+<!-- BLOCK: main header -->
 {% block header %}Home{% endblock header %}
-<!-- page content -->
+
+<!-- BLOCK: page content -->
 {% block content %}
 <!-- landing page welcome message -->
+<!-- user is logged into account -->
 {% if request.user.is_authenticated %}
 <h2>Welcome back, <em class="text-primary">{{request.user.username}}</em>!</h2>
+<!-- user is logged out or has no registered account; guest -->
 {% else %}
 <h2>Welcome to The Goblin Enclave!</h2>
 {% endif %}
-<!-- space for ads -->
-<!-- <div id="randomAd">
-	<a id="adLink" href="#" target="_blank">
-		<img class="ad-image" id="adImage" src="" alt="Ad">
-	</a>
-</div> -->
-<!-- game containers -->
+<!-- board games -->
 <div class="row">
 	<!-- Monopoly game container -->
 	<div class="col-md-4">
@@ -72,3 +75,6 @@
 	</div>
 </div>
 {% endblock content %}
+
+<!-- BLOCK: additional/page-specific scripts -->
+{% block scripts %}{% endblock scripts %}

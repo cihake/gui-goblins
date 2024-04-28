@@ -1,5 +1,5 @@
 <!--~~~ LEADERBOARD.HTML ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	Last edit on 04/27/24 (20:25) by @cihake
+	Last edit on 04/28/24 (01:07) by @cihake
 	
 	NOTE:	The contents of this template extend the 'base.html' master
 			template. Please review base.html, its content blocks, and its
@@ -10,52 +10,52 @@
 	guest users and authorized accounts. It lists all created accounts, sorted
 	by their total number of wins.
 <~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
-
+<!-- EXTENDS: base.html (master template)-->
 {% extends 'base.html' %}
+
+<!-- LOAD: static content -->
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<!-- page title -->
-	<title>{% block title %}Leaderboard | TheGoblinEnclave{% endblock title %}</title>
-	<!-- internal styles / stylesheets -->
-	{% block styles %}
-	<link rel="stylesheet" href="https://bootswatch.com/5/solar/bootstrap.css">
-	<style>
-		.container { max-width: 800px; margin: 0 auto; padding: 20px; text-align: center; }
-	</style>
-	{% endblock styles %}
-	<!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"> -->
-</head>
-<body>
-	<!-- main header -->
-	{% block header %}Leaderboard{% endblock header %}
-	<!-- page content -->
-	{% block content %}
-	<div class="row">
-		<table class="table table-striped table-bordered">
-			<thead class="table-dark">
-				<tr>
-					<th scope="col">Rank</th>
-					<th scope="col">Username</th>
-					<th scope="col">Wins</th>
-				</tr>
-			</thead>
-			<tbody>
-				{% for entry in leaderboard %}
-				<tr>
-					<td>{{ forloop.counter }}</td>		<!-- Displays rank -->
-					<td>{{ entry.user.username }}</td>	<!-- Displays username -->
-					<td>{{ entry.score }}</td>			<!-- Displays wins -->
-				</tr>
-				{% endfor %}
-			</tbody>
-		</table>
-	</div>
-	<!-- Add Bootstrap JS scripts here if needed -->
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-	{% endblock content %}
-</body>
-</html>
+
+<!-- BLOCK: page title -->
+{% block title %}Leaderboard | TheGoblinEnclave{% endblock title %}
+
+<!-- BLOCK: internal styles / stylesheets -->
+{% block styles %}
+<link rel="stylesheet" href="https://bootswatch.com/5/solar/bootstrap.css">
+<style>
+	#randomAd { margin-bottom: 20px; }
+	.ad-image { width: 100%; border: 1px solid #6bff6b; border-radius: 2px; }
+</style>
+{% endblock styles %}
+
+<!-- BLOCK: main header -->
+{% block header %}Leaderboard{% endblock header %}
+
+<!-- BLOCK: page content -->
+{% block content %}
+<div class="row">
+	<table class="table table-striped table-bordered">
+		<thead class="table-dark">
+			<tr>
+				<th scope="col">Rank</th>
+				<th scope="col">Username</th>
+				<th scope="col">Wins</th>
+			</tr>
+		</thead>
+		<tbody>
+		{% for entry in leaderboard %}
+		<tr>
+			<td>{{ forloop.counter }}</td>		<!-- Displays rank -->
+			<td>{{ entry.user.username }}</td>	<!-- Displays username -->
+			<td>{{ entry.score }}</td>			<!-- Displays wins -->
+		</tr>
+		{% endfor %}
+		</tbody>
+	</table>
+</div>
+{% endblock content %}
+
+<!-- BLOCK: additional/page-specific scripts -->
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock scripts %}

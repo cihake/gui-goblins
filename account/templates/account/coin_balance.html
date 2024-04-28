@@ -1,5 +1,5 @@
 <!--~~~ COIN_BALANCE.HTML ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	Last edit on 04/27/24 (20:24) by @cihake
+	Last edit on 04/28/24 (01:10) by @cihake
 	
 	NOTE:	The contents of this template extend the 'base.html' master
 			template. Please review base.html, its content blocks, and its
@@ -9,46 +9,40 @@
 	This is the template for the "Coins" page. This page becomes accessible
 	once a user is logged into their account. It displays a user's coin balance.
 <~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
-
+<!-- EXTENDS: base.html (master template)-->
 {% extends 'base.html' %}
+
+<!-- LOAD: static content -->
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<!-- page title -->
-	<title>{% block title %}Coins | TheGoblinEnclave{% endblock title %}</title>
-	<!-- internal styles / stylesheets -->
-	{% block styles %}
-	<link rel="stylesheet" href="https://bootswatch.com/5/solar/bootstrap.css">
-	<style>
-		/* .container { max-width: 800px; margin: 0 auto; padding: 20px; text-align: center; } */
-	</style>
-	{% endblock styles %}
-	<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> -->
-</head>
-<body>
-	<!-- main header -->
-	{% block header %}Balance{% endblock header %}
-	<!-- page content -->
-	{% block content %}
-	<div class="row">
-		<!-- main page heading -->
-		<h1 class="page-header text-center">Your Coin Balance</h1>
-		<!-- card -->
-		<div class="card text-center text-white bg-secondary mb-3" style="max-width: 20rem;">
-			<div class="card-header">Hello, {{ coin.user.username }}!</div>
-			<div class="card-body">
-				<h4 class="card-title">Your current coin balance is: {{ coin.amount }}</h4>
-				<p class="card-text">Want more coins? Play more games!</p>
-			</div>
+
+<!-- BLOCK: page title -->
+{% block title %}Coins | TheGoblinEnclave{% endblock title %}
+
+<!-- BLOCK: internal styles / stylesheets -->
+{% block styles %}
+<link rel="stylesheet" href="https://bootswatch.com/5/solar/bootstrap.css">
+<style>
+	#randomAd { margin-bottom: 20px; }
+	.ad-image { width: 100%; border: 1px solid #6bff6b; border-radius: 2px; }
+</style>
+{% endblock styles %}
+
+<!-- BLOCK: main header -->
+{% block header %}Your Coin Balance{% endblock header %}
+
+<!-- BLOCK: page content -->
+{% block content %}
+<div class="row">
+	<!-- card -->
+	<div class="card text-center text-white bg-secondary mb-3" style="max-width: 20rem;">
+		<div class="card-header">Hello, {{ coin.user.username }}!</div>
+		<div class="card-body">
+			<h4 class="card-title">Your current coin balance is: {{ coin.amount }}</h4>
+			<p class="card-text">Want more coins? Play more games!</p>
 		</div>
 	</div>
-	<!-- Bootstrap JS -->
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-	{% endblock content %}
-</body>
-</html>
+</div>
+{% endblock content %}
+
+<!-- BLOCK: additional/page-specific scripts -->
+{% block scripts %}{% endblock scripts %}

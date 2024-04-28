@@ -1,5 +1,5 @@
 <!--~~~ STORE.HTML ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	Last edit on 04/27/24 (20:24) by @cihake
+	Last edit on 04/28/24 (01:11) by @cihake
 	
 	NOTE:	The contents of this template extend the 'base.html' master
 			template. Please review base.html, its content blocks, and its
@@ -10,90 +10,89 @@
 	once a user is logged into their account. It displays various items
 	available for purchase.
 <~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
-
+<!-- EXTENDS: base.html (master template)-->
 {% extends 'base.html' %}
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<!-- page title -->
-	<title>{% block title %}Store | TheGoblinEnclave{% endblock title %}</title>
-	<!-- internal styles / stylesheets -->
-	{% block styles %}
-	<link rel="stylesheet" href="https://bootswatch.com/5/solar/bootstrap.css">
-	<style>
-		/* body { font-family: Arial, sans-serif; background-color: #ffffff; color: #000000; margin: 0; padding: 0; } */
-		/* .container { max-width: 800px; margin: 0 auto; padding: 20px; text-align: center; } */
-		.coin-item { border: 1px solid #000000; border-radius: 5px; padding: 20px; margin-bottom: 20px; }
-		.coin-name { font-size: 20px; font-weight: bold; margin-bottom: 10px; }
-		.coin-price { font-size: 18px; margin-bottom: 10px; }
-		.coin-image { margin-right: 20px; width: 100px; height: auto; } /* Adjust width as needed; height maintains aspect ratio */
-		.buy-button {
-			background-color: #000000; color: #ffffff; border: none; border-radius: 5px;
-			padding: 10px 20px; font-size: 16px; cursor: pointer; transition: background-color 0.3s;
-		}
-		.buy-button:hover { background-color: #333333; }
-	</style>
-	{% endblock styles %}
-</head>
-<body>
-	<!-- main header -->
-	{% block header %}Store{% endblock header %}
-	<!-- page content -->
-	{% block content %}
-	<div class="row">
-		<!-- main page heading -->
-		<h1 class="page-header">Store</h1>
-		<div class="coin-item">
-			<img src="{% static 'GoldCoin.png' %}" alt="Gold Coin" class="coin-image">
-			<div class="coin-name">Gold Coin</div>
-			<div class="coin-price">${{ gold_price }}</div> <!-- Render gold coin price -->
-			<button class="buy-button" id="buy-gold">Buy</button>
-		</div>
-		<div class="coin-item">
-			<img src="{% static 'SilverCoin.png' %}" alt="Silver Coin" class="coin-image">
-			<div class="coin-name">Silver Coin</div>
-			<div class="coin-price">${{ silver_price }}</div> <!-- Render silver coin price -->
-			<button class="buy-button" id="buy-silver">Buy</button>
-		</div>
-		<div class="coin-item">
-			<img src="{% static 'BronzeCoin.png' %}" alt="Bronze Coin" class="coin-image">
-			<div class="coin-name">Bronze Coin</div>
-			<div class="coin-price">${{ bronze_price }}</div> <!-- Render bronze coin price -->
-			<button class="buy-button" id="buy-bronze">Buy</button>
-		</div>
-	</div>
-	<script> // Function to handle button click events:
-		document.querySelectorAll('.buy-button').forEach(button => {
-			button.addEventListener('click', function () {
-				// Get the ID of the button clicked
-				// Extract the coin ID from the button ID
-				const coinId = this.id.split('-')[1];
 
-				// Send an AJAX request to the backend view to process the purchase
-				fetch('/store/', {
-					method: 'POST',
-					headers: {
-						'X-CSRFToken': '{{ csrf_token }}',		// Include CSRF token for CSRF protection
-						'Content-Type': 'application/json'		// Set content type to JSON
-					},
-					body: JSON.stringify({ coin_id: coinId })	// Send the coin ID in the request body
-				})
-				.then(response => response.json())
-				.then(data => {
-					// Handle the response from the server
-					if (data.success) { alert('Purchase successful!'); }
-					else { alert('Purchase failed: ' + data.error); }
-				})
-				.catch(error => {
-					console.error('Error:', error);
-					alert('An error occurred while processing the purchase.');
-				});
+<!-- LOAD: static content -->
+{% load static %}
+
+<!-- BLOCK: page title -->
+{% block title %}Store | TheGoblinEnclave{% endblock title %}
+
+<!-- BLOCK: internal styles / stylesheets -->
+{% block styles %}
+<link rel="stylesheet" href="https://bootswatch.com/5/solar/bootstrap.css">
+<style>
+	/* body { font-family: Arial, sans-serif; background-color: #ffffff; color: #000000; margin: 0; padding: 0; } */
+	/* .container { max-width: 800px; margin: 0 auto; padding: 20px; text-align: center; } */
+	.coin-item { border: 1px solid #000000; border-radius: 5px; padding: 20px; margin-bottom: 20px; }
+	.coin-name { font-size: 20px; font-weight: bold; margin-bottom: 10px; }
+	.coin-price { font-size: 18px; margin-bottom: 10px; }
+	.coin-image { margin-right: 20px; width: 100px; height: auto; } /* Adjust width as needed; height maintains aspect ratio */
+	.buy-button { background-color: #000000; color: #ffffff; border: none; border-radius: 5px; padding: 10px 20px; font-size: 16px; cursor: pointer; transition: background-color 0.3s; }
+	.buy-button:hover { background-color: #333333; }
+</style>
+{% endblock styles %}
+
+<!-- BLOCK: main header -->
+{% block header %}Store{% endblock header %}
+
+<!-- BLOCK: page content -->
+{% block content %}
+<div class="row">
+	<div class="coin-item">
+		<img src="{% static 'GoldCoin.png' %}" alt="Gold Coin" class="coin-image">
+		<div class="coin-name">Gold Coin</div>
+		<div class="coin-price">${{ gold_price }}</div> <!-- Render gold coin price -->
+		<button class="buy-button" id="buy-gold">Buy</button>
+	</div>
+	<div class="coin-item">
+		<img src="{% static 'SilverCoin.png' %}" alt="Silver Coin" class="coin-image">
+		<div class="coin-name">Silver Coin</div>
+		<div class="coin-price">${{ silver_price }}</div> <!-- Render silver coin price -->
+		<button class="buy-button" id="buy-silver">Buy</button>
+	</div>
+	<div class="coin-item">
+		<img src="{% static 'BronzeCoin.png' %}" alt="Bronze Coin" class="coin-image">
+		<div class="coin-name">Bronze Coin</div>
+		<div class="coin-price">${{ bronze_price }}</div> <!-- Render bronze coin price -->
+		<button class="buy-button" id="buy-bronze">Buy</button>
+	</div>
+</div>
+{% endblock content %}
+
+<!-- BLOCK: additional/page-specific scripts -->
+{% block scripts %}
+<!-- Bootstrap JS -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script> // Function to handle button click events:
+	document.querySelectorAll('.buy-button').forEach(button => {
+		button.addEventListener('click', function () {
+			// Get the ID of the button clicked
+			// Extract the coin ID from the button ID
+			const coinId = this.id.split('-')[1];
+			// Send an AJAX request to the backend view to process the purchase
+			fetch('/store/', {
+				method: 'POST',
+				headers: {
+					'X-CSRFToken': '{{ csrf_token }}',		// Include CSRF token for CSRF protection
+					'Content-Type': 'application/json'		// Set content type to JSON
+				},
+				body: JSON.stringify({ coin_id: coinId })	// Send the coin ID in the request body
+			})
+			.then(response => response.json())
+			.then(data => {
+				// Handle the response from the server
+				if (data.success) { alert('Purchase successful!'); }
+				else { alert('Purchase failed: ' + data.error); }
+			})
+			.catch(error => {
+				console.error('Error:', error);
+				alert('An error occurred while processing the purchase.');
 			});
 		});
-	</script>
-	{% endblock content %}
-</body>
-</html>
+	});
+</script>
+{% endblock scripts %}

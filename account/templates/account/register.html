@@ -1,5 +1,5 @@
 <!--~~~ REGISTER.HTML ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	Last edit on 04/27/24 (20:24) by @cihake
+	Last edit on 04/28/24 (00:10) by @cihake
 	
 	NOTE:	The contents of this template extend the 'base.html' master
 			template. Please review base.html, its content blocks, and its
@@ -11,58 +11,55 @@
 	the necessary fields for creating a new account. If this info doesn't
 	meet certain specifications, an error message is shown.
 <~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
-
+<!-- EXTENDS: base.html (master template)-->
 {% extends 'base.html' %}
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<!-- page title -->
-	<title>{% block title %}Register | TheGoblinEnclave{% endblock title %}</title>
-	<!-- internal styles / stylesheets -->
-	{% block styles %}
-	<link rel="stylesheet" href="https://bootswatch.com/5/solar/bootstrap.css">
-	<style>
-		.container { max-width: 800px; margin: 0 auto; padding: 20px; text-align: center; }
-	</style>
-	{% endblock styles %}
-</head>
-<body>
-	<!-- main header -->
-	{% block header %}Register an account{% endblock header %}
-	<!-- page content -->
-	{% block content %}
-	<div class="row">
-		<!-- main page heading -->
-		<h1 class="page-header">Register</h1>
-		<!-- Creates a form that submits data using the POST method;
-			'{% csrf_token %}' is a security measure to prevent CSRF attacks -->
-		<form method="post">{% csrf_token %}
 
-			<!-- Loops through registration form fields & displays them iteratively -->
-			{% for field in registration_form %}
-			<p>
-				{{field.label_tag}}	<!-- Displays the form field label -->
-				{{field}}			<!-- Displays the form field -->
-				
-				<!-- Checks field for associated help text & displays it, if any-->
-				{% if field.help_text %}
-				<small style="color: grey;">{{field.help_text}}</small>
-				{% endif %}
-				
-				<!-- Iterates thru registration form fields & displays errors, if any -->
-				{% for error in field.errors %}
-				<p style="color:red;">{{error}}</p>
-				{% endfor %}
-			</p>
+<!-- LOAD: static content -->
+{% load static %}
+
+<!-- BLOCK: page title -->
+{% block title %}Register | TheGoblinEnclave{% endblock title %}
+
+<!-- BLOCK: internal styles / stylesheets -->
+{% block styles %}
+<link rel="stylesheet" href="https://bootswatch.com/5/solar/bootstrap.css">
+<style>
+	#randomAd { margin-bottom: 20px; }
+	.ad-image { width: 100%; border: 1px solid #6bff6b; border-radius: 2px; }
+</style>
+{% endblock styles %}
+
+<!-- BLOCK: main header -->
+{% block header %}Register an account{% endblock header %}
+
+<!-- BLOCK: page content -->
+{% block content %}
+<div class="row">
+	<!-- Creates a form that submits data using the POST method;
+	'{% csrf_token %}' is a security measure to prevent CSRF attacks -->
+	<form method="post">{% csrf_token %}
+		<!-- Loops through registration form fields & displays them iteratively -->
+		{% for field in registration_form %}
+		<p>
+			<!-- Displays the form field label -->
+			{{field.label_tag}}
+			<!-- Displays the form field -->
+			{{field}}
+			<!-- Checks field for associated help text & displays it, if any-->
+			{% if field.help_text %}
+			<small style="color: grey;">{{field.help_text}}</small>
+			{% endif %}
+			<!-- Iterates thru registration form fields & displays errors, if any -->
+			{% for error in field.errors %}
+			<p style="color:red;">{{error}}</p>
 			{% endfor %}
-			
-			<!-- Form submit button -->
-			<button type="submit" class="btn btn-success">Register</button>
-		</form>
-	</div>
-	{% endblock content %}
-</body>
-</html>
+		</p>
+		{% endfor %}
+		<!-- Form submit button -->
+		<button type="submit" class="btn btn-success">Register</button>
+	</form>
+</div>
+{% endblock content %}
+
+<!-- BLOCK: additional/page-specific scripts -->
+{% block scripts %}{% endblock scripts %}
