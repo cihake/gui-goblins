@@ -1,5 +1,5 @@
 <!--~~~ COIN_BALANCE.HTML ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	Last edit on 04/27/24 (16:25) by @cihake
+	Last edit on 04/27/24 (20:24) by @cihake
 	
 	NOTE:	The contents of this template extend the 'base.html' master
 			template. Please review base.html, its content blocks, and its
@@ -23,17 +23,19 @@
 	{% block styles %}
 	<link rel="stylesheet" href="https://bootswatch.com/5/solar/bootstrap.css">
 	<style>
-		.container { max-width: 800px; margin: 0 auto; padding: 20px; text-align: center; }
+		/* .container { max-width: 800px; margin: 0 auto; padding: 20px; text-align: center; } */
 	</style>
 	{% endblock styles %}
 	<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> -->
 </head>
 <body>
-	<!-- page content ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+	<!-- main header -->
+	{% block header %}Balance{% endblock header %}
+	<!-- page content -->
 	{% block content %}
-	<div class="container">
+	<div class="row">
 		<!-- main page heading -->
-		<h1 class="mt-5 mb-4 text-center">Your Coin Balance</h1>
+		<h1 class="page-header text-center">Your Coin Balance</h1>
 		<!-- card -->
 		<div class="card text-center text-white bg-secondary mb-3" style="max-width: 20rem;">
 			<div class="card-header">Hello, {{ coin.user.username }}!</div>
