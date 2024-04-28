@@ -1,26 +1,20 @@
 <!--~~~ REGISTER.HTML ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	Last edit on 04/28/24 (00:10) by @cihake
-	
-	NOTE:	The contents of this template extend the 'base.html' master
-			template. Please review base.html, its content blocks, and its
-			included snippets before modifying this file. This will help
-			prevent duplicate/conflicting elements and rendering issues.
+Last edit on 04/28/24 (00:10) by @cihake
 
-	This is the template for the "Register" page. This page is accessible if
-	the current user is not logged into a account (i.e. a guest), displaying
-	the necessary fields for creating a new account. If this info doesn't
-	meet certain specifications, an error message is shown.
+NOTE:	The contents of this template extend the 'base.html' master
+		template. Please review base.html, its content blocks, and its
+		included snippets before modifying this file. This will help
+		prevent duplicate/conflicting elements and rendering issues.
+
+This is the template for the "Register" page. This page is accessible if
+the current user is not logged into a account (i.e. a guest), displaying
+the necessary fields for creating a new account. If this info doesn't
+meet certain specifications, an error message is shown.
 <~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 <!-- EXTENDS: base.html (master template)-->
 {% extends 'base.html' %}
-
-<!-- LOAD: static content -->
 {% load static %}
-
-<!-- BLOCK: page title -->
 {% block title %}Register | TheGoblinEnclave{% endblock title %}
-
-<!-- BLOCK: internal styles / stylesheets -->
 {% block styles %}
 <link rel="stylesheet" href="https://bootswatch.com/5/solar/bootstrap.css">
 <style>
@@ -28,11 +22,7 @@
 	.ad-image { width: 100%; border: 1px solid #6bff6b; border-radius: 2px; }
 </style>
 {% endblock styles %}
-
-<!-- BLOCK: main header -->
 {% block header %}Register an account{% endblock header %}
-
-<!-- BLOCK: page content -->
 {% block content %}
 <div class="row">
 	<!-- Creates a form that submits data using the POST method;
@@ -60,6 +50,4 @@
 	</form>
 </div>
 {% endblock content %}
-
-<!-- BLOCK: additional/page-specific scripts -->
 {% block scripts %}{% endblock scripts %}

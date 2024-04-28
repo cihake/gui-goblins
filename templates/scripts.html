@@ -1,24 +1,21 @@
 <!--~~~ SCRIPTS.HTML ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	Last edit on 04/28/24 (01:07) by @cihake
-	
-	IMPORTANT:	Changes made to this file will modify ANY/ALL templates that
-				'extend' base.html. Exercise caution!
+Last edit on 04/28/24 (01:07) by @cihake
 
-	TODO:		figure out how much of this can be moved to store.html
+IMPORTANT:	Changes made to this file will modify ANY/ALL templates that
+			'extend' base.html. Exercise caution!
 
-	The below code snippets are scripts used frequently throughout the website.
-	Any templates extending 'base.html' will automatically have the following
-	lines of code appended to them, as base.html 'includes' this file and all
-	of its contents.
+TODO:		figure out how much of this can be moved to store.html
+
+The below code snippets are scripts used frequently throughout the website.
+Any templates extending 'base.html' will automatically have the following
+lines of code appended to them, as base.html 'includes' this file and all
+of its contents.
 <~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
-<!-- LOAD: static content -->
 {% load static %}
-
 <!-- style stuffs -->
 <script src="https://bootswatch.com/_vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://bootswatch.com/_vendor/prismjs/prism.js" data-manual></script>
 <script src="https://bootswatch.com/_assets/js/custom.js"></script>
-
 <script> /* sound FX + ad stuff */
 	function playClickSound() {
 		var clickSound = document.getElementById('clickSound');
@@ -50,7 +47,6 @@
 	}
 	window.onload = function () { displayRandomAd(); };
 </script>
-
 <script>
 	document.addEventListener('DOMContentLoaded', function () {
 		const buyButtons = document.querySelectorAll('.buy-button');
@@ -61,7 +57,6 @@
 				buyCoin(coinId, coinPrice);
 			});
 		});
-
 		function buyCoin(coinId, coinPrice) {
 			// Send a request to the backend to update the user's coin balance
 			fetch(`/buy-coin/${coinId}/`, {
@@ -85,7 +80,6 @@
 				console.error('Error:', error);
 			});
 		}
-
 		// yummy coomkie
 		function getCookie(name) {
 			const value = `; ${document.cookie}`;

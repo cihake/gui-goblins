@@ -1,25 +1,19 @@
 <!--~~~ STORE.HTML ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	Last edit on 04/28/24 (01:11) by @cihake
-	
-	NOTE:	The contents of this template extend the 'base.html' master
-			template. Please review base.html, its content blocks, and its
-			included snippets before modifying this file. This will help
-			prevent duplicate/conflicting elements and rendering issues.
+Last edit on 04/28/24 (01:11) by @cihake
 
-	This is the template for the "Store" page. This page becomes accessible
-	once a user is logged into their account. It displays various items
-	available for purchase.
+NOTE:	The contents of this template extend the 'base.html' master
+		template. Please review base.html, its content blocks, and its
+		included snippets before modifying this file. This will help
+		prevent duplicate/conflicting elements and rendering issues.
+
+This is the template for the "Store" page. This page becomes accessible
+once a user is logged into their account. It displays various items
+available for purchase.
 <~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 <!-- EXTENDS: base.html (master template)-->
 {% extends 'base.html' %}
-
-<!-- LOAD: static content -->
 {% load static %}
-
-<!-- BLOCK: page title -->
 {% block title %}Store | TheGoblinEnclave{% endblock title %}
-
-<!-- BLOCK: internal styles / stylesheets -->
 {% block styles %}
 <link rel="stylesheet" href="https://bootswatch.com/5/solar/bootstrap.css">
 <style>
@@ -33,11 +27,7 @@
 	.buy-button:hover { background-color: #333333; }
 </style>
 {% endblock styles %}
-
-<!-- BLOCK: main header -->
 {% block header %}Store{% endblock header %}
-
-<!-- BLOCK: page content -->
 {% block content %}
 <div class="row">
 	<div class="coin-item">
@@ -60,8 +50,6 @@
 	</div>
 </div>
 {% endblock content %}
-
-<!-- BLOCK: additional/page-specific scripts -->
 {% block scripts %}
 <!-- Bootstrap JS -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

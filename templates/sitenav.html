@@ -1,16 +1,27 @@
 <!--~~~ SITENAV.HTML ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	Last edit on 04/28/24 (01:09) by @cihake
-	
-	IMPORTANT:	Changes made to this file will modify ANY/ALL templates that
-				'extend' base.html. Exercise caution!
-	
-	The below code is a responsive, "sticky" site navigation bar which is used
-	throughout the website. Navigate to the bottom of this file for detailed
-	info on this element's layout/configuration.
-<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
-<!-- LOAD: static content-->
-{% load static %}
+Last edit on 04/28/24 (01:09) by @cihake
 
+IMPORTANT:	Changes made to this file will modify ANY/ALL templates that
+			'extend' base.html. Exercise caution!
+
+The below code creates a responsive, "sticky" site navigation bar.
+It has the following layout:
+
+	__registered_accounts________________		__guests________________________
+	BRAND				(url:home)			|	BRAND
+	HOME				(url:home)			|	HOME
+	CREDITS				(url:credits)		|	CREDITS
+	LEADERBOARD			(url:leaderboard)	|	LEADERBOARD
+	STORE				(url:store)			|	REGISTER	(url:register)
+	ACCOUNT				[dropdown]			|	LOGIN		(url:login)
+	├╌╴PROFILE			[disabled]			|	SEARCH
+	├╌╴VIEW BALANCE		(url:coins)			|
+	├╌╴MANAGE ACCOUNT	(url:account)		|
+	│  [divider]							|
+	└╌╴LOGOUT			(url:logout)		|
+	SEARCH									|
+<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+{% load static %}
 <nav class="navbar navbar-expand-lg fixed-top bg-dark" data-bs-theme="dark">
 	<div class="container">
 		<a href="{% url 'home' %}" class="navbar-brand" onclick="playClickSound()">TheGoblinEnclave</a>
@@ -63,30 +74,3 @@
 		</div>
 	</div>
 </nav>
-<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	This navbar has the following layout for registered accounts:
-
-		BRAND				(url 'home')
-		HOME				(url 'home')
-		CREDITS				(url 'credits')
-		LEADERBOARD			(url 'leaderboard')
-		STORE				(url 'store')
-		ACCOUNT				(toggle dropdown)
-			PROFILE			(space for account profile)
-			VIEW BALANCE	(url 'coins')
-			MANAGE ACCOUNTS	(url 'account')
-			---
-			LOGOUT			(url 'logout')
-		SEARCH BAR
-
-	For guest users, there are a few differences (namely, there are no 'store'
-	or 'account' options; these are replaced with links to 'register'/'login'):
-
-		BRAND				(url 'home')
-		HOME				(url 'home')
-		CREDITS				(url 'credits')
-		LEADERBOARD			(url 'leaderboard')
-		REGISTER			(url 'register')
-		LOGIN				(url 'login')
-		SEARCH BAR
-<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->

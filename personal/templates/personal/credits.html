@@ -1,26 +1,21 @@
 <!--~~~ CREDITS.HTML ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	Last edit on 04/28/24 (01:00) by @cihake
-	
-	NOTE:	The contents of this template extend the 'base.html' master
-			template. Please review base.html, its content blocks, and its
-			included snippets before modifying this file. This will help
-			prevent duplicate/conflicting elements and rendering issues.
+Last edit on 04/28/24 (01:00) by @cihake
 
-	TODO:	Summarize all references/sources used, if time permits.
+NOTE:	The contents of this template extend the 'base.html' master
+		template. Please review base.html, its content blocks, and its
+		included snippets before modifying this file. This will help
+		prevent duplicate/conflicting elements and rendering issues.
 
-	This is the template for the "Credits" page. It briefly lists website
-	contributors/developers.
+TODO:	Summarize all references/sources used, if time permits.
+
+This is the template for the "Credits" page. It briefly lists website
+contributors/developers.
 <~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 <!-- EXTENDS: base.html (master template)-->
 {% extends 'base.html' %}
-
-<!-- LOAD: static content -->
 {% load static %}
-
-<!-- BLOCK: page title -->
 {% block title %}Credits | TheGoblinEnclave{% endblock title %}
 
-<!-- BLOCK: internal styles / stylesheets -->
 {% block styles %}
 <link rel="stylesheet" href="https://bootswatch.com/5/solar/bootstrap.css">
 <style>
@@ -29,14 +24,11 @@
 </style>
 {% endblock styles %}
 
-<!-- BLOCK: main header -->
 {% block header %}Credits{% endblock header %}
 
-<!-- BLOCK: page content -->
 {% block content %}
 <p>This webpage can be credited to the efforts of Nathan Young, Eva Cihak, and Anthony Ramos.</p>
 <p><small>For the low price of <i>1 bitcoin</i>, you can support these prospective web developers in their journey to fame and fortune.</small></p>
 {% endblock content %}
 
-<!-- BLOCK: additional/page-specific scripts -->
 {% block scripts %}{% endblock scripts %}

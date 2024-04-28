@@ -1,25 +1,19 @@
 <!--~~~ HOME.HTML ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	Last edit on 04/28/24 (01:00) by @cihake
-	
-	NOTE:	The contents of this template extend the 'base.html' master
-			template. Please review base.html, its content blocks, and its
-			included snippets before modifying this file. This will help
-			prevent duplicate/conflicting elements and rendering issues.
+Last edit on 04/28/24 (01:00) by @cihake
 
-	This template serves as the site's home/landing page. The page includes
-	space for ads, body text, and (of course) the board game containers. Users
-	who are logged into their account will see a personalized "welcome message".
+NOTE:	The contents of this template extend the 'base.html' master
+		template. Please review base.html, its content blocks, and its
+		included snippets before modifying this file. This will help
+		prevent duplicate/conflicting elements and rendering issues.
+
+This template serves as the site's home/landing page. The page includes
+space for ads, body text, and (of course) the board game containers. Users
+who are logged into their account will see a personalized "welcome message".
 <~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 <!-- EXTENDS: base.html (master template)-->
 {% extends 'base.html' %}
-
-<!-- LOAD: static content -->
 {% load static %}
-
-<!-- BLOCK: page title -->
 {% block title %}Home | TheGoblinEnclave{% endblock title %}
-
-<!-- BLOCK: internal styles / stylesheets -->
 {% block styles %}
 <link rel="stylesheet" href="https://bootswatch.com/5/solar/bootstrap.css">
 <style>
@@ -30,11 +24,7 @@
 	.ad-image { width: 100%; border: 1px solid #6bff6b; border-radius: 2px; }
 </style>
 {% endblock styles %}
-
-<!-- BLOCK: main header -->
 {% block header %}Home{% endblock header %}
-
-<!-- BLOCK: page content -->
 {% block content %}
 <!-- landing page welcome message -->
 <!-- user is logged into account -->
@@ -75,6 +65,4 @@
 	</div>
 </div>
 {% endblock content %}
-
-<!-- BLOCK: additional/page-specific scripts -->
 {% block scripts %}{% endblock scripts %}
