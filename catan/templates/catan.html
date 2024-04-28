@@ -127,7 +127,6 @@
                 var tile_positions = [];
                 setup_board(corner_positions, tile_positions);
                 draw_board(corner_positions, tile_positions, draw_data);
-                var building_count = 0;
 
                 // Set up player display
                 add_menu_item("player1_inventory", "player1_wool", "wool 0");
@@ -349,7 +348,8 @@
                         var marker_position = tile_positions[x][y];
                         var tile_dice = draw_data.tile_dice[y][x];
                         //if (tile_color != "none") {tiles.push(draw_tile(draw_positions, tile_color));}
-                        if (tile_color != "none") {draw_tile(draw_positions, tile_color);}
+                        if (tile_color != "none") {draw_tile(draw_positions, "gray", "100%");}
+                        if (tile_color != "none") {draw_tile(draw_positions, tile_color, "70%");}
                         if (tile_dice != 0) {draw_dice_marker(marker_position, tile_dice);}
                     }
                 }
@@ -420,7 +420,7 @@
             }
 
             // Function to draw a tile
-            function draw_tile(draw_positions, tile_color) {
+            function draw_tile(draw_positions, tile_color, opacity) {
                 var svgNS = "http://www.w3.org/2000/svg";
                 var polygon = document.createElementNS(svgNS, "polygon");
                 var points = ""
@@ -428,7 +428,7 @@
                     points += draw_positions[i][0].toString() + "," +
                     draw_positions[i][1].toString() + " ";
                 }
-                var style = "fill:" + tile_color + ";stroke:black;stroke-width:1";
+                var style = "fill:" + tile_color + ";fill-opacity:" + opacity + ";stroke:black;stroke-width:1";
                 polygon.setAttributeNS(null, "points", points);
                 polygon.setAttributeNS(null, "style", style);
                 //return polygon;
