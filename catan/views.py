@@ -139,7 +139,7 @@ def catan_view(request):
                 color = ""
                 if terrain == "empty": color = "none"
                 elif terrain == "water": color = "darkturquoise"
-                elif terrain == "desert": color = "gold"
+                elif terrain == "desert": color = "yellow"
                 elif terrain == "pasture": color = "chartreuse"
                 elif terrain == "fields": color = "goldenrod"
                 elif terrain == "forest": color = "forestgreen"
