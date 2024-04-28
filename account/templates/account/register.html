@@ -1,5 +1,5 @@
 <!--~~~ REGISTER.HTML ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	Last edit on 04/27/24 (16:25) by @cihake
+	Last edit on 04/27/24 (20:24) by @cihake
 	
 	NOTE:	The contents of this template extend the 'base.html' master
 			template. Please review base.html, its content blocks, and its
@@ -30,11 +30,13 @@
 	{% endblock styles %}
 </head>
 <body>
-	<!-- page content ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+	<!-- main header -->
+	{% block header %}Register an account{% endblock header %}
+	<!-- page content -->
 	{% block content %}
-	<div class="container">
+	<div class="row">
 		<!-- main page heading -->
-		<h1 class="mt-5 mb-4">Register</h1>
+		<h1 class="page-header">Register</h1>
 		<!-- Creates a form that submits data using the POST method;
 			'{% csrf_token %}' is a security measure to prevent CSRF attacks -->
 		<form method="post">{% csrf_token %}
