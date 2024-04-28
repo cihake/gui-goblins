@@ -40,19 +40,23 @@
 	<div class="container" style="padding-top: 60px">
 		<div class="bs-docs-section page-header" id="banner">
 			<div class="row">
-				<div class="col-lg-12">
+				<div class="col-md-1">
+					
+				</div>
+				<div class="col-lg-10">
 					<!-- BLOCK for page header -->
 					<h1>{% block header %}{% endblock header %}</h1>
 					<div class="bs-docs-section">
 						<div class="row" style="padding-top: 10px">
-							<div class="col-md-1"></div>
 							<div class="col-md-10">
 								<!-- BLOCK for content (ads/images/etc.) -->
 								{% block content %}{% endblock content %}
 							</div>
-							<div class="col-md-1"></div>
 						</div>
 					</div>
+				</div>
+				<div class="col-md-1">
+
 				</div>
 			</div>
 		</div>
