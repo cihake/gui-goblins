@@ -43,12 +43,10 @@
 					<h1>{% block header %}{% endblock header %}</h1>
 					<!-- BLOCK for main content (article/images/etc.) -->
 					<div class="bs-docs-section">
-						<div class="row">
+						<div class="row" style="padding-top: 60px">
 							<div class="col-md-1"></div>
 							<div class="col-md-10">
-								<div style="padding-top: 20px">
-									{% block content %}{% endblock content %}
-								</div>
+								{% block content %}{% endblock content %}
 							</div>
 							<div class="col-md-1"></div>
 						</div>
