@@ -13,73 +13,63 @@
 
 {% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<!-- page title -->
-	<title>{% block title %}Home | TheGoblinEnclave{% endblock title %}</title>
-	<!-- internal styles / stylesheets -->
-	{% block styles %}
-	<link rel="stylesheet" href="https://bootswatch.com/5/solar/bootstrap.css">
-	<style>
-		/* .container { max-width: 800px; margin: 0 auto; padding: 20px; text-align: center; } */
-		.image { margin-bottom: 20px; }
-		.image img { width: 100%; border: 3px solid #6bff6b; border-radius: 10px; cursor: pointer; }
-		.image-title { font-weight: bold; }
-		#randomAd { margin-bottom: 20px; }
-		.ad-image { width: 50%; border: 3px solid #6bff6b; border-radius: 10px; }
-	</style>
-	{% endblock styles %}
-</head>
-<body>
-	<!-- main header -->
-	{% block header %}Home{% endblock header %}
-	<!-- page content -->
-	{% block content %}
-	<!-- landing page welcome message -->
-	{% if request.user.is_authenticated %}
-	<h2>Welcome back, <em class="text-primary">{{request.user.username}}</em>!</h2>
-	{% else %}
-	<h2>Welcome to The Goblin Enclave!</h2>
-	{% endif %}
-	<!-- space for ads -->
-	<div id="randomAd">
-		<a id="adLink" href="#" target="_blank">
-			<img class="ad-image" id="adImage" src="" alt="Ad">
-		</a>
-	</div>
-	<!-- game containers -->
-	<div class="row">
-		<!-- Monopoly game container -->
-		<div class="col-md-4">
-			<div class="image">
-				<a href="monopoly">
-					<img src="{% static 'Monopoly.jpg' %}" alt="Monopoly">
-				</a>
-				<p class="image-title">Monopoly</p>
-			</div>
-		</div>
-		<!-- Candy Land game container -->
-		<div class="col-md-4">
-			<div class="image">
-				<a href="candyland">
-					<img src="{% static 'Candyland.jpg' %}" alt="Candyland">
-				</a>
-				<p class="image-title">Candyland</p>
-			</div>
-		</div>
-		<!-- Settlers of Catan game container -->
-		<div class="col-md-4">
-			<div class="image">
-				<a href="catan">
-					<img src="{% static 'SettlersOfCatan.jpg' %}" alt="Settlers of Catan">
-				</a>
-				<p class="image-title">Settlers of Catan</p>
-			</div>
+{% block title %}Home | TheGoblinEnclave{% endblock title %}</title>
+<!-- internal styles / stylesheets -->
+{% block styles %}
+<link rel="stylesheet" href="https://bootswatch.com/5/solar/bootstrap.css">
+<style>
+	/* .container { max-width: 800px; margin: 0 auto; padding: 20px; text-align: center; } */
+	.image { margin-bottom: 20px; }
+	.image img { width: 100%; border: 3px solid #6bff6b; border-radius: 10px; cursor: pointer; }
+	.image-title { font-weight: bold; }
+	#randomAd { margin-bottom: 20px; }
+	.ad-image { width: 50%; border: 3px solid #6bff6b; border-radius: 10px; }
+</style>
+{% endblock styles %}
+<!-- main header -->
+{% block header %}Home{% endblock header %}
+<!-- page content -->
+{% block content %}
+<!-- landing page welcome message -->
+{% if request.user.is_authenticated %}
+<h2>Welcome back, <em class="text-primary">{{request.user.username}}</em>!</h2>
+{% else %}
+<h2>Welcome to The Goblin Enclave!</h2>
+{% endif %}
+<!-- space for ads -->
+<div id="randomAd">
+	<a id="adLink" href="#" target="_blank">
+		<img class="ad-image" id="adImage" src="" alt="Ad">
+	</a>
+</div>
+<!-- game containers -->
+<div class="row">
+	<!-- Monopoly game container -->
+	<div class="col-md-4">
+		<div class="image">
+			<a href="monopoly">
+				<img src="{% static 'Monopoly.jpg' %}" alt="Monopoly">
+			</a>
+			<p class="image-title">Monopoly</p>
 		</div>
 	</div>
-	{% endblock content %}
-</body>
-</html>
+	<!-- Candy Land game container -->
+	<div class="col-md-4">
+		<div class="image">
+			<a href="candyland">
+				<img src="{% static 'Candyland.jpg' %}" alt="Candyland">
+			</a>
+			<p class="image-title">Candyland</p>
+		</div>
+	</div>
+	<!-- Settlers of Catan game container -->
+	<div class="col-md-4">
+		<div class="image">
+			<a href="catan">
+				<img src="{% static 'SettlersOfCatan.jpg' %}" alt="Settlers of Catan">
+			</a>
+			<p class="image-title">Settlers of Catan</p>
+		</div>
+	</div>
+</div>
+{% endblock content %}
