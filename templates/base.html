@@ -33,19 +33,21 @@
 <body>
 	<!-- INCLUDE site audio (onclick/music) -->
 	{% include 'audio.html' %}
+
 	<!-- INCLUDE top navbar -->
 	{% include 'sitenav.html' %}
-	<div class="container">
+
+	<div class="container" style="padding-top: 60px">
 		<div class="bs-docs-section page-header" id="banner">
 			<div class="row">
 				<div class="col-lg-12">
 					<!-- BLOCK for page header -->
 					<h1>{% block header %}{% endblock header %}</h1>
-					<!-- BLOCK for main content (article/images/etc.) -->
 					<div class="bs-docs-section">
-						<div class="row" style="padding-top: 60px">
+						<div class="row" style="padding-top: 10px">
 							<div class="col-md-1"></div>
 							<div class="col-md-10">
+								<!-- BLOCK for content (ads/images/etc.) -->
 								{% block content %}{% endblock content %}
 							</div>
 							<div class="col-md-1"></div>
