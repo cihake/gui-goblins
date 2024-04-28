@@ -27,7 +27,7 @@ class Board(models.Model):
         board.corners.add(*corners)
         
         tile_terrain = [
-            ["empty", "empty", "water", "water", "water", "empty", "empty"],
+            ["empty", "water", "water", "water", "water", "empty", "empty"],
             ["empty", "water", "forest", "fields", "mountains", "water", "empty"],
             ["water", "hills", "pasture", "hills", "mountains", "water", "empty"],
             ["water", "mountains", "pasture", "desert", "fields", "pasture", "water"],
