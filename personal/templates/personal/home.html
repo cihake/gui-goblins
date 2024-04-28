@@ -1,5 +1,5 @@
 <!--~~~ HOME.HTML ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	Last edit on 04/27/24 (16:25) by @cihake
+	Last edit on 04/27/24 (20:24) by @cihake
 	
 	NOTE:	The contents of this template extend the 'base.html' master
 			template. Please review base.html, its content blocks, and its
@@ -38,7 +38,7 @@
 	{% block content %}
 	<div class="container">
 		<!-- main page heading -->
-		<h1 class="mt-5 mb-4">Home</h1>
+		<h1 class="page-header">Home</h1>
 		<!-- landing page welcome message -->
 		{% if request.user.is_authenticated %}
 		<h2>Welcome back, <em class="text-primary">{{request.user.username}}</em>!</h2>
