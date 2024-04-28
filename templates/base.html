@@ -1,5 +1,5 @@
 <!--~~~ BASE.HTML ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-	Last edit on 04/27/24 (16:25) by @cihake
+	Last edit on 04/27/24 (20:23) by @cihake
 	
 	IMPORTANT:	Changes made to this file will modify ANY/ALL templates that
 				'extend' it. Exercise caution!
@@ -34,9 +34,18 @@
 <body>
 	{% include 'audio.html' %}		<!-- INCLUDE site audio (onclick/music) -->
 	{% include 'sitenav.html' %}	<!-- INCLUDE top navbar -->
+	<div class="container">
 
-	<!-- BLOCK for main content (heading/article/etc.) -->
-	{% block content %}{% endblock content %}
+		<!-- BLOCK for page header -->
+		<div class="page-header" id="banner">
+			<div class="row">
+				<h1>{% block header %}{% endblock header %}</h1>
+			</div>
+		</div>
+		
+		<!-- BLOCK for main content (article/images/etc.) -->
+		{% block content %}{% endblock content %}
+	</div>
 
 	{% include 'footer.html' %}		<!-- INCLUDE footer -->
 	{% include 'scripts.html' %}	<!-- INCLUDE scripts -->
