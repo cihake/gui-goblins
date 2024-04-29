@@ -1,5 +1,5 @@
 from django.db import models
-import math
+import math, random
 from .corner import Corner
 from .tile import Tile
 """
@@ -27,7 +27,7 @@ class Board(models.Model):
         board.corners.add(*corners)
         
         tile_terrain = [
-            ["empty", "empty", "water", "water", "water", "empty", "empty"],
+            ["empty", "water", "water", "water", "water", "empty", "empty"],
             ["empty", "water", "forest", "fields", "mountains", "water", "empty"],
             ["water", "hills", "pasture", "hills", "mountains", "water", "empty"],
             ["water", "mountains", "pasture", "desert", "fields", "pasture", "water"],
@@ -44,6 +44,8 @@ class Board(models.Model):
             [0, 0, 11, 4, 8, 0, 0],
             [0, 0, 0, 0, 0, 0, 0],
         ]
+        cls.randomize_tiles(tile_terrain, tile_dice)
+
         tiles = []
         for y in range(7):
             for x in range(7):
@@ -79,6 +81,26 @@ class Board(models.Model):
             for attr_name, attr_value in attributes.items():
                 setattr(tile, attr_name, attr_value)
             tile.save()  # Save the tile after updating
+    
+
+    """Randomize the organization of terrain and dice for tiles"""
+    def randomize_tiles(tile_terrain, tile_dice):
+        terrain_list = []
+        dice_list = []
+        for y in range(7):
+            for x in range(7):
+                if tile_dice[y][x] != 0:
+                    terrain_list.append(tile_terrain[y][x])
+                    dice_list.append(tile_dice[y][x])
+        random.shuffle(terrain_list)
+        random.shuffle(dice_list)
+        i = 0
+        for y in range(7):
+            for x in range(7):
+                if tile_dice[y][x] != 0:
+                    tile_terrain[y][x] = terrain_list[i]
+                    tile_dice[y][x] = dice_list[i]
+                    i += 1
     
     """Get corner neighbors of corners; also checks for bounds"""
     def get_neighbor_corners(self, corner):
