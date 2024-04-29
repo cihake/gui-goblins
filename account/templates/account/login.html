@@ -1,5 +1,5 @@
 <!--~~~ LOGIN.HTML ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-Last edit on 04/28/24 (01:13) by @cihake
+Last edit on 04/29/24 (14:54) by @cihake
 
 NOTE:	The contents of this template extend the 'base.html' master
 		template. Please review base.html, its content blocks, and its
@@ -11,7 +11,6 @@ current user is not logged into a account (i.e. a guest). It displays the
 necessary login fields for inputting a user's credentials. If this info
 doesn't match any database entries, an error message is shown.
 <~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
-<!-- EXTENDS: base.html (master template)-->
 {% extends 'base.html' %}
 {% load static %}
 {% block title %}Login | TheGoblinEnclave{% endblock title %}
@@ -52,8 +51,7 @@ doesn't match any database entries, an error message is shown.
 		<div style="color:red;"><p>{{login_form.non_field_errors}}</p></div>
 		{% endif %}
 		<!-- Form submit button -->
-		<!-- <button type="submit" class="btn btn-success">Login</button> -->
-		<button type="submit">Login</button>
+		<button type="submit" class="btn btn-success">Login</button>
 	</form>
 </div>
 {% endblock content %}
