@@ -11,7 +11,7 @@ class CatanTests(TestCase):
     def test(self):
         dummy_key = uuid.uuid4()
         game = Game.objects.create(game_key=dummy_key, number_players=1)
-        board = Board.initialize(dummy_key)
+        board = Board.initialize(dummy_key, False)
         player1 = Player.objects.create(game_key=dummy_key, ordinal=1, starting_settlements=2)
         
         """neighbor method tests"""
@@ -78,20 +78,20 @@ class CatanTests(TestCase):
 
         # not touching land
         corner = board.corners.get(yindex=0, xindex=0)
-        build_attempt(board, corner.yindex, corner.xindex, response)
+        build_attempt(game, board, player1, corner.yindex, corner.xindex, response)
         self.assertTrue(response['build_success'] == -2)
         # successful build
         corner1 = board.corners.get(yindex=3, xindex=4, building=0)
         corner2 = board.corners.get(yindex=2, xindex=3, building=0)
-        build_attempt(board, corner1.yindex, corner1.xindex, response)
+        build_attempt(game, board, player1, corner1.yindex, corner1.xindex, response)
         self.assertTrue(response['build_success'] == 1)
         # already built
         corner1.building = 1; corner1.save()
-        build_attempt(board, corner1.yindex, corner1.xindex, response)
+        build_attempt(game, board, player1, corner1.yindex, corner1.xindex, response)
         self.assertTrue(response['build_success'] == -1)
         # neighbor rule violation
         corner1.building = 0; corner1.save(); corner2.building = 1; corner2.save()
-        build_attempt(board, corner1.yindex, corner1.xindex, response)
+        build_attempt(game, board, player1, corner1.yindex, corner1.xindex, response)
         print("Build success: " + str(response['build_success']))
         self.assertTrue(response['build_success'] == -3)
         corner1.building = 0; corner1.save(); corner2.building = 0; corner2.save()

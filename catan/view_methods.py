@@ -70,8 +70,9 @@ Additionally, it must start at one of the player's own buildings or roads.
 The road is built in two phases: start and end, which are across user interactions,
 requiring data to be stored."""
 def handle_road_build (game, board, player, yindex, xindex, response):
-    # Land check
     corner_to_build = board.corners.get(yindex=yindex, xindex=xindex)
+
+    # Land check
     neighbor_tiles = board.get_neighbor_tiles(corner_to_build)
     touching_land = False
     for Tile in neighbor_tiles:
@@ -87,12 +88,15 @@ def handle_road_build (game, board, player, yindex, xindex, response):
     if game.build_flag == 2:
         response['build_type'] = "road_start"
         response['build_success'] = 0
+
         # Building check
         if corner_to_build.building != 0:
              response['build_success'] = 1
+
         # Road check
         elif len(corner_to_build.roads) > 0:
             response['build_success'] = 1
+
         # Successful build
         if response['build_success'] == 1:
             board.road_start = str(yindex) + "," + str(xindex)
@@ -108,6 +112,7 @@ def handle_road_build (game, board, player, yindex, xindex, response):
     # Road end
     elif game.build_flag == 3:
         response['build_type'] = "road_end"
+
         # Neighbor check
         road_start = board.road_start.split(',')
         starting_corner = board.corners.get(yindex=road_start[0], xindex=road_start[1])
@@ -146,15 +151,10 @@ def handle_road_build (game, board, player, yindex, xindex, response):
         response['road'] = road
         response['build_success'] = 1
         # Save road on corners
-        starting_corner.roads += str(player.ordinal) + ","
-        print(starting_corner.__str__())
-        starting_corner.save()
-        corner_to_build.roads += str(player.ordinal) + ","
-        print(corner_to_build.__str__())
-        corner_to_build.save()
+        starting_corner.roads += str(player.ordinal) + ","; starting_corner.save()
+        corner_to_build.roads += str(player.ordinal) + ","; corner_to_build.save()
         # Charge player
-        player.lumber -= 1; player.brick -= 1
-        player.save()
+        player.lumber -= 1; player.brick -= 1; player.save()
         game.build_flag = 0
         response['announcement'] += "Built successfully\n"
         return
