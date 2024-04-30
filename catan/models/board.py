@@ -126,7 +126,7 @@ class Board(models.Model):
         elif y % 4 == 3 and corners.filter(yindex=y-1, xindex=x-1).exists():
             neighbors.append(corners.get(yindex=y-1, xindex=x-1))
 
-        self.print_neighbor_corners(neighbors)
+        #self.print_neighbor_corners(neighbors)
         
         return neighbors
     
@@ -149,7 +149,7 @@ class Board(models.Model):
         if yindex % 4 != 3 and tiles.filter(yindex=y-1, xindex=x).exists():
             neighbors.append(tiles.get(yindex=y-1, xindex=x))
 
-        self.print_neighbor_tiles(neighbors)
+        #self.print_neighbor_tiles(neighbors)
         
         return neighbors
     
