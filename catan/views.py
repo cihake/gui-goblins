@@ -24,7 +24,7 @@ def catan_view(request):
     # Create game objects if none match the key
     if not Game.objects.filter(game_key=game_key).exists():
         game = Game.objects.create(game_key=game_key, number_players=1)
-        board = Board.initialize(game_key)
+        board = Board.initialize(game_key, True)
         player1 = Player.objects.create(game_key=game_key, ordinal=1, starting_settlements=2)
         game.save()
         board.save()
@@ -58,6 +58,10 @@ def catan_view(request):
             Tile.objects.all().delete()
         elif input == "unload":
             request.session['game_key'] = "no key"
+
+        # Cancel button, for several actions
+        elif input == "cancel":
+            game.build_flag = 0
         
         # Build buttons; each checks for sufficient resources
         # Build settlement button
@@ -130,37 +134,40 @@ def catan_view(request):
     else:
         draw_data = {}
         
-        # Pass terrains as colors
-        tile_colors = []
-        for y in range(7):
-            color_row = []
-            for x in range(7):
-                terrain = board.tiles.get(yindex=y, xindex=x).terrain
-                color = ""
-                if terrain == "empty": color = "none"
-                elif terrain == "water": color = "darkturquoise"
-                elif terrain == "desert": color = "yellow"
-                elif terrain == "pasture": color = "chartreuse"
-                elif terrain == "fields": color = "goldenrod"
-                elif terrain == "forest": color = "forestgreen"
-                elif terrain == "hills": color = "sienna"
-                elif terrain == "mountains": color = "lightslategrey"
-                color_row.append(color)
-            tile_colors.append(color_row)
-        draw_data['tile_colors'] = tile_colors
-
-        # Pass dice values
-        tile_dice = []
-        for y in range(7):
-            dice_row = []
-            for x in range(7):
-                dice_row.append(board.tiles.get(yindex=y, xindex=x).dice)
-            tile_dice.append(dice_row)
-        draw_data['tile_dice'] = tile_dice
+        send_tiles(board, draw_data)
         
         return render(request, 'catan.html', {'draw_data': json.dumps(draw_data)})
 
 #*************************************************************************************
+def send_tiles(board, draw_data):
+    # Pass terrains as colors
+    tile_colors = []
+    for y in range(7):
+        color_row = []
+        for x in range(7):
+            terrain = board.tiles.get(yindex=y, xindex=x).terrain
+            color = ""
+            if terrain == "empty": color = "none"
+            elif terrain == "water": color = "darkturquoise"
+            elif terrain == "desert": color = "yellow"
+            elif terrain == "pasture": color = "chartreuse"
+            elif terrain == "fields": color = "goldenrod"
+            elif terrain == "forest": color = "forestgreen"
+            elif terrain == "hills": color = "sienna"
+            elif terrain == "mountains": color = "lightslategrey"
+            color_row.append(color)
+        tile_colors.append(color_row)
+    draw_data['tile_colors'] = tile_colors
+
+    # Pass dice values
+    tile_dice = []
+    for y in range(7):
+        dice_row = []
+        for x in range(7):
+            dice_row.append(board.tiles.get(yindex=y, xindex=x).dice)
+        tile_dice.append(dice_row)
+    draw_data['tile_dice'] = tile_dice
+
 def send_inventories(player, response):
     players = [player]
     players_data = [{
