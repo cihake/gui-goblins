@@ -113,7 +113,7 @@ def handle_road_build (game, board, player, yindex, xindex, response):
     elif game.build_flag == 3:
         response['build_type'] = "road_end"
 
-        # Neighbor check
+        # Distance check
         road_start = board.road_start.split(',')
         starting_corner = board.corners.get(yindex=road_start[0], xindex=road_start[1])
         adjacent = False
@@ -130,7 +130,7 @@ def handle_road_build (game, board, player, yindex, xindex, response):
         # Overlap check
         if len(board.existing_roads) > 0:
             new_start = board.road_start
-            new_end = yindex + "," + xindex
+            new_end = str(yindex) + "," + str(xindex)
             existing_roads = board.existing_roads.strip(';').split(';')
             for road in existing_roads:
                 road_points = road.split(',')
