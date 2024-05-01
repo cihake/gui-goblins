@@ -5,13 +5,13 @@ from .models.player import Player
 from .models.board import Board
 from .models.corner import Corner
 from .models.tile import Tile
-from .view_methods import build_attempt, gather_resources, handle_setup, can_afford
+from .view_methods import build_attempt, gather_resources, handle_setup, handle_road_build, can_afford
 
 class CatanTests(TestCase):
     def test(self):
         dummy_key = uuid.uuid4()
         game = Game.objects.create(game_key=dummy_key, number_players=1)
-        board = Board.initialize(dummy_key)
+        board = Board.initialize(dummy_key, False)
         player1 = Player.objects.create(game_key=dummy_key, ordinal=1, starting_settlements=2)
         
         """neighbor method tests"""
@@ -78,21 +78,20 @@ class CatanTests(TestCase):
 
         # not touching land
         corner = board.corners.get(yindex=0, xindex=0)
-        build_attempt(board, corner.yindex, corner.xindex, response)
+        build_attempt(game, board, player1, corner.yindex, corner.xindex, response)
         self.assertTrue(response['build_success'] == -2)
         # successful build
         corner1 = board.corners.get(yindex=3, xindex=4, building=0)
         corner2 = board.corners.get(yindex=2, xindex=3, building=0)
-        build_attempt(board, corner1.yindex, corner1.xindex, response)
+        build_attempt(game, board, player1, corner1.yindex, corner1.xindex, response)
         self.assertTrue(response['build_success'] == 1)
         # already built
         corner1.building = 1; corner1.save()
-        build_attempt(board, corner1.yindex, corner1.xindex, response)
+        build_attempt(game, board, player1, corner1.yindex, corner1.xindex, response)
         self.assertTrue(response['build_success'] == -1)
         # neighbor rule violation
         corner1.building = 0; corner1.save(); corner2.building = 1; corner2.save()
-        build_attempt(board, corner1.yindex, corner1.xindex, response)
-        print("Build success: " + str(response['build_success']))
+        build_attempt(game, board, player1, corner1.yindex, corner1.xindex, response)
         self.assertTrue(response['build_success'] == -3)
         corner1.building = 0; corner1.save(); corner2.building = 0; corner2.save()
 
@@ -113,7 +112,57 @@ class CatanTests(TestCase):
         game.save(); player1.save()
         self.assertTrue(game.setup_flag == 0 and player1.starting_settlements == 0)
 
+        """Road building tests"""
+        #handle_road_build (game, board, player1, yindex, xindex, response)
+        response['announcement'] = ""
+        for Corner in board.corners.all(): Corner.building = 0; Corner.save()
+        
+        # Over water tests
+        game.build_flag = 2; game.save()
+        handle_road_build (game, board, player1, 2, 1, response)
+        self.assertTrue(response['build_success'] == -1)
+        game.build_flag = 3; game.save()
+        handle_road_build (game, board, player1, 2, 1, response)
+        self.assertTrue(response['build_success'] == -1)
+
+        # Road start tests
+        game.build_flag = 2; game.save()
+        corner = board.corners.get(yindex=7, xindex=2)
+        # No building or road
+        corner.building = 0; corner.save()
+        handle_road_build (game, board, player1, corner.yindex, corner.xindex, response)
+        self.assertTrue(response['build_success'] == -2)
+        # Has building
+        corner.building = 1; corner.save()
+        handle_road_build (game, board, player1, corner.yindex, corner.xindex, response)
+        self.assertTrue(response['build_success'] == 1)
+        # Has road
+        game.build_flag = 2; game.save()
+        corner.building = 0; corner.roads += "1,"; corner.save
+        handle_road_build (game, board, player1, corner.yindex, corner.xindex, response)
+        self.assertTrue(response['build_success'] == 1)
+
+        # Road end tests
+        game.build_flag = 3; game.save()
+        board.road_start = "7,2"; board.save()
+        # Length test
+        corner = board.corners.get(yindex=8, xindex=3)
+        handle_road_build (game, board, player1, corner.yindex, corner.xindex, response)
+        self.assertTrue(response['build_success'] == -3)
+        # Successful build
+        game.build_flag = 3; game.save()
+        corner = board.corners.get(yindex=8, xindex=2)
+        handle_road_build (game, board, player1, corner.yindex, corner.xindex, response)
+        board.save()
+        game.build_flag = 3; game.save()
+        self.assertTrue(response['build_success'] == 1)
+        # Overlap test
+        handle_road_build (game, board, player1, corner.yindex, corner.xindex, response)
+        print("Build success: " + str(response['build_success']))
+        self.assertTrue(response['build_success'] == -4)
+
         """harvest method tests"""
+        player1.wool = 0; player1.grain = 0; player1.lumber = 0; player1.brick = 0; player1. ore = 0; player1.save()
         corner1 = board.corners.get(yindex=4, xindex=4)
         corner1.building = 1; corner1.save()
         corner2 = board.corners.get(yindex=6, xindex=4)

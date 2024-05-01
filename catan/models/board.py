@@ -14,7 +14,7 @@ class Board(models.Model):
 
     """Initialization; takes the game_key and coordinates"""
     @classmethod
-    def initialize(cls, game_key):
+    def initialize(cls, game_key, randomize):
         board = cls.objects.create(game_key=game_key)
         board.existing_roads = ""
 
@@ -44,7 +44,8 @@ class Board(models.Model):
             [0, 0, 11, 4, 8, 0, 0],
             [0, 0, 0, 0, 0, 0, 0],
         ]
-        cls.randomize_tiles(tile_terrain, tile_dice)
+
+        if randomize == True: cls.randomize_tiles(tile_terrain, tile_dice)
 
         tiles = []
         for y in range(7):
@@ -125,7 +126,7 @@ class Board(models.Model):
         elif y % 4 == 3 and corners.filter(yindex=y-1, xindex=x-1).exists():
             neighbors.append(corners.get(yindex=y-1, xindex=x-1))
 
-        self.print_neighbor_corners(neighbors)
+        #self.print_neighbor_corners(neighbors)
         
         return neighbors
     
@@ -148,7 +149,7 @@ class Board(models.Model):
         if yindex % 4 != 3 and tiles.filter(yindex=y-1, xindex=x).exists():
             neighbors.append(tiles.get(yindex=y-1, xindex=x))
 
-        self.print_neighbor_tiles(neighbors)
+        #self.print_neighbor_tiles(neighbors)
         
         return neighbors
     
