@@ -86,21 +86,14 @@
 		}
 	</style>
 </head>
-<!--*************************************************************************-->
-
 <body>
 	<svg id="svg-container" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid meet">
 		<!--The game board-->
-		<g id="board" height="1000">
-			<image id="board_image" xlink:href="{% static 'CandyLand.jpg' %}" height="1000" />
-		</g>
+		<g id="board" height="1000"><image id="board_image" xlink:href="{% static 'CandyLand.jpg' %}" height="1000" /></g>
 		<text id="wintext" x="100%" y="8%"> Player 1 wins!</text>
 	</svg>
 	<button class="card_draw btn btn-success">Draw a card</button>
-
-	<svg id="card-container">
-
-	</svg>
+	<svg id="card-container"></svg>
 	<div id="card-deck">
 		<div id="back-text">Candy<br><br>Land</text></div>
 	</div>
