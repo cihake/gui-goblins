@@ -4,7 +4,6 @@ A player of the game. They have an ordinal (which player they are)
 and a resource total.
 """
 class Player(models.Model):
-    game_key = models.UUIDField(unique=True, null=True)
     ordinal = models.IntegerField(default=-1)
     starting_settlements = models.IntegerField(default=0)
     wool = models.IntegerField(default=0)
