@@ -23,16 +23,16 @@ def catan_view(request):
     
     # Create game objects if none match the key
     if not Game.objects.filter(game_key=game_key).exists():
-        game = Game.objects.create(game_key=game_key, number_players=1)
+        game = Game.initialize(game_key, 3, 2)
         board = Board.initialize(game_key, True)
-        player1 = Player.objects.create(game_key=game_key, ordinal=1, starting_settlements=2)
+        current_player = game.players.get(ordinal=1)
         game.save()
         board.save()
-        player1.save()
     else: # Load game objects
         game = Game.objects.get(game_key=game_key)
         board = Board.objects.get(game_key=game_key)
-        player1 = Player.objects.get(game_key=game_key)
+        player_ordinal = (game.turn - 1) % game.number_players + 1
+        current_player = game.players.get(ordinal=player_ordinal)
 
     #*************************************************************************************
     # AJAX POST request; active response
@@ -43,7 +43,7 @@ def catan_view(request):
         # In addition to announcements and game data, the response has several flags:
         # build_success, build_type
         response = {}
-        response['announcement'] = "Player " + str(player1.ordinal) + "\n"
+        response['announcement'] = "Player " + str(current_player.ordinal) + "\n"
         if game.setup_flag == 0:
             response['announcement'] += "Turn: " + str(game.turn) + "\n"
 
@@ -66,7 +66,7 @@ def catan_view(request):
         # Build buttons; each checks for sufficient resources
         # Build settlement button
         elif input == "build_settlement":
-            if can_afford(player1, input, response):
+            if can_afford(current_player, input, response):
                 game.build_flag = 1
                 response['announcement'] = "Build where?\n"
             else:
@@ -74,12 +74,19 @@ def catan_view(request):
                 + "A settlement costs one each of brick, lumber, wool, and grain.")
         # Build road button
         elif input == "build_road":
-            if can_afford(player1, input, response):
+            if can_afford(current_player, input, response):
                 game.build_flag = 2 # Road start
                 response['announcement'] = "Build where?\n"
             else:
                 response['announcement'] = ("Not enough resources.\n"
                 + "A road costs one unit of brick and lumber.")
+        elif input == "build_city":
+            if can_afford(current_player, input, response):
+                game.build_flag = 4
+                response['announcement'] = "Build where?\n"
+            else:
+                response['announcement'] = ("Not enough resources.\n"
+                + "A city costs three ore and two grain.")
         
         # Corner clicked
         elif input == "corner":
@@ -87,14 +94,14 @@ def catan_view(request):
             xindex = request.POST.get('xindex')
             # Setup phase
             if game.setup_flag != 0:
-                handle_setup(game, board, player1, yindex, xindex, response)
+                handle_setup(game, board, current_player, yindex, xindex, response)
             # Settlement building mode; costs resources; price checked at "build" button
             if game.build_flag == 1:
                 response['build_type'] = "settlement"
-                build_attempt(game, board, player1, yindex, xindex, response)
+                build_attempt(game, board, current_player, yindex, xindex, response)
                 if response['build_success'] == 1:
-                    player1.wool -= 1; player1.grain -= 1; player1.lumber -= 1; player1.brick -= 1
-                    player1.save()
+                    current_player.wool -= 1; current_player.grain -= 1; current_player.lumber -= 1; current_player.brick -= 1
+                    current_player.save()
                     game.build_flag = 0
                     # Victory condition: 10 buildings
                     response['number_buildings'] = 0
@@ -103,26 +110,40 @@ def catan_view(request):
                             response['number_buildings'] += 1
             # Road building mode; two-step process
             elif game.build_flag == 2 or game.build_flag == 3:
-                handle_road_build(game, board, player1, yindex, xindex, response)
-                
+                handle_road_build(game, board, current_player, yindex, xindex, response)
+            # City building mode; rather simple
+            elif game.build_flag == 4:
+                response['build_type'] = "city"
+                corner_to_build = board.corners.get(yindex=yindex, xindex=xindex)
+                if corner_to_build.building == 1:
+                    current_player.grain -= 2; current_player.ore -= 3; current_player.save()
+                    corner_to_build.building = 2; corner_to_build.save()
+                    response['build_success'] = 1
+                    response['announcement'] += "Built successfully\n"
+                else:
+                    response['build_success'] = -1
+                    response['announcement'] += "A city must be built on one of your own settlements.\n"
         
         # Tile clicked
         elif input == "tile":
             if game.setup_flag != 0:
-                response['announcement'] += "Remaining settlements: " + str(player1.starting_settlements) + "\n"
+                response['announcement'] += "Remaining settlements: " + str(current_player.starting_settlements) + "\n"
 
         # End turn, gather resources
         elif input == "end_turn":
+            game.turn += 1
+            player_ordinal = (game.turn - 1) % game.number_players + 1
+            response['announcement'] = ("Player " + str(player_ordinal) + "\n" +
+            "Turn: " + str(game.turn) + "\n")
             dice_value = random.randint(1, 6) + random.randint(1, 6)
             print("Dice value: " + str(dice_value))
             response['announcement'] += "Dice roll: " + str(dice_value) + "\n"
-            gather_resources(board, player1, dice_value, response)
-            player1.save()
+            gather_resources(board, current_player, dice_value, response)
+            current_player.save()
             game.build_flag = 0
-            game.turn += 1
             
         # Sava game data, return response
-        send_inventories(player1, response)
+        send_inventories(current_player, response)
         send_flags(game, response)
         game.save()
         board.save()
@@ -151,7 +172,7 @@ def send_tiles(board, draw_data):
             elif terrain == "water": color = "darkturquoise"
             elif terrain == "desert": color = "yellow"
             elif terrain == "pasture": color = "chartreuse"
-            elif terrain == "fields": color = "goldenrod"
+            elif terrain == "fields": color = "gold"
             elif terrain == "forest": color = "forestgreen"
             elif terrain == "hills": color = "sienna"
             elif terrain == "mountains": color = "lightslategrey"
