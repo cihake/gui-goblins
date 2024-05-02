@@ -51,6 +51,10 @@
                 top: 14%;
                 left: 86%;
             }
+            .build_city {
+                top: 23%;
+                left: 86%;
+            }
             .cancel {
                 top: 5%;
                 left: 75%;
@@ -98,7 +102,10 @@
                 <!--<image id="board_image" xlink:href="{% static 'SettlersOfCatan.jpg' %}"
                 height="1000" />-->
                 <g id="tiles" height="1000"></g>
+                <g id="edges" height="1000"></g>
                 <g id="corners" height="1000"></g>
+                <g id="tile_sensors" height="1000"></g>
+                <g id="corner_sensors" height="1000"></g>
                 <!--<circle id="build_indicator" cx="0" cy="0" r="20" stroke="yellow" stroke-width="3" fill="transparent"></circle>-->
             </g>
             <text id="wintext" x="110%" y="80%"> Player 1 wins!</text>
@@ -107,6 +114,7 @@
         <button class="end_turn">Gather resources</button>
         <button class="build_settlement">Build settlement</button>
         <button class="build_road">Build road</button>
+        <button class="build_city">Build city</button>
         <button class="cancel">Cancel</button>
 
         <!--<button class="clear_database">Erase database objects (debug)</button>
@@ -149,6 +157,7 @@
                 $('.end_turn').hide();
                 $('.build_settlement').hide();
                 $('.build_road').hide();
+                $('.build_city').hide();
                 $('.cancel').hide();
                 $('#player1_inventory').hide();
 
@@ -222,6 +231,19 @@
                         }
                     });
                 });
+                // Register the "build city" button
+                $('.build_city').click(function() {
+                    $.ajax({
+                        url: '/catan/',
+                        type: 'POST',
+                        data: {'input': 'build_city'},
+                        headers: {'X-CSRFToken': csrftoken},
+                        success: function(response) { 
+                            announce(response); // Print response
+                            $('.cancel').show(); // Show the "cancel" button
+                        }
+                    });
+                });
 
                 // Register the "end turn" button
                 $('.end_turn').click(function() {
@@ -240,7 +262,7 @@
                 });
 
                 // React to a corner being clicked
-                $('#corners').on('click', 'circle', function(event) {
+                $('#corner_sensors').on('click', 'circle', function(event) {
                     var position = $(this).attr('data-id').split(',');
                     console.log("Corner " + position);
                     var xindex = parseInt(position[0]);
@@ -275,6 +297,11 @@
                                     draw_road(response, corner_positions)
                                     $('.cancel').hide(); // Hide the "cancel" button
                                 }
+                                else if (response['build_type'] == "city") {
+                                    console.log("City built");
+                                    draw_city(response, clicked_circle, corner_positions, xindex, yindex);
+                                    $('.cancel').hide(); // Hide the "cancel" button
+                                }
                                 update_inventories(response); // Update player inventories
                                 
                                 // Victory condition: 10 buildings
@@ -288,6 +315,7 @@
                                 $('.end_turn').show();
                                 $('.build_settlement').show();
                                 $('.build_road').show();
+                                $('.build_city').show();
                                 $('#player1_inventory').show();
                             }
                         }
@@ -295,7 +323,7 @@
                 });
 
                 // React to a tile being clicked
-                $('#tiles').on('click', 'circle', function(event) {
+                $('#tile_sensors').on('click', 'circle', function(event) {
                     var position = $(this).attr('data-id').split(',');
                     console.log("Tile " + position);
                     var xindex = parseInt(position[0]);
@@ -338,10 +366,10 @@
                         else { ypos = firstpos[1] + vlength * (1 + Math.floor(y / 2) * 3); }
                         var xpos = 0;
                         if (y % 4 == 0 || y % 4 == 3) { xpos = firstpos[0] + hlength * (x * 2); }
-                        else if (y % 4 == 1 || y % 4 == 2) { xpos = firstpos[0] + hlength * (1 + x * 2); }
+                        else if (y % 4 == 1 || y % 4 == 2) {xpos = firstpos[0] + hlength * (1 + x * 2); }
                         corner_positions[x][y] = [xpos, ypos];
                         var circle_data = x + "," + y;
-                        create_data_circle("corners", circle_data, xpos, ypos, 30, "transparent");
+                        create_data_circle("corner_sensors", circle_data, xpos, ypos, 30, "transparent");
                     }
                 }
                 // Tiles
@@ -354,7 +382,7 @@
                         else { xpos = firstpos[0] + hlength * (1 + x * 2); }
                         tile_positions[x][y] = [xpos, ypos];
                         var circle_data = x + "," + y;
-                        create_data_circle("tiles", circle_data, xpos, ypos, 70, "transparent");
+                        create_data_circle("tile_sensors", circle_data, xpos, ypos, 70, "transparent");
                         //create_circle("tile_marker", xpos, ypos, 3, "black");
                     }
                 }
@@ -414,7 +442,7 @@
                 var xpos = corner_positions[xindex][yindex][0];
                 var ypos = corner_positions[xindex][yindex][1];
                 create_group_circle("corners", "building", xpos, ypos, 20, "red");
-                clicked_circle.appendTo('#corners');
+                //clicked_circle.appendTo('#corners');
             }
 
             // Function to draw a road between two corners, along an edge
@@ -430,10 +458,35 @@
                 adjusted_road = adjust_points(x1, y1, x2, y2, 0.1);
                 console.log(adjusted_road);
                 x1=adjusted_road[0]; y1=adjusted_road[1]; x2=adjusted_road[2]; y2=adjusted_road[3];
-                create_group_line("corners", x1, y1, x2, y2, "black", 16);
-                create_group_line("corners", x1, y1, x2, y2, "red", 14);
-                $('.building').appendTo('#corners');
-                $('.data_circle').appendTo('#corners');
+                create_group_line("edges", x1, y1, x2, y2, "black", 16);
+                create_group_line("edges", x1, y1, x2, y2, "red", 14);
+                /*$('.building').appendTo('#corners');
+                $('.city').appendTo("corners");
+                $('.data_circle').appendTo('corners');*/
+            }
+
+            // Function to draw a city on a settlement
+            function draw_city(response, clicked_circle, corner_positions, xindex, yindex) {
+                xpos = corner_positions[xindex][yindex][0];
+                ypos = corner_positions[xindex][yindex][1];
+                var svgNS = "http://www.w3.org/2000/svg";
+                var circle1 = document.createElementNS(svgNS, "circle");
+                circle1.setAttributeNS(null, "class", "city");
+                circle1.setAttributeNS(null, "cx", xpos);
+                circle1.setAttributeNS(null, "cy", ypos);
+                circle1.setAttributeNS(null, "r", 5);
+                circle1.setAttributeNS(null, "fill", "black");
+                document.getElementById("corners").appendChild(circle1);
+                var circle2 = document.createElementNS(svgNS, "circle");
+                circle2.setAttributeNS(null, "class", "city");
+                circle2.setAttributeNS(null, "cx", xpos);
+                circle2.setAttributeNS(null, "cy", ypos);
+                circle2.setAttributeNS(null, "r", 20);
+                circle2.setAttributeNS(null, "fill", "transparent");
+                circle2.setAttributeNS(null, "stroke", "black");
+                circle2.setAttributeNS(null, "stroke-width", 5);
+                document.getElementById("corners").appendChild(circle2);
+                //clicked_circle.appendTo('#corners');
             }
             
             // Function to draw a build indicator
@@ -443,7 +496,7 @@
                 $('#build_indicator').show();
                 $('#build_indicator').attr('cx', xpos);
                 $('#build_indicator').attr('cy', ypos);
-                clicked_circle.appendTo('#corners');
+                //clicked_circle.appendTo('#corners');
             }
 
             // Function to draw a tile
@@ -482,18 +535,6 @@
                 text.setAttributeNS(null, "dy", font_size / 2);
                 if (tile_dice == 6 || tile_dice == 8) {text.setAttributeNS(null, "fill", "red");}
                 document.getElementById("tiles").appendChild(text);
-            }
-
-            // Function to create a circle dynamically using SVG
-            function create_circle(id, x, y, radius, color) {
-                var svgNS = "http://www.w3.org/2000/svg";
-                var circle = document.createElementNS(svgNS, "circle");
-                circle.setAttributeNS(null, "id", id);
-                circle.setAttributeNS(null, "cx", x);
-                circle.setAttributeNS(null, "cy", y);
-                circle.setAttributeNS(null, "r", radius);
-                circle.setAttributeNS(null, "fill", color);
-                document.getElementById("board").appendChild(circle);
             }
 
             // Function to create a circle with a specific group

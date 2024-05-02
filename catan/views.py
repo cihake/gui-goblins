@@ -80,6 +80,13 @@ def catan_view(request):
             else:
                 response['announcement'] = ("Not enough resources.\n"
                 + "A road costs one unit of brick and lumber.")
+        elif input == "build_city":
+            if can_afford(player1, input, response):
+                game.build_flag = 4
+                response['announcement'] = "Build where?\n"
+            else:
+                response['announcement'] = ("Not enough resources.\n"
+                + "A city costs three ore and two grain.")
         
         # Corner clicked
         elif input == "corner":
@@ -104,7 +111,18 @@ def catan_view(request):
             # Road building mode; two-step process
             elif game.build_flag == 2 or game.build_flag == 3:
                 handle_road_build(game, board, player1, yindex, xindex, response)
-                
+            # City building mode; rather simple
+            elif game.build_flag == 4:
+                response['build_type'] = "city"
+                corner_to_build = board.corners.get(yindex=yindex, xindex=xindex)
+                if corner_to_build.building == 1:
+                    player1.grain -= 2; player1.ore -= 3; player1.save()
+                    corner_to_build.building = 2; corner_to_build.save()
+                    response['build_success'] = 1
+                    response['announcement'] += "Built successfully\n"
+                else:
+                    response['build_success'] = -1
+                    response['announcement'] += "A city must be built on one of your own settlements.\n"
         
         # Tile clicked
         elif input == "tile":
@@ -151,7 +169,7 @@ def send_tiles(board, draw_data):
             elif terrain == "water": color = "darkturquoise"
             elif terrain == "desert": color = "yellow"
             elif terrain == "pasture": color = "chartreuse"
-            elif terrain == "fields": color = "goldenrod"
+            elif terrain == "fields": color = "gold"
             elif terrain == "forest": color = "forestgreen"
             elif terrain == "hills": color = "sienna"
             elif terrain == "mountains": color = "lightslategrey"
