@@ -20,7 +20,7 @@ class Game(models.Model):
         game = cls.objects.create(game_key=game_key, number_players=number_players)
 
         players = []
-        for i in range(1, number_players+1):
+        for i in range(1, game.number_players+1):
             player = Player(ordinal=i, starting_settlements=starting_settlements)
             players.append(player)
         Player.objects.bulk_create(players)

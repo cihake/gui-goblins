@@ -23,7 +23,7 @@ def catan_view(request):
     
     # Create game objects if none match the key
     if not Game.objects.filter(game_key=game_key).exists():
-        game = Game.initialize(game_key, 1, 2)
+        game = Game.initialize(game_key, 3, 2)
         board = Board.initialize(game_key, True)
         current_player = game.players.get(ordinal=1)
         game.save()
@@ -31,7 +31,8 @@ def catan_view(request):
     else: # Load game objects
         game = Game.objects.get(game_key=game_key)
         board = Board.objects.get(game_key=game_key)
-        current_player = game.players.get(ordinal=1)
+        player_ordinal = (game.turn - 1) % game.number_players + 1
+        current_player = game.players.get(ordinal=player_ordinal)
 
     #*************************************************************************************
     # AJAX POST request; active response
@@ -130,13 +131,16 @@ def catan_view(request):
 
         # End turn, gather resources
         elif input == "end_turn":
+            game.turn += 1
+            player_ordinal = (game.turn - 1) % game.number_players + 1
+            response['announcement'] = ("Player " + str(player_ordinal) + "\n" +
+            "Turn: " + str(game.turn) + "\n")
             dice_value = random.randint(1, 6) + random.randint(1, 6)
             print("Dice value: " + str(dice_value))
             response['announcement'] += "Dice roll: " + str(dice_value) + "\n"
             gather_resources(board, current_player, dice_value, response)
             current_player.save()
             game.build_flag = 0
-            game.turn += 1
             
         # Sava game data, return response
         send_inventories(current_player, response)
