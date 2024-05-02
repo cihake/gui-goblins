@@ -1,19 +1,82 @@
+<!--~~~ BASE.HTML ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
+Last edit on 04/28/24 (01:03) by @cihake
+
+IMPORTANT:	Changes made to this file will modify ANY/ALL templates that
+			'extend' it. Exercise caution!
+
+This master template provides a general layout/outline upon which other site
+pages are built. For more information on Django template tags, you can go to
+https://www.w3schools.com/django/django_ref_template_tags.php (W3Schools).
+
+Content 'blocks' are sections to be overwritten in separate page templates.
+So, in any given template extending base.html, you'd insert your custom code
+between block/endblock tags. Make sure to initialize blocks within their
+respective containers (e.g. blocks 'title' and 'styles' exist inside <head>,
+not <body>).
+
+'include' statements will automatically insert reusable, previously-defined
+scripts and/or elements to a template extending base.html. You do NOT add
+these to your template unless you'd like to include their contents in a
+template which doesn't extand base.html.
+<~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<!-- LOAD: static content -->
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+	<!-- BLOCK: page title ("Home"/"Store"/etc.) -->
 	<title>{% block title %}{% endblock title %}</title>
-	{% block styles %}
-	{% endblock styles %}
+	
+	<!-- BLOCK: internal styles / stylesheets -->
+	{% block styles %}{% endblock styles %}
 </head>
-
 <body>
-	{% include 'sitenav.html' %}
-	{% block content %}{% endblock content %}
-	{% include 'footer.html' %}
-</body>
+	<!-- INCLUDE: site audio (onclick/music) -->
+	{% include 'audio.html' %}
 
+	<!-- INCLUDE: top navbar -->
+	{% include 'sitenav.html' %}
+	<div style="padding-top: 60px">
+		<div class="bs-docs-section page-header" id="banner">
+			<div class="row">
+				<div class="col-md-2"><!-- ad space -->
+					<div id="randomAd">
+						<a id="adLink" href="#" target="_blank">
+							<img class="ad-image" id="adImage" src="" alt="Ad">
+						</a>
+					</div>
+				</div>
+				<aside class="col-lg-8">
+
+					<!-- BLOCK: page header -->
+					<h1 style="text-align: center">{% block header %}{% endblock header %}</h1>
+					<div class="bs-docs-section">
+						<div class="row" style="padding-top: 10px">
+							<div style="text-align: center" class="col-md-10">
+
+								<!-- BLOCK: content (ads/images/etc.) -->
+								{% block content %}{% endblock content %}
+							</div>
+						</div>
+					</div>
+				</aside>
+				<aside class="col-md-2">
+				</aside>
+			</div>
+		</div>
+	</div>
+
+	<!-- INCLUDE: footer -->
+	{% include 'footer.html' %}
+
+	<!-- INCLUDE: scripts -->
+	{% include 'scripts.html' %}
+
+	<!-- BLOCK: additional/page-specific scripts -->
+	{% block scripts %}{% endblock scripts %}
+</body>
 </html>
