@@ -10,9 +10,9 @@ from .view_methods import build_attempt, gather_resources, handle_setup, handle_
 class CatanTests(TestCase):
     def test(self):
         dummy_key = uuid.uuid4()
-        game = Game.objects.create(game_key=dummy_key, number_players=1)
+        game = Game.initialize(dummy_key, 2, 2)
         board = Board.initialize(dummy_key, False)
-        player1 = Player.objects.create(game_key=dummy_key, ordinal=1, starting_settlements=2)
+        player1 = game.players.get(ordinal=1)
         
         """neighbor method tests"""
         corner = board.corners.get(yindex=3, xindex=4, building=0)
@@ -95,25 +95,40 @@ class CatanTests(TestCase):
         self.assertTrue(response['build_success'] == -3)
         corner1.building = 0; corner1.save(); corner2.building = 0; corner2.save()
 
-        """Game setup test (one player)"""
+        """Game setup test (Two players)"""
         # build mistake test
         response['announcement'] = ""; corner1.building = 1; corner1.save()
-        handle_setup(game, board, player1, corner1.yindex, corner1.xindex, response)
-        game.save(); player1.save()
-        self.assertTrue(game.setup_flag == 1 and player1.starting_settlements == 2)
-        # Successful build 1
+        player = game.players.get(ordinal=game.turn)
+        handle_setup(game, board, player, corner1.yindex, corner1.xindex, response)
+        game.save()
+        self.assertTrue(game.setup_flag == 1 and game.turn == 1 and player.starting_settlements == 2)
+        # Successful build 1; next player
         response['announcement'] = ""; corner1.building = 0; corner1.save()
-        handle_setup(game, board, player1, corner1.yindex, corner1.xindex, response)
-        game.save(); player1.save()
-        self.assertTrue(game.setup_flag == 1 and player1.starting_settlements == 1)
+        player = game.players.get(ordinal=game.turn)
+        handle_setup(game, board, player, corner1.yindex, corner1.xindex, response)
+        game.save()
+        self.assertTrue(game.setup_flag == 1 and game.turn == 2 and player.starting_settlements == 1)
+        # Successful build 2; loop back
+        response['announcement'] = ""; corner1.building = 0; corner1.save()
+        player = game.players.get(ordinal=game.turn)
+        handle_setup(game, board, player, corner1.yindex, corner1.xindex, response)
+        game.save()
+        self.assertTrue(game.setup_flag == 1 and game.turn == 1 and player.starting_settlements == 1)
+        # Successful build 3; next player
+        response['announcement'] = ""; corner1.building = 0; corner1.save()
+        player = game.players.get(ordinal=game.turn)
+        handle_setup(game, board, player, corner1.yindex, corner1.xindex, response)
+        game.save()
+        self.assertTrue(game.setup_flag == 1 and game.turn == 2 and player.starting_settlements == 0)
         # Final successful build
         response['announcement'] = ""; corner1.building = 0; corner1.save()
-        handle_setup(game, board, player1, corner1.yindex, corner1.xindex, response)
-        game.save(); player1.save()
-        self.assertTrue(game.setup_flag == 0 and player1.starting_settlements == 0)
+        player = game.players.get(ordinal=game.turn)
+        handle_setup(game, board, player, corner1.yindex, corner1.xindex, response)
+        game.save()
+        self.assertTrue(game.setup_flag == 0 and game.turn == 1 and player.starting_settlements == 0)
 
         """Road building tests"""
-        #handle_road_build (game, board, player1, yindex, xindex, response)
+        #handle_road_build (game, board, player, yindex, xindex, response)
         response['announcement'] = ""
         for Corner in board.corners.all(): Corner.building = 0; Corner.save()
         

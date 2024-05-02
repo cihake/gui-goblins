@@ -1,17 +1,31 @@
-"""Game setup; players place their starter buildings"""
+"""Game setup; players place their starter buildings
+Each player places 1, then it loops around again"""
 def handle_setup(game, board, player, yindex, xindex, response):
     response['build_type'] = "settlement"
     build_attempt(game, board, player, yindex, xindex, response)
+
     # Respond to successful build
     if response['build_success'] == 1:
-        player.starting_settlements -= 1
-        player.save()
-        # Try to progress
-        if player.starting_settlements > 0:
-            response['announcement'] += "Remaining settlements: " + str(player.starting_settlements) + "\n"
+        player.starting_settlements -= 1; player.save()
+        # Try to progress; advance turn
+        turn = game.turn
+        if turn + 1 <= game.number_players:
+            turn += 1
+            player = game.players.get(ordinal=turn)
+            response['announcement'] += ("Player " + str(player.ordinal) + "\n" +
+            "Remaining settlements: " + str(player.starting_settlements) + "\n")
+            game.turn = turn
+        # Loop back, or finish
         else:
-            game.setup_flag = 0
-            response['announcement'] += "Setup finished, all settlements are placed.\n"
+            game.turn = 1
+            if player.starting_settlements > 0:
+                player = game.players.get(ordinal=1)
+                response['announcement'] += ("Player " + str(player.ordinal) + "\n" +
+                "Remaining settlements: " + str(player.starting_settlements) + "\n")
+            else:
+                game.setup_flag = 0
+                response['announcement'] += "Setup finished, all settlements are placed.\n"
+    
     # Respond to unsuccessful build
     else:
         response['announcement'] += "Remaining settlements: " + str(player.starting_settlements) + "\n"
