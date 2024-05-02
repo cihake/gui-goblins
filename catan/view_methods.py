@@ -203,3 +203,7 @@ def can_afford(player, input, response):
         if (player.lumber > 0 and player.brick > 0):
             return True
         else: return False
+    elif input == "build_city":
+        if (player.grain >= 2 and player.ore >= 3):
+            return True
+        else: return False
