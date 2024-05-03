@@ -286,22 +286,7 @@
 
                             // Draw if the corner was successfully built on
                             if (response && response['build_success'] == 1) {
-                                console.log("Build type: " + response['build_type']);
-                                // Draw a settlement
-                                if (response['build_type'] == "settlement") {
-                                    draw_building(response, clicked_circle, corner_positions, xindex, yindex);
-                                    $('.cancel').hide(); // Hide the "cancel" button
-                                }
-                                // Draw a road
-                                else if (response['build_type'] == "road_end") {
-                                    draw_road(response, corner_positions)
-                                    $('.cancel').hide(); // Hide the "cancel" button
-                                }
-                                else if (response['build_type'] == "city") {
-                                    console.log("City built");
-                                    draw_city(response, clicked_circle, corner_positions, xindex, yindex);
-                                    $('.cancel').hide(); // Hide the "cancel" button
-                                }
+                                draw_build_items(response, corner_positions, xindex, yindex);
                                 update_inventories(response); // Update player inventories
                                 
                                 // Victory condition: 10 buildings
@@ -420,85 +405,6 @@
                 }
             }
 
-            // Function to update player inventory displays
-            function update_inventories(response) {
-                console.log(response.players_data[0]);
-                response.players_data.forEach(function(player) {
-                    // Update the HTML elements for each player
-                    $('#player' + player.ordinal + '_wool').text("wool " + player.wool);
-                    $('#player' + player.ordinal + '_grain').text("grain " + player.grain);
-                    $('#player' + player.ordinal + '_lumber').text("lumber " + player.lumber);
-                    $('#player' + player.ordinal + '_brick').text("brick " + player.brick);
-                    $('#player' + player.ordinal + '_ore').text("ore " + player.ore);
-                    player_inventory = [player.wool, player.grain, player.lumber, player.brick, player.ore]
-                    for (var i = 0; i < player_inventory.length; i++) {
-                        if (player_inventory[i] >= 10) {declare_winner(player.ordinal)}
-                    }
-                });
-            }
-
-            // Function to draw a building at a given position
-            function draw_building(response, clicked_circle, corner_positions, xindex, yindex) {
-                var xpos = corner_positions[xindex][yindex][0];
-                var ypos = corner_positions[xindex][yindex][1];
-                create_group_circle("corners", "building", xpos, ypos, 20, "red");
-                //clicked_circle.appendTo('#corners');
-            }
-
-            // Function to draw a road between two corners, along an edge
-            function draw_road(response, corner_positions) {
-                var road = response['road'].replace(';', '').split(',');
-                console.log("Road start: " + road[1].toString() + "," + road[0].toString() +
-                "; Road end: " + road[3].toString() + "," + road[2].toString());
-                var x1 = corner_positions[road[1]][road[0]][0];
-                var y1 = corner_positions[road[1]][road[0]][1];
-                var x2 = corner_positions[road[3]][road[2]][0];
-                var y2 = corner_positions[road[3]][road[2]][1];
-                console.log("(drawing) Road start: " + x1.toString() + "," + y1.toString() + "; Road end: " + x2.toString() + "," + y2.toString());
-                adjusted_road = adjust_points(x1, y1, x2, y2, 0.1);
-                console.log(adjusted_road);
-                x1=adjusted_road[0]; y1=adjusted_road[1]; x2=adjusted_road[2]; y2=adjusted_road[3];
-                create_group_line("edges", x1, y1, x2, y2, "black", 16);
-                create_group_line("edges", x1, y1, x2, y2, "red", 14);
-                /*$('.building').appendTo('#corners');
-                $('.city').appendTo("corners");
-                $('.data_circle').appendTo('corners');*/
-            }
-
-            // Function to draw a city on a settlement
-            function draw_city(response, clicked_circle, corner_positions, xindex, yindex) {
-                xpos = corner_positions[xindex][yindex][0];
-                ypos = corner_positions[xindex][yindex][1];
-                var svgNS = "http://www.w3.org/2000/svg";
-                var circle1 = document.createElementNS(svgNS, "circle");
-                circle1.setAttributeNS(null, "class", "city");
-                circle1.setAttributeNS(null, "cx", xpos);
-                circle1.setAttributeNS(null, "cy", ypos);
-                circle1.setAttributeNS(null, "r", 5);
-                circle1.setAttributeNS(null, "fill", "black");
-                document.getElementById("corners").appendChild(circle1);
-                var circle2 = document.createElementNS(svgNS, "circle");
-                circle2.setAttributeNS(null, "class", "city");
-                circle2.setAttributeNS(null, "cx", xpos);
-                circle2.setAttributeNS(null, "cy", ypos);
-                circle2.setAttributeNS(null, "r", 20);
-                circle2.setAttributeNS(null, "fill", "transparent");
-                circle2.setAttributeNS(null, "stroke", "black");
-                circle2.setAttributeNS(null, "stroke-width", 5);
-                document.getElementById("corners").appendChild(circle2);
-                //clicked_circle.appendTo('#corners');
-            }
-            
-            // Function to draw a build indicator
-            function draw_build_indicator(response, clicked_circle, corner_positions, xindex, yindex) {
-                var xpos = corner_positions[xindex][yindex][0];
-                var ypos = corner_positions[xindex][yindex][1];
-                $('#build_indicator').show();
-                $('#build_indicator').attr('cx', xpos);
-                $('#build_indicator').attr('cy', ypos);
-                //clicked_circle.appendTo('#corners');
-            }
-
             // Function to draw a tile
             function draw_tile(draw_positions, tile_color, opacity) {
                 var svgNS = "http://www.w3.org/2000/svg";
@@ -537,6 +443,112 @@
                 document.getElementById("tiles").appendChild(text);
             }
 
+            // Function to draw various build items; decide on what to draw
+            function draw_build_items(response, corner_positions, xindex, yindex) {
+                var player_color = "none", current_player = response['current_player'];
+                if (current_player == 1) {player_color = "red";}
+                else if (current_player == 2) {player_color = "blue";}
+                else if (current_player == 3) {player_color = "white";}
+                else if (current_player == 4) {player_color = "orange";}
+                else {player_color = "black";}
+
+                // Draw a settlement
+                if (response['build_type'] == "settlement") {
+                    draw_settlement(response, player_color, corner_positions, xindex, yindex);
+                    $('.cancel').hide(); // Hide the "cancel" button
+                }
+                // Draw a road
+                else if (response['build_type'] == "road_end") {
+                    draw_road(response, player_color, corner_positions)
+                    $('.cancel').hide(); // Hide the "cancel" button
+                }
+                // Draw a city
+                else if (response['build_type'] == "city") {
+                    console.log("City built");
+                    draw_city(response, corner_positions, xindex, yindex);
+                    $('.cancel').hide(); // Hide the "cancel" button
+                }
+            }
+
+            // Function to draw a road between two corners, along an edge
+            function draw_road(response, player_color, corner_positions) {
+                var road = response['road'].replace(';', '').split(',');
+                console.log("Road start: " + road[1].toString() + "," + road[0].toString() +
+                "; Road end: " + road[3].toString() + "," + road[2].toString());
+                var x1 = corner_positions[road[1]][road[0]][0];
+                var y1 = corner_positions[road[1]][road[0]][1];
+                var x2 = corner_positions[road[3]][road[2]][0];
+                var y2 = corner_positions[road[3]][road[2]][1];
+                console.log("(drawing) Road start: " + x1.toString() + "," + y1.toString() + "; Road end: " + x2.toString() + "," + y2.toString());
+                adjusted_road = adjust_points(x1, y1, x2, y2, 0.1);
+                console.log(adjusted_road);
+                x1=adjusted_road[0]; y1=adjusted_road[1]; x2=adjusted_road[2]; y2=adjusted_road[3];
+                create_group_line("edges", x1, y1, x2, y2, "black", 16);
+                create_group_line("edges", x1, y1, x2, y2, player_color, 14);
+            }
+
+            // Function to create a line with a specific group
+            function create_group_line(group_id, x1, y1, x2, y2, color, width) {
+                var svgNS = "http://www.w3.org/2000/svg";
+                var line = document.createElementNS(svgNS, "line");
+                line.setAttributeNS(null, "id", "road");
+                line.setAttributeNS(null, "x1", x1);
+                line.setAttributeNS(null, "y1", y1);
+                line.setAttributeNS(null, "x2", x2);
+                line.setAttributeNS(null, "y2", y2);
+                var style = "stroke:" + color + ";stroke-width:" + width.toString();
+                line.setAttributeNS(null, "style", style);
+                document.getElementById(group_id).appendChild(line);
+            }
+
+            // Function to move points closer together
+            function adjust_points(x1, y1, x2, y2, factor) {
+                newx1 = x1 + (x2 - x1) * factor;
+                newy1 = y1 + (y2 - y1) * factor;
+                newx2 = x2 + (x1 - x2) * factor;
+                newy2 = y2 + (y1 - y2) * factor;
+                return [newx1, newy1, newx2, newy2];
+            }
+
+            // Function to draw a settlement at a given position
+            function draw_settlement(response, player_color, corner_positions, xindex, yindex) {
+                var xpos = corner_positions[xindex][yindex][0];
+                var ypos = corner_positions[xindex][yindex][1];
+                create_group_circle("corners", "building", xpos, ypos, 20, player_color);
+            }
+
+            // Function to draw a city on a settlement
+            function draw_city(response, corner_positions, xindex, yindex) {
+                xpos = corner_positions[xindex][yindex][0];
+                ypos = corner_positions[xindex][yindex][1];
+                var svgNS = "http://www.w3.org/2000/svg";
+                var circle1 = document.createElementNS(svgNS, "circle");
+                circle1.setAttributeNS(null, "class", "city");
+                circle1.setAttributeNS(null, "cx", xpos);
+                circle1.setAttributeNS(null, "cy", ypos);
+                circle1.setAttributeNS(null, "r", 5);
+                circle1.setAttributeNS(null, "fill", "black");
+                document.getElementById("corners").appendChild(circle1);
+                var circle2 = document.createElementNS(svgNS, "circle");
+                circle2.setAttributeNS(null, "class", "city");
+                circle2.setAttributeNS(null, "cx", xpos);
+                circle2.setAttributeNS(null, "cy", ypos);
+                circle2.setAttributeNS(null, "r", 20);
+                circle2.setAttributeNS(null, "fill", "transparent");
+                circle2.setAttributeNS(null, "stroke", "black");
+                circle2.setAttributeNS(null, "stroke-width", 5);
+                document.getElementById("corners").appendChild(circle2);
+            }
+            
+            // Function to draw a build indicator
+            function draw_build_indicator(response, corner_positions, xindex, yindex) {
+                var xpos = corner_positions[xindex][yindex][0];
+                var ypos = corner_positions[xindex][yindex][1];
+                $('#build_indicator').show();
+                $('#build_indicator').attr('cx', xpos);
+                $('#build_indicator').attr('cy', ypos);
+            }
+
             // Function to create a circle with a specific group
             function create_group_circle(group_id, class_id, x, y, radius, color) {
                 var svgNS = "http://www.w3.org/2000/svg";
@@ -563,27 +575,21 @@
                 document.getElementById(group_id).appendChild(circle);
             }
 
-            // Function to create a line with a specific group
-            function create_group_line(group_id, x1, y1, x2, y2, color, width) {
-                var svgNS = "http://www.w3.org/2000/svg";
-                var line = document.createElementNS(svgNS, "line");
-                line.setAttributeNS(null, "id", "road");
-                line.setAttributeNS(null, "x1", x1);
-                line.setAttributeNS(null, "y1", y1);
-                line.setAttributeNS(null, "x2", x2);
-                line.setAttributeNS(null, "y2", y2);
-                var style = "stroke:" + color + ";stroke-width:" + width.toString();
-                line.setAttributeNS(null, "style", style);
-                document.getElementById(group_id).appendChild(line);
-            }
-
-            // Function to move points closer together
-            function adjust_points(x1, y1, x2, y2, factor) {
-                newx1 = x1 + (x2 - x1) * factor;
-                newy1 = y1 + (y2 - y1) * factor;
-                newx2 = x2 + (x1 - x2) * factor;
-                newy2 = y2 + (y1 - y2) * factor;
-                return [newx1, newy1, newx2, newy2];
+            // Function to update player inventory displays
+            function update_inventories(response) {
+                console.log(response.players_data[0]);
+                response.players_data.forEach(function(player) {
+                    // Update the HTML elements for each player
+                    $('#player' + player.ordinal + '_wool').text("wool " + player.wool);
+                    $('#player' + player.ordinal + '_grain').text("grain " + player.grain);
+                    $('#player' + player.ordinal + '_lumber').text("lumber " + player.lumber);
+                    $('#player' + player.ordinal + '_brick').text("brick " + player.brick);
+                    $('#player' + player.ordinal + '_ore').text("ore " + player.ore);
+                    player_inventory = [player.wool, player.grain, player.lumber, player.brick, player.ore]
+                    for (var i = 0; i < player_inventory.length; i++) {
+                        if (player_inventory[i] >= 10) {declare_winner(player.ordinal)}
+                    }
+                });
             }
 
             // Function to add items to a dropdown menu
