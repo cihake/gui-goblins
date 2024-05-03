@@ -23,7 +23,7 @@ def catan_view(request):
     
     # Create game objects if none match the key
     if not Game.objects.filter(game_key=game_key).exists():
-        game = Game.initialize(game_key, 2, 3)
+        game = Game.initialize(game_key, 1, 2)
         board = Board.initialize(game_key, True)
         current_player = game.players.get(ordinal=1)
         game.save()
@@ -68,23 +68,29 @@ def catan_view(request):
         elif input == "build_settlement":
             if can_afford(current_player, input, response):
                 game.build_flag = 1
+                response['can_afford'] = True
                 response['announcement'] = "Build where?\n"
             else:
+                response['can_afford'] = False
                 response['announcement'] = ("Not enough resources.\n"
                 + "A settlement costs one each of brick, lumber, wool, and grain.")
         # Build road button
         elif input == "build_road":
             if can_afford(current_player, input, response):
                 game.build_flag = 2 # Road start
+                response['can_afford'] = True
                 response['announcement'] = "Build where?\n"
             else:
+                response['can_afford'] = False
                 response['announcement'] = ("Not enough resources.\n"
                 + "A road costs one unit of brick and lumber.")
         elif input == "build_city":
-            if can_afford(current_player, input, response):
+            if True:#can_afford(current_player, input, response):
                 game.build_flag = 4
+                response['can_afford'] = True
                 response['announcement'] = "Build where?\n"
             else:
+                response['can_afford'] = False
                 response['announcement'] = ("Not enough resources.\n"
                 + "A city costs three ore and two grain.")
         
@@ -138,8 +144,7 @@ def catan_view(request):
             dice_value = random.randint(1, 6) + random.randint(1, 6)
             print("Dice value: " + str(dice_value))
             response['announcement'] += "Dice roll: " + str(dice_value) + "\n"
-            gather_resources(board, current_player, dice_value, response)
-            current_player.save()
+            gather_resources(game, board, dice_value, response)
             game.build_flag = 0
             
         # Sava game data, return response

@@ -182,33 +182,38 @@ def handle_road_build (game, board, player, yindex, xindex, response):
 """At the start of a turn, for every corner that is built, check the adjacent tiles.
 If the tile's dice value matches the dice roll, add the corresponding terrain resource
 to the corresponding player."""
-def gather_resources(board, player, dice_value, response):
+def gather_resources(game, board, dice_value, response):
     for Corner in board.corners.all():
         if Corner.building > 0:
+            player = game.players.get(ordinal=Corner.player)
+            amount = 0
+            if Corner.building == 2: amount = 2
+            elif Corner.building == 1: amount = 1
             for Tile in board.get_neighbor_tiles(Corner):
                 if Tile.dice == dice_value:
                     terrain = Tile.terrain
                     if terrain == "pasture":
-                        player.wool += 1
-                        print("Wool gathered")
-                        response['announcement'] += "Wool gathered\n"
+                        player.wool += amount
+                        response['announcement'] += ("Player " + str(player.ordinal) +
+                        " gained " + str(amount) + " wool\n")
                     elif terrain == "fields":
-                        player.grain += 1
-                        print("Grain gathered")
-                        response['announcement'] += "Grain gathered\n"
+                        player.grain += amount
+                        response['announcement'] += ("Player " + str(player.ordinal) +
+                        " gained " + str(amount) + " grain\n")
                     elif terrain == "forest":
-                        player.lumber += 1
-                        print("Lumber gathered")
-                        response['announcement'] += "Lumber gathered\n"
+                        player.lumber += amount
+                        response['announcement'] += ("Player " + str(player.ordinal) +
+                        " gained " + str(amount) + " lumber\n")
                     elif terrain == "hills":
-                        player.brick += 1
-                        print("Brick gathered")
-                        response['announcement'] += "Brick gathered\n"
+                        player.brick += amount
+                        response['announcement'] += ("Player " + str(player.ordinal) +
+                        " gained " + str(amount) + " brick\n")
                     elif terrain == "mountains":
-                        player.ore += 1
-                        print("Ore gathered")
-                        response['announcement'] += "Ore gathered\n"
-    print(player.__str__())
+                        player.ore += amount
+                        response['announcement'] += ("Player " + str(player.ordinal) +
+                        " gained " + str(amount) + " ore\n")
+                    player.save()
+    for Player in game.players.all(): Player.save()
 
 
 """Check for if a player can afford to build / buy something.
