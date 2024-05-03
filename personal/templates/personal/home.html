@@ -32,13 +32,13 @@ who are logged into their account will see a personalized "welcome message".
 <h2>Welcome back, <em class="text-primary">{{request.user.username}}</em>!</h2>
 <!-- user is logged out or has no registered account; guest -->
 {% else %}
-<h2 style="padding-bottom: 35px">Welcome to The Goblin Enclave!</h2>
+<h2 style="padding-bottom: 35px;">Welcome to <strong>The Goblin Enclave</strong>!</h2>
 {% endif %}
 <!-- board games -->
 <div class="row">
 
 	<!-- Monopoly game container -->
-	<div class="col-md-4" style="text-align: center">
+	<div class="col-md-4" style="text-align: center;">
 		<div class="image">
 			<a href="monopoly">
 				<img src="{% static 'Monopoly.jpg' %}" alt="Monopoly">
@@ -48,7 +48,7 @@ who are logged into their account will see a personalized "welcome message".
 	</div>
 
 	<!-- Candy Land game container -->
-	<div class="col-md-4" style="text-align: center">
+	<div class="col-md-4" style="text-align: center;">
 		<div class="image">
 			<a href="candyland">
 				<img src="{% static 'Candyland.jpg' %}" alt="Candyland">
@@ -58,7 +58,7 @@ who are logged into their account will see a personalized "welcome message".
 	</div>
 
 	<!-- Settlers of Catan game container -->
-	<div class="col-md-4" style="text-align: center">
+	<div class="col-md-4" style="text-align: center;">
 		<div class="image">
 			<a href="catan">
 				<img src="{% static 'SettlersOfCatan.jpg' %}" alt="Settlers of Catan">
