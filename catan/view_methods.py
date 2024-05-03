@@ -72,7 +72,7 @@ def build_attempt(game, board, player, yindex, xindex, response):
             return
     
     # Successful build
-    corner_to_build.building = 1
+    corner_to_build.building = 1; corner_to_build.player = player.ordinal
     corner_to_build.save()
     response['build_success'] = 1
     response['announcement'] += "Built successfully\n"

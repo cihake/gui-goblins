@@ -23,7 +23,7 @@ def catan_view(request):
     
     # Create game objects if none match the key
     if not Game.objects.filter(game_key=game_key).exists():
-        game = Game.initialize(game_key, 3, 2)
+        game = Game.initialize(game_key, 2, 3)
         board = Board.initialize(game_key, True)
         current_player = game.players.get(ordinal=1)
         game.save()
@@ -143,8 +143,8 @@ def catan_view(request):
             game.build_flag = 0
             
         # Sava game data, return response
-        send_inventories(current_player, response)
-        send_flags(game, response)
+        send_inventories(game, response)
+        send_flags(game, current_player, response)
         game.save()
         board.save()
         print(response['announcement'])
@@ -189,8 +189,7 @@ def send_tiles(board, draw_data):
         tile_dice.append(dice_row)
     draw_data['tile_dice'] = tile_dice
 
-def send_inventories(player, response):
-    players = [player]
+def send_inventories(game, response):
     players_data = [{
         'ordinal': player.ordinal,
         'wool': player.wool,
@@ -198,11 +197,13 @@ def send_inventories(player, response):
         'lumber': player.lumber,
         'brick': player.brick,
         'ore': player.ore,
-    } for player in players]
+    } for player in game.players.all()]
 
     response['players_data'] = players_data
 
 
-def send_flags(game, response):
+def send_flags(game, current_player, response):
     response['setup_flag'] = game.setup_flag
     response['build_flag'] = game.build_flag
+    response['current_player'] = current_player.ordinal
+
