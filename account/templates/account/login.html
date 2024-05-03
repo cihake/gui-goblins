@@ -22,34 +22,42 @@ doesn't match any database entries, an error message is shown.
 </style>
 {% endblock styles %}
 {% block header %}Login{% endblock header %}
+
 {% block content %}
 <div class="row">
 	<!-- Creates a form that submits data using the POST method;
 	'{% csrf_token %}' is a security measure to prevent CSRF attacks -->
 	<form method="post">{% csrf_token %}
+
 		<!-- Loops through login form fields & displays them iteratively -->
 		{% for field in login_form %}
+
+		<!-- Displays the form field label -->
+		<p class="form-label">{{field.label_tag}}</p>
+
+		<!-- Displays the form field -->
+		<p>{{field}}</p>
+		
+		<!-- Checks field for associated help text & displays it, if any-->
 		<p>
-			<!-- Displays the form field label -->
-			{{field.label_tag}}
-			<!-- Displays the form field -->
-			{{field}}
-			<!-- Checks field for associated help text & displays it, if any-->
 			{% if field.help_text %}
 			<small style="color: grey;">{{field.help_text}}</small>
 			{% endif %}
 		</p>
 		{% endfor %}
+
 		<!-- Iterates thru login form fields & displays errors, if any -->
 		{% for field in login_form %}
 		{% for error in field.errors %}
 		<p style="color:red;">{{error}}</p>
 		{% endfor %}
 		{% endfor %}
+
 		<!-- Checks any non-field errors in the login form & displays them, if any -->
 		{% if login_form.non_field_errors %}
 		<div style="color:red;"><p>{{login_form.non_field_errors}}</p></div>
 		{% endif %}
+
 		<!-- Form submit button -->
 		<button type="submit" class="btn btn-success">Login</button>
 	</form>
