@@ -31,8 +31,11 @@ def catan_view(request):
     else: # Load game objects
         game = Game.objects.get(game_key=game_key)
         board = Board.objects.get(game_key=game_key)
-        player_ordinal = (game.turn - 1) % game.number_players + 1
-        current_player = game.players.get(ordinal=player_ordinal)
+        current_ordinal = (game.turn - 1) % game.number_players + 1
+        previous_ordinal = (game.turn - 2) % game.number_players + 1
+        current_player = game.players.get(ordinal=current_ordinal)
+        previous_player = game.players.get(ordinal=previous_ordinal)
+        game.current_player = current_ordinal; game.previous_player = previous_ordinal; game.save()
 
     #*************************************************************************************
     # AJAX POST request; active response
@@ -138,18 +141,22 @@ def catan_view(request):
         # End turn, gather resources
         elif input == "end_turn":
             game.turn += 1
+            game.build_flag = 0
             player_ordinal = (game.turn - 1) % game.number_players + 1
             response['announcement'] = ("Player " + str(player_ordinal) + "\n" +
             "Turn: " + str(game.turn) + "\n")
             dice_value = random.randint(1, 6) + random.randint(1, 6)
             print("Dice value: " + str(dice_value))
             response['announcement'] += "Dice roll: " + str(dice_value) + "\n"
-            gather_resources(game, board, dice_value, response)
-            game.build_flag = 0
+            # Regular gather response
+            if dice_value != 7: gather_resources(game, board, dice_value, response)
+            # Special robber case
+            else:
+                game.robber_flag = 1
             
         # Sava game data, return response
         send_inventories(game, response)
-        send_flags(game, current_player, response)
+        send_flags(game, response)
         game.save()
         board.save()
         print(response['announcement'])
@@ -207,8 +214,9 @@ def send_inventories(game, response):
     response['players_data'] = players_data
 
 
-def send_flags(game, current_player, response):
+def send_flags(game, response):
     response['setup_flag'] = game.setup_flag
     response['build_flag'] = game.build_flag
-    response['current_player'] = current_player.ordinal
-
+    response['robber_flag'] = game.robber_flag
+    response['current_player'] = game.current_player
+    response['previous_player'] = game.previous_player
