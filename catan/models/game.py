@@ -10,9 +10,12 @@ class Game(models.Model):
     game_key = models.UUIDField(unique=True)
     players = models.ManyToManyField('Player', related_name='games')
     number_players = models.IntegerField(default=1)
+    current_player = models.IntegerField(default=1)
+    previous_player = models.IntegerField(default=1)
     turn = models.IntegerField(default=1)
     setup_flag = models.IntegerField(default=1)
     build_flag = models.IntegerField(default=0)
+    robber_flag = models.IntegerField(default=0)
 
     """Initialization; takes the game key, number of players, and number of starting settlements"""
     @classmethod
