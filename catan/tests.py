@@ -147,13 +147,19 @@ class CatanTests(TestCase):
         corner.building = 0; corner.save()
         handle_road_build (game, board, player1, corner.yindex, corner.xindex, response)
         self.assertTrue(response['build_success'] == -2)
-        # Has building
-        corner.building = 1; corner.save()
+        # Has building and matches player
+        corner.building = 1; corner.player = 1; corner.save()
         handle_road_build (game, board, player1, corner.yindex, corner.xindex, response)
         self.assertTrue(response['build_success'] == 1)
-        # Has road
+        # Has a road, but not the right one
+        player2 = game.players.get(ordinal=2)
         game.build_flag = 2; game.save()
-        corner.building = 0; corner.roads += "1,"; corner.save
+        corner.building = 0; corner.roads = "1"; corner.save()
+        handle_road_build (game, board, player2, corner.yindex, corner.xindex, response)
+        self.assertTrue(response['build_success'] == -2)
+        # Has the right road
+        game.build_flag = 2; game.save()
+        corner.building = 0; corner.roads = "1"; corner.save()
         handle_road_build (game, board, player1, corner.yindex, corner.xindex, response)
         self.assertTrue(response['build_success'] == 1)
 

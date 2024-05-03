@@ -115,7 +115,7 @@ def catan_view(request):
             elif game.build_flag == 4:
                 response['build_type'] = "city"
                 corner_to_build = board.corners.get(yindex=yindex, xindex=xindex)
-                if corner_to_build.building == 1:
+                if corner_to_build.building == 1 and corner_to_build.player == current_player.ordinal:
                     current_player.grain -= 2; current_player.ore -= 3; current_player.save()
                     corner_to_build.building = 2; corner_to_build.save()
                     response['build_success'] = 1

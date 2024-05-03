@@ -37,7 +37,7 @@ and at least one of its neighbors is a land tile"""
 def build_attempt(game, board, player, yindex, xindex, response):
     corner_to_build = board.corners.get(yindex=yindex, xindex=xindex)
     # Check if already built
-    if corner_to_build.building == 1:
+    if corner_to_build.building > 0:
         response['build_success'] = -1
         response['announcement'] += "That corner already has a building on it.\n"
         return
@@ -104,12 +104,14 @@ def handle_road_build (game, board, player, yindex, xindex, response):
         response['build_success'] = 0
 
         # Building check
-        if corner_to_build.building != 0:
+        if corner_to_build.building != 0 and corner_to_build.player == player.ordinal:
              response['build_success'] = 1
 
         # Road check
-        elif len(corner_to_build.roads) > 0:
-            response['build_success'] = 1
+        if corner_to_build.roads:
+            roads = [int(road) for road in corner_to_build.roads.split(',')]
+            if player.ordinal in roads:
+                response['build_success'] = 1
 
         # Successful build
         if response['build_success'] == 1:
@@ -145,7 +147,7 @@ def handle_road_build (game, board, player, yindex, xindex, response):
         if len(board.existing_roads) > 0:
             new_start = board.road_start
             new_end = str(yindex) + "," + str(xindex)
-            existing_roads = board.existing_roads.strip(';').split(';')
+            existing_roads = board.existing_roads.split(';')
             for road in existing_roads:
                 road_points = road.split(',')
                 print("Road:", road)
@@ -160,13 +162,16 @@ def handle_road_build (game, board, player, yindex, xindex, response):
                     return
 
         # Successful build
-        road = (str(road_start[0]) + "," + str(road_start[1]) + "," + str(yindex) + "," + str(xindex) + ";")
+        if board.existing_roads: board.existing_roads += ";"
+        road = (str(road_start[0]) + "," + str(road_start[1]) + "," + str(yindex) + "," + str(xindex))
         board.existing_roads += road
         response['road'] = road
         response['build_success'] = 1
         # Save road on corners
-        starting_corner.roads += str(player.ordinal) + ","; starting_corner.save()
-        corner_to_build.roads += str(player.ordinal) + ","; corner_to_build.save()
+        if starting_corner.roads: starting_corner.roads += ","
+        starting_corner.roads += str(player.ordinal); starting_corner.save()
+        if corner_to_build.roads: corner_to_build.roads += ","
+        corner_to_build.roads += str(player.ordinal); corner_to_build.save()
         # Charge player
         player.lumber -= 1; player.brick -= 1; player.save()
         game.build_flag = 0
