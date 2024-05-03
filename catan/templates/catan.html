@@ -8,6 +8,8 @@
         <title>Settlers of Catan</title>
         <!--Access the jQuery library-->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <!--JavaScript functions
+        <script src="catan_html_methods.js"></script>-->
 
         <!--Define the CSS style for content-->
         <style>
@@ -102,6 +104,7 @@
                 <!--<image id="board_image" xlink:href="{% static 'SettlersOfCatan.jpg' %}"
                 height="1000" />-->
                 <g id="tiles" height="1000"></g>
+                <circle id="robber" cx="0" cy="0" r="40" fill="gray" stroke="black"></circle>
                 <g id="edges" height="1000"></g>
                 <g id="corners" height="1000"></g>
                 <g id="tile_sensors" height="1000"></g>
@@ -399,6 +402,7 @@
                         if (tile_dice != 0) {draw_dice_marker(marker_position, tile_dice);}
                     }
                 }
+                move_robber(tile_positions, 3, 3);
                 //draw_tiles(tiles, 0);
             }
             // Draw tiles in sequence, for SVG animation assignment
@@ -546,13 +550,21 @@
                 document.getElementById("corners").appendChild(circle2);
             }
             
-            // Function to draw a build indicator
-            function draw_build_indicator(response, corner_positions, xindex, yindex) {
+            // Function to move the build indicator
+            function draw_build_indicator(corner_positions, xindex, yindex) {
                 var xpos = corner_positions[xindex][yindex][0];
                 var ypos = corner_positions[xindex][yindex][1];
                 $('#build_indicator').show();
                 $('#build_indicator').attr('cx', xpos);
                 $('#build_indicator').attr('cy', ypos);
+            }
+
+            // Function to move the robber
+            function move_robber(tile_positions, xindex, yindex) {
+                var xpos = tile_positions[xindex][yindex][0];
+                var ypos = tile_positions[xindex][yindex][1];
+                $('#robber').attr('cx', xpos);
+                $('#robber').attr('cy', ypos);
             }
 
             // Function to create a circle with a specific group
