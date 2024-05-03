@@ -45,7 +45,8 @@ template which doesn't extand base.html.
 			<div class="bs-docs-section page-header" id="banner">
 				<div class="row">
 
-					<aside class="col-md-2"><!-- ad space -->
+					<!-- ad space -->
+					<aside class="col-md-2">
 						<div id="randomAd">
 							<a id="adLink" href="#" target="_blank">
 								<img class="ad-image" id="adImage" src="" alt="Ad">
@@ -55,17 +56,18 @@ template which doesn't extand base.html.
 
 					<div class="col-md-8">
 						<!-- BLOCK: page header -->
-						<h1 class="page-header" style="text-align: center">
+						<h1 class="page-header" style="font-size:3em; text-align: center;">
 							{% block header %}{% endblock header %}
 						</h1>
 						<div class="bs-docs-section">
-							<div class="row" style="padding-top: 20px">
+							<div class="row" style="padding-top: 20px;">
 								<!-- BLOCK: content (ads/images/etc.) -->
 								{% block content %}{% endblock content %}
 							</div>
 						</div>
 					</div>
 
+					<!-- ad space? -->
 					<aside class="col-md-2">
 					</aside>
 				</div>
