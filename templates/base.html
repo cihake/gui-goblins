@@ -41,32 +41,34 @@ template which doesn't extand base.html.
 	<!-- INCLUDE: top navbar -->
 	{% include 'sitenav.html' %}
 	<div style="padding-top: 60px">
-		<div class="bs-docs-section page-header" id="banner">
-			<div class="row">
+		<div class="container">
+			<div class="bs-docs-section page-header" id="banner">
+				<div class="row">
 
-				<aside class="col-md-2"><!-- ad space -->
-					<div id="randomAd">
-						<a id="adLink" href="#" target="_blank">
-							<img class="ad-image" id="adImage" src="" alt="Ad">
-						</a>
-					</div>
-				</aside>
+					<aside class="col-md-2"><!-- ad space -->
+						<div id="randomAd">
+							<a id="adLink" href="#" target="_blank">
+								<img class="ad-image" id="adImage" src="" alt="Ad">
+							</a>
+						</div>
+					</aside>
 
-				<div class="col-md-8">
-					<!-- BLOCK: page header -->
-					<h1 class="page-header" style="text-align: center">
-						{% block header %}{% endblock header %}
-					</h1>
-					<div class="bs-docs-section">
-						<div class="row" style="padding-top: 20px">
-							<!-- BLOCK: content (ads/images/etc.) -->
-							{% block content %}{% endblock content %}
+					<div class="col-md-8">
+						<!-- BLOCK: page header -->
+						<h1 class="page-header" style="text-align: center">
+							{% block header %}{% endblock header %}
+						</h1>
+						<div class="bs-docs-section">
+							<div class="row" style="padding-top: 20px">
+								<!-- BLOCK: content (ads/images/etc.) -->
+								{% block content %}{% endblock content %}
+							</div>
 						</div>
 					</div>
-				</div>
 
-				<aside class="col-md-2">
-				</aside>
+					<aside class="col-md-2">
+					</aside>
+				</div>
 			</div>
 		</div>
 	</div>
