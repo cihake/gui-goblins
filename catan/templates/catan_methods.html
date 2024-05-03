@@ -1,0 +1,309 @@
+{% load static %}
+<!DOCTYPE html>
+
+<html>
+    <!--JavaScript functions-->
+    <script>
+        // Function to set up the game's coordinate system (involves geometry)
+        function setup_board(corner_positions, tile_positions) {
+            var scale = (1000 / 522) * 1.02;
+            var hex_length = (522 - 75) / 5;
+            var hlength = scale * hex_length / 2; // Horizontal
+            var vlength = scale * hex_length / (2 * Math.sqrt(3)); // Vertical
+            var firstpos = [(209 - 50) * scale - 5 * hlength, (54 - 5) * scale - 3 * vlength];
+            // Corners
+            for (var x = 0; x < 8; x++) { // Columns
+                corner_positions[x] = [];
+                for (var y = 0; y < 16; y++) { // Rows
+                    var ypos = 0;
+                    if (y % 2 == 0) { ypos = firstpos[1] + vlength * (Math.floor(y / 2) * 3); }
+                    else { ypos = firstpos[1] + vlength * (1 + Math.floor(y / 2) * 3); }
+                    var xpos = 0;
+                    if (y % 4 == 0 || y % 4 == 3) { xpos = firstpos[0] + hlength * (x * 2); }
+                    else if (y % 4 == 1 || y % 4 == 2) {xpos = firstpos[0] + hlength * (1 + x * 2); }
+                    corner_positions[x][y] = [xpos, ypos];
+                    var circle_data = x + "," + y;
+                    create_data_circle("corner_sensors", circle_data, xpos, ypos, 30, "transparent");
+                }
+            }
+            // Tiles
+            for (var x = 0; x < 7; x++) { // Columns
+                tile_positions[x] = [];
+                for (var y = 0; y < 7; y++) { // Rows
+                    var ypos = firstpos[1] + vlength * (2 + y * 3);
+                    var xpos = 0;
+                    if (y % 2 == 0) { xpos = firstpos[0] + hlength * (2 + x * 2); }
+                    else { xpos = firstpos[0] + hlength * (1 + x * 2); }
+                    tile_positions[x][y] = [xpos, ypos];
+                    var circle_data = x + "," + y;
+                    create_data_circle("tile_sensors", circle_data, xpos, ypos, 70, "transparent");
+                    //create_circle("tile_marker", xpos, ypos, 3, "black");
+                }
+            }
+        }
+
+        // SVG function to draw a custom game board
+        function draw_board(corner_positions, tile_positions, draw_data) {
+            var x1=0, x2=0, x3=0, x4=0, x5=0, x6=0, y1=0, y2=0, y3=0, y4=0, y5=0, y6=0;
+            var tiles = [];
+            for (var y = 0; y < 7; y++) {
+                for (var x = 0; x < 7; x++) {
+                    y1=y*2; y2=y*2+1; y3=y*2+2; y4=y*2+3; y5=y*2+2; y6=y*2+1;
+                    if (y % 2 == 0) {x1=x+1; x2=x+1; x3=x+1; x4=x+1; x5=x; x6=x;}
+                    else if (y % 2 == 1) {x1=x; x2=x+1; x3=x+1; x4=x; x5=x; x6=x;}
+                    var draw_positions = [corner_positions[x1][y1], corner_positions[x2][y2], corner_positions[x3][y3],
+                    corner_positions[x4][y4], corner_positions[x5][y5], corner_positions[x6][y6]];
+                    var tile_color = draw_data.tile_colors[y][x];
+                    var marker_position = tile_positions[x][y];
+                    var tile_dice = draw_data.tile_dice[y][x];
+                    //if (tile_color != "none") {tiles.push(draw_tile(draw_positions, tile_color));}
+                    if (tile_color != "none") {draw_tile(draw_positions, "gray", "100%");}
+                    if (tile_color != "none") {draw_tile(draw_positions, tile_color, "70%");}
+                    if (tile_dice != 0) {draw_dice_marker(marker_position, tile_dice);}
+                }
+            }
+            move_robber(tile_positions, 3, 3);
+            //draw_tiles(tiles, 0);
+        }
+        // Draw tiles in sequence, for SVG animation assignment
+        function draw_tiles(tiles, i) {
+            if (i < tiles.length) {
+                document.getElementById("tiles").appendChild(tiles[i]);
+                setTimeout(function() {
+                    draw_tiles(tiles, i + 1);
+                }, 400);
+            }
+        }
+
+        // Function to draw a tile
+        function draw_tile(draw_positions, tile_color, opacity) {
+            var svgNS = "http://www.w3.org/2000/svg";
+            var polygon = document.createElementNS(svgNS, "polygon");
+            var points = ""
+            for (var i = 0; i < draw_positions.length; i++) {
+                points += draw_positions[i][0].toString() + "," +
+                draw_positions[i][1].toString() + " ";
+            }
+            var style = "fill:" + tile_color + ";fill-opacity:" + opacity + ";stroke:black;stroke-width:1";
+            polygon.setAttributeNS(null, "points", points);
+            polygon.setAttributeNS(null, "style", style);
+            //return polygon;
+            document.getElementById("tiles").appendChild(polygon);
+        }
+        // Function to draw a dice marker on a tile
+        function draw_dice_marker(marker_position, tile_dice) {
+            var xpos = marker_position[0];
+            var ypos = marker_position[1];
+            create_group_circle("tiles", "dice_marker", xpos, ypos, 30, "moccasin");
+            draw_marker_text(xpos, ypos, tile_dice);
+        }
+        // Function to draw SVG text for a dice marker
+        function draw_marker_text(x, y, tile_dice) {
+            var svgNS = "http://www.w3.org/2000/svg";
+            var text = document.createElementNS(svgNS, "text");
+            text.textContent = tile_dice.toString();
+            text.setAttributeNS(null, "x", x);
+            text.setAttributeNS(null, "y", y);
+            text.setAttributeNS(null, "text-anchor", "middle");
+            text.setAttributeNS(null, "font-family", "Arial");
+            var font_size = 20;
+            text.setAttributeNS(null, "font-size", font_size);
+            text.setAttributeNS(null, "dy", font_size / 2);
+            if (tile_dice == 6 || tile_dice == 8) {text.setAttributeNS(null, "fill", "red");}
+            document.getElementById("tiles").appendChild(text);
+        }
+
+        // Function to draw various build items; decide on what to draw
+        function draw_build_items(response, corner_positions, xindex, yindex) {
+            var player_color = "none", current_player = response['current_player'];
+            if (current_player == 1) {player_color = "red";}
+            else if (current_player == 2) {player_color = "royalblue";}
+            else if (current_player == 3) {player_color = "white";}
+            else if (current_player == 4) {player_color = "orange";}
+            else {player_color = "black";}
+
+            // Draw a settlement
+            if (response['build_type'] == "settlement") {
+                draw_settlement(response, player_color, corner_positions, xindex, yindex);
+                $('.cancel').hide(); // Hide the "cancel" button
+            }
+            // Draw a road
+            else if (response['build_type'] == "road_end") {
+                draw_road(response, player_color, corner_positions)
+                $('.cancel').hide(); // Hide the "cancel" button
+            }
+            // Draw a city
+            else if (response['build_type'] == "city") {
+                console.log("City built");
+                draw_city(response, corner_positions, xindex, yindex);
+                $('.cancel').hide(); // Hide the "cancel" button
+            }
+        }
+
+        // Function to draw a road between two corners, along an edge
+        function draw_road(response, player_color, corner_positions) {
+            var road = response['road'].replace(';', '').split(',');
+            console.log("Road start: " + road[1].toString() + "," + road[0].toString() +
+            "; Road end: " + road[3].toString() + "," + road[2].toString());
+            var x1 = corner_positions[road[1]][road[0]][0];
+            var y1 = corner_positions[road[1]][road[0]][1];
+            var x2 = corner_positions[road[3]][road[2]][0];
+            var y2 = corner_positions[road[3]][road[2]][1];
+            console.log("(drawing) Road start: " + x1.toString() + "," + y1.toString() + "; Road end: " + x2.toString() + "," + y2.toString());
+            adjusted_road = adjust_points(x1, y1, x2, y2, 0.1);
+            console.log(adjusted_road);
+            x1=adjusted_road[0]; y1=adjusted_road[1]; x2=adjusted_road[2]; y2=adjusted_road[3];
+            create_group_line("edges", x1, y1, x2, y2, "black", 16);
+            create_group_line("edges", x1, y1, x2, y2, player_color, 14);
+        }
+
+        // Function to create a line with a specific group
+        function create_group_line(group_id, x1, y1, x2, y2, color, width) {
+            var svgNS = "http://www.w3.org/2000/svg";
+            var line = document.createElementNS(svgNS, "line");
+            line.setAttributeNS(null, "id", "road");
+            line.setAttributeNS(null, "x1", x1);
+            line.setAttributeNS(null, "y1", y1);
+            line.setAttributeNS(null, "x2", x2);
+            line.setAttributeNS(null, "y2", y2);
+            var style = "stroke:" + color + ";stroke-width:" + width.toString();
+            line.setAttributeNS(null, "style", style);
+            document.getElementById(group_id).appendChild(line);
+        }
+
+        // Function to move points closer together
+        function adjust_points(x1, y1, x2, y2, factor) {
+            newx1 = x1 + (x2 - x1) * factor;
+            newy1 = y1 + (y2 - y1) * factor;
+            newx2 = x2 + (x1 - x2) * factor;
+            newy2 = y2 + (y1 - y2) * factor;
+            return [newx1, newy1, newx2, newy2];
+        }
+
+        // Function to draw a settlement at a given position
+        function draw_settlement(response, player_color, corner_positions, xindex, yindex) {
+            var xpos = corner_positions[xindex][yindex][0];
+            var ypos = corner_positions[xindex][yindex][1];
+            create_group_circle("corners", "building", xpos, ypos, 20, player_color);
+        }
+
+        // Function to draw a city on a settlement
+        function draw_city(response, corner_positions, xindex, yindex) {
+            xpos = corner_positions[xindex][yindex][0];
+            ypos = corner_positions[xindex][yindex][1];
+            var svgNS = "http://www.w3.org/2000/svg";
+            var circle1 = document.createElementNS(svgNS, "circle");
+            circle1.setAttributeNS(null, "class", "city");
+            circle1.setAttributeNS(null, "cx", xpos);
+            circle1.setAttributeNS(null, "cy", ypos);
+            circle1.setAttributeNS(null, "r", 5);
+            circle1.setAttributeNS(null, "fill", "black");
+            document.getElementById("corners").appendChild(circle1);
+            var circle2 = document.createElementNS(svgNS, "circle");
+            circle2.setAttributeNS(null, "class", "city");
+            circle2.setAttributeNS(null, "cx", xpos);
+            circle2.setAttributeNS(null, "cy", ypos);
+            circle2.setAttributeNS(null, "r", 20);
+            circle2.setAttributeNS(null, "fill", "transparent");
+            circle2.setAttributeNS(null, "stroke", "black");
+            circle2.setAttributeNS(null, "stroke-width", 5);
+            document.getElementById("corners").appendChild(circle2);
+        }
+
+        // Function to move the build indicator
+        function draw_build_indicator(corner_positions, xindex, yindex) {
+            var xpos = corner_positions[xindex][yindex][0];
+            var ypos = corner_positions[xindex][yindex][1];
+            $('#build_indicator').show();
+            $('#build_indicator').attr('cx', xpos);
+            $('#build_indicator').attr('cy', ypos);
+        }
+
+        // Function to move the robber
+        function move_robber(tile_positions, xindex, yindex) {
+            var xpos = tile_positions[xindex][yindex][0];
+            var ypos = tile_positions[xindex][yindex][1];
+            $('#robber').attr('cx', xpos);
+            $('#robber').attr('cy', ypos);
+        }
+
+        // Function to create a circle with a specific group
+        function create_group_circle(group_id, class_id, x, y, radius, color) {
+            var svgNS = "http://www.w3.org/2000/svg";
+            var circle = document.createElementNS(svgNS, "circle");
+            circle.setAttributeNS(null, "class", class_id);
+            circle.setAttributeNS(null, "cx", x);
+            circle.setAttributeNS(null, "cy", y);
+            circle.setAttributeNS(null, "r", radius);
+            circle.setAttributeNS(null, "fill", color);
+            circle.setAttributeNS(null, "stroke", "black");
+            document.getElementById(group_id).appendChild(circle);
+        }
+
+        // Function to create a circle, with a specific group and data
+        function create_data_circle(group_id, data_id, x, y, radius, color) {
+            var svgNS = "http://www.w3.org/2000/svg";
+            var circle = document.createElementNS(svgNS, "circle");
+            circle.setAttributeNS(null, "class", "data_circle");
+            circle.setAttributeNS(null, "data-id", data_id);
+            circle.setAttributeNS(null, "cx", x);
+            circle.setAttributeNS(null, "cy", y);
+            circle.setAttributeNS(null, "r", radius);
+            circle.setAttributeNS(null, "fill", color);
+            document.getElementById(group_id).appendChild(circle);
+        }
+
+        // Function to update player inventory displays
+        function update_inventories(response) {
+            console.log(response.players_data[0]);
+            response.players_data.forEach(function(player) {
+                // Update the HTML elements for each player
+                $('#player' + player.ordinal + '_wool').text("wool " + player.wool);
+                $('#player' + player.ordinal + '_grain').text("grain " + player.grain);
+                $('#player' + player.ordinal + '_lumber').text("lumber " + player.lumber);
+                $('#player' + player.ordinal + '_brick').text("brick " + player.brick);
+                $('#player' + player.ordinal + '_ore').text("ore " + player.ore);
+                player_inventory = [player.wool, player.grain, player.lumber, player.brick, player.ore]
+                for (var i = 0; i < player_inventory.length; i++) {
+                    if (player_inventory[i] >= 10) {declare_winner(player.ordinal)}
+                }
+            });
+        }
+
+        // Function to add items to a dropdown menu
+        function add_menu_item(group, id, text) {
+            const newItem = document.createElement('div');
+            newItem.classList.add('menu-item');
+            newItem.setAttribute('id', id);
+            newItem.textContent = text;
+            document.getElementById(group).appendChild(newItem);
+        }
+
+        // Function to declare a winner
+        function declare_winner(player) {
+            $('#wintext').text("Player " + player + " wins!");
+            $('#wintext').show();
+        }
+
+        // Function to display an announcement
+        function announce(response) {
+            $('.announcer').html(response['announcement'].replace(/\n/g, '<br>'));
+        }
+
+        // Function to get the CSRF token
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+</html>
