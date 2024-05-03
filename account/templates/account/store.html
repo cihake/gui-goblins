@@ -1,5 +1,5 @@
 <!--~~~ STORE.HTML ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-Last edit on 04/28/24 (01:11) by @cihake
+Last edit on 05/02/24 (21:08) by @cihake
 
 NOTE:	The contents of this template extend the 'base.html' master
 		template. Please review base.html, its content blocks, and its
@@ -25,6 +25,25 @@ available for purchase.
 	.coin-image { margin-right: 20px; width: 100px; height: auto; } /* Adjust width as needed; height maintains aspect ratio */
 	.buy-button { background-color: #000000; color: #ffffff; border: none; border-radius: 5px; padding: 10px 20px; font-size: 16px; cursor: pointer; transition: background-color 0.3s; }
 	.buy-button:hover { background-color: #333333; }
+	/*
+	i was gonna add a "shining"/"reflection" animation to each
+	of the coin/product containers but i still cant log in :(
+	*/
+	.shiny{
+		width: 170px;
+		height: 80px;
+		position: relative;
+		float: right;
+		border-radius: 5px;
+		background: linear-gradient(120deg, #e5e5e5 30%, #f0f0f0 38%, #f0f0f0 
+		40%, #e5e5e5 48%);
+		margin-top: 10px;
+		background-size: 200% 100%;
+		background-position: 100% 0;
+		animation: shine 2s infinite;
+	}
+	@keyframes shine { 100% { background-position: -100% 0; }}
+
 </style>
 {% endblock styles %}
 {% block header %}Store{% endblock header %}
