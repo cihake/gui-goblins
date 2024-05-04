@@ -5,7 +5,7 @@ from .models.player import Player
 from .models.board import Board
 from .models.corner import Corner
 from .models.tile import Tile
-from .view_methods import build_attempt, gather_resources, handle_setup, handle_road_build, can_afford
+from .view_methods import build_attempt, gather_resources, handle_setup, handle_road_build, can_afford, move_attempt, steal_resource
 
 class CatanTests(TestCase):
     def test(self):
@@ -71,6 +71,16 @@ class CatanTests(TestCase):
         neighbor_tiles = board.get_neighbor_tiles(corner)
         for Tile in neighbor_tiles:
             self.assertTrue(Tile.xindex == 0 and Tile.yindex == 3)
+        
+        tile = board.tiles.get(yindex=3, xindex=3)
+        surrounding_corners = board.get_surrounding_corners(tile)
+        for Corner in surrounding_corners:
+            self.assertTrue(Corner.xindex == 3 and Corner.yindex == 6 or
+                            Corner.xindex == 4 and Corner.yindex == 7 or
+                            Corner.xindex == 4 and Corner.yindex == 8 or
+                            Corner.xindex == 3 and Corner.yindex == 9 or
+                            Corner.xindex == 3 and Corner.yindex == 8 or
+                            Corner.xindex == 3 and Corner.yindex == 7)
         
         """build attempt method tests"""
         response = {}
@@ -185,23 +195,33 @@ class CatanTests(TestCase):
         """harvest method tests"""
         player1.wool = 0; player1.grain = 0; player1.lumber = 0; player1.brick = 0; player1. ore = 0; player1.save()
         corner1 = board.corners.get(yindex=4, xindex=4)
-        corner1.building = 1; corner1.save()
+        corner1.building = 1; corner1.player = 1; corner1.save()
         corner2 = board.corners.get(yindex=6, xindex=4)
-        corner2.building = 1; corner2.save()
+        corner2.building = 1; corner2.player = 1;  corner2.save()
         corner3 = board.corners.get(yindex=9, xindex=4)
-        corner3.building = 1; corner3.save()
+        corner3.building = 1; corner3.player = 1;  corner3.save()
         dice_value = 8
-        gather_resources(board, player1, dice_value, response)
-        player1.save()
+        gather_resources(game, board, dice_value, response)
+        player1 = game.players.get(ordinal=1)
         self.assertTrue(player1.brick == 2)
         dice_value = 9
-        gather_resources(board, player1, dice_value, response)
-        player1.save()
+        gather_resources(game, board, dice_value, response)
+        player1 = game.players.get(ordinal=1)
         self.assertTrue(player1.grain == 2)
         dice_value = 11
-        gather_resources(board, player1, dice_value, response)
-        player1.save()
+        gather_resources(game, board, dice_value, response)
+        player1 = game.players.get(ordinal=1)
         self.assertTrue(player1.lumber == 1)
+        dice_value = 11 # City increased gathering
+        corner3.building = 2; corner3.save()
+        gather_resources(game, board, dice_value, response)
+        player1 = game.players.get(ordinal=1)
+        self.assertTrue(player1.lumber == 3)
+        dice_value = 11 # Other player, do not gather
+        corner3.player = 2; corner3.save()
+        gather_resources(game, board, dice_value, response)
+        player1 = game.players.get(ordinal=1)
+        self.assertTrue(player1.lumber == 3)
 
         """afford method test"""
         # Cannot afford a settlement
@@ -222,3 +242,44 @@ class CatanTests(TestCase):
         # Can afford a city
         player1.wool=0; player1.grain=2; player1.lumber=0; player1.brick=0; player1.ore=3; player1.save()
         self.assertTrue(can_afford(player1, "build_city", response))
+
+        """Robber move tests"""
+        response['announcement'] = ""
+        # Not a land tile
+        move_attempt(game, board, 0, 0, response)
+        self.assertTrue(response['move_success'] == -1)
+        # Same space
+        move_attempt(game, board, 3, 3, response)
+        board.save()
+        self.assertTrue(response['move_success'] == -2)
+        # Successful move
+        move_attempt(game, board, 4, 4, response)
+        self.assertTrue(response['move_success'] == 1)
+
+        """Steal method tests"""
+        corner1 = board.corners.get(yindex=6, xindex=3)
+        corner1.building = 1; corner1.player = 1; corner1.save()
+        corner2 = board.corners.get(yindex=9, xindex=3)
+        corner2.building = 1; corner2.player = 2; corner2.save()
+        # No resource stolen
+        player1.wool=0; player1.grain=0; player1.lumber=0; player1.brick=0; player1.ore=0; player1.save()
+        player2.wool=0; player2.grain=0; player2.lumber=0; player2.brick=0; player2.ore=0; player2.save()
+        steal_resource(game, board, player1, 3, 3, response)
+        player1 = game.players.get(ordinal=1)
+        player2 = game.players.get(ordinal=2)
+        self.assertTrue(player1.wool == 0 and player1.grain == 0 and player1.lumber == 0 and player1.brick == 0 and player1.ore == 0 and
+                    player2.wool == 0 and player2.grain == 0 and player2.lumber == 0 and player2.brick == 0 and player2.ore == 0)
+        # Resource stolen
+        player1.wool=0; player1.grain=0; player1.lumber=0; player1.brick=0; player1.ore=0; player1.save()
+        player2.wool=1; player2.grain=0; player2.lumber=0; player2.brick=0; player2.ore=0; player2.save()
+        steal_resource(game, board, player1, 3, 3, response)
+        player1 = game.players.get(ordinal=1)
+        player2 = game.players.get(ordinal=2)
+        self.assertTrue(player1.wool == 1 and player2.wool == 0)
+        # Choice of resource stolen
+        player1.wool=0; player1.grain=0; player1.lumber=0; player1.brick=0; player1.ore=0; player1.save()
+        player2.wool=0; player2.grain=2; player2.lumber=0; player2.brick=0; player2.ore=0; player2.save()
+        steal_resource(game, board, player1, 3, 3, response)
+        player1 = game.players.get(ordinal=1)
+        player2 = game.players.get(ordinal=2)
+        self.assertTrue(player1.wool == 1 and player2.wool == 0 or player1.grain == 1 and player2.grain == 1)

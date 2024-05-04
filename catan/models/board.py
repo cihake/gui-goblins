@@ -11,12 +11,14 @@ class Board(models.Model):
     tiles = models.ManyToManyField('Tile', related_name='board')
     road_start = models.CharField(max_length=100, null=True)
     existing_roads = models.CharField(max_length=10000, null=True)
+    robber_space = models.CharField(max_length=100, null=True)
 
     """Initialization; takes the game_key and coordinates"""
     @classmethod
     def initialize(cls, game_key, randomize):
         board = cls.objects.create(game_key=game_key)
         board.existing_roads = ""
+        board.robber_space = "3,3"
 
         corners = []
         for y in range(16):
@@ -107,9 +109,7 @@ class Board(models.Model):
     def get_neighbor_corners(self, corner):
         y = corner.yindex
         x = corner.xindex
-        # Get an intermediate "corners" model
-        corner_model = self.corners.through._meta.get_field('corner').remote_field.model
-        corners = corner_model.objects.filter(board=self)  # Query all corner objects related to this board
+        corners = self.corners
         neighbors = []
         # All have these neighbors.
         if corners.filter(yindex=y-1, xindex=x).exists():
@@ -127,16 +127,13 @@ class Board(models.Model):
             neighbors.append(corners.get(yindex=y-1, xindex=x-1))
 
         #self.print_neighbor_corners(neighbors)
-        
         return neighbors
     
     """Get tile neighbors of corners; also checks for bounds"""
     def get_neighbor_tiles(self, corner):
         yindex = corner.yindex
         x = corner.xindex
-        # Get an intermediate "tiles" model
-        tile_model = self.tiles.through._meta.get_field('tile').remote_field.model
-        tiles = tile_model.objects.filter(board=self)  # Query all tile objects related to this board
+        tiles = self.tiles
         y = math.floor(yindex / 2)
         # There are four offsets, and each lacks one of them.
         neighbors = []
@@ -150,7 +147,27 @@ class Board(models.Model):
             neighbors.append(tiles.get(yindex=y-1, xindex=x))
 
         #self.print_neighbor_tiles(neighbors)
-        
+        return neighbors
+    
+    """Get corner neighbors of tiles; doesn't need bound checks, all tiles are surrounded."""
+    def get_surrounding_corners(self, tile):
+        y = tile.yindex
+        x = tile.xindex
+        corners = self.corners
+        neighbors = []
+        # The y offsets are the same for any tile, but the x offsets differ based on y index
+        x1=0; x2=0; x3=0; x4=0; x5=0; x6=0; y1=0; y2=0; y3=0; y4=0; y5=0; y6=0
+        y1=y*2; y2=y*2+1; y3=y*2+2; y4=y*2+3; y5=y*2+2; y6=y*2+1
+        if y % 2 == 0: x1=x+1; x2=x+1; x3=x+1; x4=x+1; x5=x; x6=x
+        elif y % 2 == 1: x1=x; x2=x+1; x3=x+1; x4=x; x5=x; x6=x
+        neighbors.append(corners.get(yindex=y1, xindex=x1))
+        neighbors.append(corners.get(yindex=y2, xindex=x2))
+        neighbors.append(corners.get(yindex=y3, xindex=x3))
+        neighbors.append(corners.get(yindex=y4, xindex=x4))
+        neighbors.append(corners.get(yindex=y5, xindex=x5))
+        neighbors.append(corners.get(yindex=y6, xindex=x6))
+
+        #self.print_surrounding_corners(neighbors)
         return neighbors
     
     """Print check for the neighbor corners method"""
@@ -160,9 +177,16 @@ class Board(models.Model):
             output += Corner.__str__()
         print(output)
     
-    """Print check for the nieghbor tiles method"""
+    """Print check for the neighbor tiles method"""
     def print_neighbor_tiles(self, neighbor_tiles):
         output = ""
         for Tile in neighbor_tiles:
             output += Tile.__str__()
+        print(output)
+    
+    """Print check for the surrounding corners method"""
+    def print_surrounding_corners(self, neighbors):
+        output = ""
+        for Corner in neighbors:
+            output += Corner.__str__()
         print(output)
