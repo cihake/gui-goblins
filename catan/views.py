@@ -7,7 +7,7 @@ from .models.player import Player
 from .models.board import Board
 from .models.corner import Corner
 from .models.tile import Tile
-from .view_methods import build_attempt, gather_resources, handle_setup, can_afford, handle_road_build
+from .view_methods import build_attempt, gather_resources, handle_setup, can_afford, handle_road_build, city_attempt, move_attempt, steal_resource
 
 def catan_view(request):
     # Load game key, or create one if none in session and valueless
@@ -23,7 +23,7 @@ def catan_view(request):
     
     # Create game objects if none match the key
     if not Game.objects.filter(game_key=game_key).exists():
-        game = Game.initialize(game_key, 1, 2)
+        game = Game.initialize(game_key, 3, 2)
         board = Board.initialize(game_key, True)
         current_player = game.players.get(ordinal=1)
         game.save()
@@ -46,9 +46,9 @@ def catan_view(request):
         # In addition to announcements and game data, the response has several flags:
         # build_success, build_type
         response = {}
-        response['announcement'] = "Player " + str(current_player.ordinal) + "\n"
-        if game.setup_flag == 0:
-            response['announcement'] += "Turn: " + str(game.turn) + "\n"
+        response['announcement'] = ""
+        player_string = "Player " + str(current_player.ordinal) + "\n"
+        send_start_flags(game, response)
 
         # Reset data
         if input == "clear_data":
@@ -88,7 +88,7 @@ def catan_view(request):
                 response['announcement'] = ("Not enough resources.\n"
                 + "A road costs one unit of brick and lumber.")
         elif input == "build_city":
-            if True:#can_afford(current_player, input, response):
+            if can_afford(current_player, input, response):
                 game.build_flag = 4
                 response['can_afford'] = True
                 response['announcement'] = "Build where?\n"
@@ -97,6 +97,7 @@ def catan_view(request):
                 response['announcement'] = ("Not enough resources.\n"
                 + "A city costs three ore and two grain.")
         
+
         # Corner clicked
         elif input == "corner":
             yindex = request.POST.get('yindex')
@@ -123,42 +124,53 @@ def catan_view(request):
             # City building mode; rather simple
             elif game.build_flag == 4:
                 response['build_type'] = "city"
-                corner_to_build = board.corners.get(yindex=yindex, xindex=xindex)
-                if corner_to_build.building == 1 and corner_to_build.player == current_player.ordinal:
+                city_attempt(board, current_player, yindex, xindex, response)
+                if response['build_success'] == 1:
                     current_player.grain -= 2; current_player.ore -= 3; current_player.save()
-                    corner_to_build.building = 2; corner_to_build.save()
-                    response['build_success'] = 1
-                    response['announcement'] += "Built successfully\n"
-                else:
-                    response['build_success'] = -1
-                    response['announcement'] += "A city must be built on one of your own settlements.\n"
+                
         
+
         # Tile clicked
         elif input == "tile":
+            yindex = request.POST.get('yindex')
+            xindex = request.POST.get('xindex')
+            
             if game.setup_flag != 0:
                 response['announcement'] += "Remaining settlements: " + str(current_player.starting_settlements) + "\n"
 
+            # Move the robber, if the game is in that phase, and advance the turn
+            if game.robber_flag == 1:
+                move_attempt(game, board, yindex, xindex, response)
+                # Steal from other players, if successfully moved
+                if response['move_success'] == 1:
+                    steal_resource(game, board, current_player, yindex, xindex, response)
+                    
+
+
         # End turn, gather resources
         elif input == "end_turn":
-            game.turn += 1
             game.build_flag = 0
-            player_ordinal = (game.turn - 1) % game.number_players + 1
-            response['announcement'] = ("Player " + str(player_ordinal) + "\n" +
-            "Turn: " + str(game.turn) + "\n")
             dice_value = random.randint(1, 6) + random.randint(1, 6)
-            print("Dice value: " + str(dice_value))
             response['announcement'] += "Dice roll: " + str(dice_value) + "\n"
             # Regular gather response
-            if dice_value != 7: gather_resources(game, board, dice_value, response)
+            if dice_value != 7:
+                game.turn += 1
+                gather_resources(game, board, dice_value, response)
             # Special robber case
             else:
                 game.robber_flag = 1
-            
+                response['announcement'] += ("The robber moves! Choose which tile to move the robber to.\n")
+        
+
         # Sava game data, return response
         send_inventories(game, response)
         send_flags(game, response)
         game.save()
         board.save()
+        if game.setup_flag == 0:
+            announcement = (player_string +
+            "Turn: " + str(game.turn) + "\n" + response['announcement'])
+            response['announcement'] = announcement
         print(response['announcement'])
         return JsonResponse(response)
     
@@ -213,10 +225,12 @@ def send_inventories(game, response):
 
     response['players_data'] = players_data
 
-
 def send_flags(game, response):
     response['setup_flag'] = game.setup_flag
     response['build_flag'] = game.build_flag
     response['robber_flag'] = game.robber_flag
     response['current_player'] = game.current_player
     response['previous_player'] = game.previous_player
+
+def send_start_flags(game, response):
+    response['robber_flag_start'] = game.robber_flag

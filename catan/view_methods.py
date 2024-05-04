@@ -1,3 +1,5 @@
+import random
+
 """Game setup; players place their starter buildings
 Each player places 1, then it loops around again"""
 def handle_setup(game, board, player, yindex, xindex, response):
@@ -151,7 +153,6 @@ def handle_road_build (game, board, player, yindex, xindex, response):
             for road in existing_roads:
                 road_points = road.split(',')
                 print("Road:", road)
-                print("Road points:", road_points)
                 old_start = road_points[0] + "," + road_points[1]
                 old_end = road_points[2] + "," + road_points[3]
                 # Since the points can be in either order, compare the points individually
@@ -177,6 +178,92 @@ def handle_road_build (game, board, player, yindex, xindex, response):
         game.build_flag = 0
         response['announcement'] += "Built successfully\n"
         return
+    
+
+"""A city must simply be placed over a player's existing settlement."""
+def city_attempt(board, player, yindex, xindex, response):
+    corner_to_build = board.corners.get(yindex=yindex, xindex=xindex)
+    if corner_to_build.building == 1 and corner_to_build.player == player.ordinal:
+        corner_to_build.building = 2; corner_to_build.save()
+        response['build_success'] = 1
+        response['announcement'] += "Built successfully\n"
+    else:
+        response['build_success'] = -1
+        response['announcement'] += "A city must be built on one of your own settlements.\n"
+
+
+"""The robber has to be moved to another land tile"""
+def move_attempt(game, board, yindex, xindex, response):
+    space = str(yindex) + "," + str(xindex)
+    terrain = board.tiles.get(yindex=yindex, xindex=xindex).terrain
+    # Non-land space
+    if terrain == "empty" or terrain == "water":
+        response['move_success'] = -1
+        response['announcement'] += "The robber must be moved to a land tile.\n"
+    # Same space clicked
+    elif space == board.robber_space:
+        response['move_success'] = -2
+        response['announcement'] += "The robber must be moved to another tile.\n"
+    # Successful move
+    else:
+        response['move_success'] = 1
+        board.robber_space = space
+        game.turn += 1
+        game.robber_flag = 0
+
+
+"""When the robber is moved to a tile, the player steals from
+one of the other adjacent players at random."""
+def steal_resource(game, board, player, yindex, xindex, response):
+    tile = board.tiles.get(yindex=yindex, xindex=xindex)
+    surrounding_corners = board.get_surrounding_corners(tile)
+    others_adjacent = []
+    resource_list = []
+    stolen_player = 0
+    
+    # Check corners for other players with resources
+    for Corner in surrounding_corners:
+        player_value = Corner.player
+        if player_value != 0 and player_value != player.ordinal:
+            other_player = game.players.get(ordinal=player_value)
+            total_resources = other_player.wool + other_player.grain + other_player.lumber + other_player.brick + other_player.ore
+            if total_resources > 0 and player_value not in others_adjacent:
+                others_adjacent.append(player_value)
+    
+    # Choose a player from the list of others
+    if len(others_adjacent) > 1:
+        stolen_player = random.randint(0, len(others_adjacent)-1)
+    elif others_adjacent: stolen_player = 0
+    # Return if no player can have a resource stolen
+    else: return
+    other_ordinal = others_adjacent[stolen_player]
+    other_player = game.players.get(ordinal=other_ordinal)
+    
+    # Translate player inventory to a simulated deck, for weighted random drawing
+    for i in range(other_player.wool): resource_list.append(1)
+    for i in range(other_player.grain): resource_list.append(2)
+    for i in range(other_player.lumber): resource_list.append(3)
+    for i in range(other_player.brick): resource_list.append(4)
+    for i in range(other_player.ore): resource_list.append(5)
+
+    # Draw a resource from the deck, and move from one player to the other
+    resource_draw = random.randint(0, len(resource_list)-1)
+    resource_taken = resource_list[resource_draw]
+    if resource_taken == 1:
+        other_player.wool -= 1; other_player.save(); player.wool += 1; player.save()
+        response['announcement'] += "Wool taken from player " + str(other_player.ordinal) + "\n"
+    elif resource_taken == 2:
+        other_player.grain -= 1; other_player.save(); player.grain += 1; player.save()
+        response['announcement'] += "Grain taken from player " + str(other_player.ordinal) + "\n"
+    elif resource_taken == 3:
+        other_player.lumber -= 1; other_player.save(); player.lumber += 1; player.save()
+        response['announcement'] += "Lumber taken from player " + str(other_player.ordinal) + "\n"
+    elif resource_taken == 4:
+        other_player.brick -= 1; other_player.save(); player.brick += 1; player.save()
+        response['announcement'] += "Brick taken from player " + str(other_player.ordinal) + "\n"
+    elif resource_taken == 5:
+        other_player.ore -= 1; other_player.save(); player.ore += 1; player.save()
+        response['announcement'] += "Ore taken from player " + str(other_player.ordinal) + "\n"
 
 
 """At the start of a turn, for every corner that is built, check the adjacent tiles.
@@ -195,23 +282,23 @@ def gather_resources(game, board, dice_value, response):
                     if terrain == "pasture":
                         player.wool += amount
                         response['announcement'] += ("Player " + str(player.ordinal) +
-                        " gained " + str(amount) + " wool\n")
+                        " gains " + str(amount) + " wool\n")
                     elif terrain == "fields":
                         player.grain += amount
                         response['announcement'] += ("Player " + str(player.ordinal) +
-                        " gained " + str(amount) + " grain\n")
+                        " gains " + str(amount) + " grain\n")
                     elif terrain == "forest":
                         player.lumber += amount
                         response['announcement'] += ("Player " + str(player.ordinal) +
-                        " gained " + str(amount) + " lumber\n")
+                        " gains " + str(amount) + " lumber\n")
                     elif terrain == "hills":
                         player.brick += amount
                         response['announcement'] += ("Player " + str(player.ordinal) +
-                        " gained " + str(amount) + " brick\n")
+                        " gains " + str(amount) + " brick\n")
                     elif terrain == "mountains":
                         player.ore += amount
                         response['announcement'] += ("Player " + str(player.ordinal) +
-                        " gained " + str(amount) + " ore\n")
+                        " gains " + str(amount) + " ore\n")
                     player.save()
     for Player in game.players.all(): Player.save()
 
