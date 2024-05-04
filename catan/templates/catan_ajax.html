@@ -139,8 +139,18 @@
                     
                     success: function(response) {
                         announce(response); // Display a message
-                        update_inventories(response); // Update player inventories
                         $('.cancel').hide(); // Hide the "cancel" button
+
+                        // Normal gather case; update player inventories
+                        if (response['robber_flag'] == 0) {update_inventories(response);}
+                        // Special robber case; start interaction
+                        else if (response['robber_flag'] == 1) {
+                            $('.end_turn').hide();
+                            $('.build_settlement').hide();
+                            $('.build_road').hide();
+                            $('.build_city').hide();
+                        }
+                        
                     }
                 });
             });
@@ -211,6 +221,16 @@
                     success: function(response) {
                         // Display a message
                         announce(response);
+
+                        // Move the robber, if the game is in that phase
+                        if (response['robber_flag_start'] == 1 && response['move_success'] == 1) {
+                            move_robber(tile_positions, xindex, yindex);
+                            update_inventories(response)
+                            $('.end_turn').show();
+                            $('.build_settlement').show();
+                            $('.build_road').show();
+                            $('.build_city').show();
+                        }
                     }
                 });
             });
