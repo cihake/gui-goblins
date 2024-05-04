@@ -277,7 +277,8 @@ def gather_resources(game, board, dice_value, response):
             if Corner.building == 2: amount = 2
             elif Corner.building == 1: amount = 1
             for Tile in board.get_neighbor_tiles(Corner):
-                if Tile.dice == dice_value:
+                space = str(Tile.yindex) + "," + str(Tile.xindex)
+                if Tile.dice == dice_value and space != board.robber_space:
                     terrain = Tile.terrain
                     if terrain == "pasture":
                         player.wool += amount
@@ -289,6 +290,7 @@ def gather_resources(game, board, dice_value, response):
                         " gains " + str(amount) + " grain\n")
                     elif terrain == "forest":
                         player.lumber += amount
+                        print("Lumber gathered")
                         response['announcement'] += ("Player " + str(player.ordinal) +
                         " gains " + str(amount) + " lumber\n")
                     elif terrain == "hills":
