@@ -10,7 +10,7 @@ from .view_methods import build_attempt, gather_resources, handle_setup, handle_
 class CatanTests(TestCase):
     def test(self):
         dummy_key = uuid.uuid4()
-        game = Game.initialize(dummy_key, 2, 2)
+        game = Game.initialize(dummy_key, 3, 2)
         board = Board.initialize(dummy_key, False)
         player1 = game.players.get(ordinal=1)
         
@@ -118,18 +118,30 @@ class CatanTests(TestCase):
         handle_setup(game, board, player, corner1.yindex, corner1.xindex, response)
         game.save()
         self.assertTrue(game.setup_flag == 1 and game.turn == 2 and player.starting_settlements == 1)
-        # Successful build 2; loop back
+        # Successful build 2; next player
+        response['announcement'] = ""; corner1.building = 0; corner1.save()
+        player = game.players.get(ordinal=game.turn)
+        handle_setup(game, board, player, corner1.yindex, corner1.xindex, response)
+        game.save()
+        self.assertTrue(game.setup_flag == 1 and game.turn == 3 and player.starting_settlements == 1)
+        # Successful build 3; loop back
         response['announcement'] = ""; corner1.building = 0; corner1.save()
         player = game.players.get(ordinal=game.turn)
         handle_setup(game, board, player, corner1.yindex, corner1.xindex, response)
         game.save()
         self.assertTrue(game.setup_flag == 1 and game.turn == 1 and player.starting_settlements == 1)
-        # Successful build 3; next player
+        # Successful build 4; next player
         response['announcement'] = ""; corner1.building = 0; corner1.save()
         player = game.players.get(ordinal=game.turn)
         handle_setup(game, board, player, corner1.yindex, corner1.xindex, response)
         game.save()
         self.assertTrue(game.setup_flag == 1 and game.turn == 2 and player.starting_settlements == 0)
+        # Successful build 5; next player
+        response['announcement'] = ""; corner1.building = 0; corner1.save()
+        player = game.players.get(ordinal=game.turn)
+        handle_setup(game, board, player, corner1.yindex, corner1.xindex, response)
+        game.save()
+        self.assertTrue(game.setup_flag == 1 and game.turn == 3 and player.starting_settlements == 0)
         # Final successful build
         response['announcement'] = ""; corner1.building = 0; corner1.save()
         player = game.players.get(ordinal=game.turn)
@@ -222,6 +234,18 @@ class CatanTests(TestCase):
         gather_resources(game, board, dice_value, response)
         player1 = game.players.get(ordinal=1)
         self.assertTrue(player1.lumber == 3)
+        dice_value = 11 # Other player, do not gather
+        corner3.player = 2; corner3.save()
+        gather_resources(game, board, dice_value, response)
+        player1 = game.players.get(ordinal=1)
+        self.assertTrue(player1.lumber == 3)
+        # Robber test; do not gather
+        dice_value = 11
+        board.robber_space = "4,4"; board.save()
+        corner3.player = 1; corner3.save()
+        gather_resources(game, board, dice_value, response)
+        player1 = game.players.get(ordinal=1)
+        self.assertTrue(player1.lumber == 3)
 
         """afford method test"""
         # Cannot afford a settlement
@@ -245,6 +269,7 @@ class CatanTests(TestCase):
 
         """Robber move tests"""
         response['announcement'] = ""
+        board.robber_space = "3,3"; board.save()
         # Not a land tile
         move_attempt(game, board, 0, 0, response)
         self.assertTrue(response['move_success'] == -1)
