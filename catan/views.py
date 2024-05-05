@@ -47,7 +47,7 @@ def catan_view(request):
         # build_success, build_type
         response = {}
         response['announcement'] = ""
-        player_string = "Player " + str(current_player.ordinal) + "\n"
+        response['build_success'] = 0
         send_start_flags(game, response)
 
         # Reset data
@@ -167,10 +167,7 @@ def catan_view(request):
         send_flags(game, response)
         game.save()
         board.save()
-        if game.setup_flag == 0:
-            announcement = (player_string +
-            "Turn: " + str(game.turn) + "\n" + response['announcement'])
-            response['announcement'] = announcement
+        update_turn_display(game, response)
         print(response['announcement'])
         return JsonResponse(response)
     
@@ -234,3 +231,13 @@ def send_flags(game, response):
 
 def send_start_flags(game, response):
     response['robber_flag_start'] = game.robber_flag
+
+def update_turn_display(game, response):
+    current_ordinal = (game.turn - 1) % game.number_players + 1
+    player_string = "Player " + str(current_ordinal) + "\n"
+    if game.setup_flag == 0:
+        announcement = player_string + "Turn: " + str(game.turn) + "\n" + response['announcement']
+        response['announcement'] = announcement
+    elif response['build_success'] != 1:
+        announcement = player_string + response['announcement']
+        response['announcement'] = announcement

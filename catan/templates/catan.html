@@ -78,6 +78,7 @@
             }
 
             #player1_inventory {
+                display: none;
                 bottom: 0%;
                 left: 4%;
             }
@@ -90,6 +91,60 @@
             .menu-item:last-child {
                 border-bottom: none;
             }
+
+            .menu-positioning {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            .inventory-container {
+                position: fixed;
+                justify-content: center;
+                align-items: center;
+                bottom: 0%;
+                width: 100px;
+                box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            }
+            .inventory-content {
+                display: none;
+            }
+            .inventory-base {
+                width: 100%;
+                position: relative;
+                padding: 10px;
+                background-color: white;
+                color: black;
+                border: 1px solid #ccc;
+                border-radius: 0px;
+            }
+            .inventory-item {
+                background-color: white;
+                border-top: 1px solid #ccc;
+                border-left: 1px solid #ccc;
+                border-right: 1px solid #ccc;
+                padding: 5px 10px;
+            }
+            #player1 {
+                left: 10%;
+            }
+            #player1 .inventory-base {
+                background-color: #fdd;
+            }
+            #player1 .inventory-item {
+                background-color: #fdd;
+            }
+            #player2 .inventory-base {
+                background-color: #ccf;
+                transform: translate(-0%);
+            }
+            #player2 .inventory-item {
+                background-color: #ccf;
+                transform: translate(-0%);
+            }
+            #player3 {
+                right: 10%;
+            }
+
         </style>
     </head>
     <!--*************************************************************************-->
@@ -122,7 +177,99 @@
         <button class="clear_data">Clear session (debug)</button>-->
 
         <div class="announcer"></div>
-        <div class="menu-container" id="player1_inventory"></div>
+        
+        <div class="menu-positioning">
+            <div class="inventory-container" id="player1">
+                <div class="inventory-content">
+                    <div class="inventory-item" id="ore">
+                        <div class="trade-display" data-id="0"></div>
+                        <input type="text" class="trade-input" data-id="0">
+                        <div class="inventory-display" data-id="0">ore: 0</div>
+                    </div>
+                    <div class="inventory-item" id="brick">
+                        <div class="trade-display" data-id="0"></div>
+                        <input type="text" class="trade-input" data-id="0">
+                        <div class="inventory-display" data-id="0">brick: 0</div>
+                    </div>
+                    <div class="inventory-item" id="lumber">
+                        <div class="trade-display" data-id="0"></div>
+                        <input type="text" class="trade-input" data-id="0">
+                        <div class="inventory-display" data-id="0">lumber: 0</div>
+                    </div>
+                    <div class="inventory-item" id="grain">
+                        <div class="trade-display" data-id="0"></div>
+                        <input type="text" class="trade-input" data-id="0">
+                        <div class="inventory-display" data-id="0">grain: 0</div>
+                    </div>
+                    <div class="inventory-item" id="wool">
+                        <div class="trade-display" data-id="0"></div>
+                        <input type="text" class="trade-input" data-id="0">
+                        <div class="inventory-display" data-id="0">wool: 0</div>
+                    </div>
+                </div>
+                <button class="inventory-base">Player 1</button>
+            </div>
+            <div class="inventory-container" id="player2">
+                <div class="inventory-content">
+                    <div class="inventory-item" id="ore">
+                        <div class="trade-display" data-id="0"></div>
+                        <input type="text" class="trade-input" data-id="0">
+                        <div class="inventory-display" data-id="0">ore: 0</div>
+                    </div>
+                    <div class="inventory-item" id="brick">
+                        <div class="trade-display" data-id="0"></div>
+                        <input type="text" class="trade-input" data-id="0">
+                        <div class="inventory-display" data-id="0">brick: 0</div>
+                    </div>
+                    <div class="inventory-item" id="lumber">
+                        <div class="trade-display" data-id="0"></div>
+                        <input type="text" class="trade-input" data-id="0">
+                        <div class="inventory-display" data-id="0">lumber: 0</div>
+                    </div>
+                    <div class="inventory-item" id="grain">
+                        <div class="trade-display" data-id="0"></div>
+                        <input type="text" class="trade-input" data-id="0">
+                        <div class="inventory-display" data-id="0">grain: 0</div>
+                    </div>
+                    <div class="inventory-item" id="wool">
+                        <div class="trade-display" data-id="0"></div>
+                        <input type="text" class="trade-input" data-id="0">
+                        <div class="inventory-display" data-id="0">wool: 0</div>
+                    </div>
+                </div>
+                <button class="inventory-base">Player 2</button>
+            </div>
+            <div class="inventory-container" id="player3">
+                <div class="inventory-content">
+                    <div class="inventory-item" id="ore">
+                        <div class="trade-display" data-id="0"></div>
+                        <input type="text" class="trade-input" data-id="0">
+                        <div class="inventory-display" data-id="0">ore: 0</div>
+                    </div>
+                    <div class="inventory-item" id="brick">
+                        <div class="trade-display" data-id="0"></div>
+                        <input type="text" class="trade-input" data-id="0">
+                        <div class="inventory-display" data-id="0">brick: 0</div>
+                    </div>
+                    <div class="inventory-item" id="lumber">
+                        <div class="trade-display" data-id="0"></div>
+                        <input type="text" class="trade-input" data-id="0">
+                        <div class="inventory-display" data-id="0">lumber: 0</div>
+                    </div>
+                    <div class="inventory-item" id="grain">
+                        <div class="trade-display" data-id="0"></div>
+                        <input type="text" class="trade-input" data-id="0">
+                        <div class="inventory-display" data-id="0">grain: 0</div>
+                    </div>
+                    <div class="inventory-item" id="wool">
+                        <div class="trade-display" data-id="0"></div>
+                        <input type="text" class="trade-input" data-id="0">
+                        <div class="inventory-display" data-id="0">wool: 0</div>
+                    </div>
+                </div>
+                <button class="inventory-base">Player 3</button>
+            </div>
+        </div>
 
         <!--*************************************************************************-->
         <!--JavaScript for setup and input-->

@@ -6,11 +6,11 @@
     <script>
         // Function to set up the game's coordinate system (involves geometry)
         function setup_board(corner_positions, tile_positions) {
-            var scale = (1000 / 522) * 1.02;
+            var scale = (1000 / 522) * 0.97;
             var hex_length = (522 - 75) / 5;
             var hlength = scale * hex_length / 2; // Horizontal
             var vlength = scale * hex_length / (2 * Math.sqrt(3)); // Vertical
-            var firstpos = [(209 - 50) * scale - 5 * hlength, (54 - 5) * scale - 3 * vlength];
+            var firstpos = [(209 - 30) * scale - 5 * hlength, (54 - 5) * scale - 3 * vlength];
             // Corners
             for (var x = 0; x < 8; x++) { // Columns
                 corner_positions[x] = [];
@@ -258,11 +258,11 @@
             console.log(response.players_data[0]);
             response.players_data.forEach(function(player) {
                 // Update the HTML elements for each player
-                $('#player' + player.ordinal + '_wool').text("wool " + player.wool);
-                $('#player' + player.ordinal + '_grain').text("grain " + player.grain);
-                $('#player' + player.ordinal + '_lumber').text("lumber " + player.lumber);
-                $('#player' + player.ordinal + '_brick').text("brick " + player.brick);
-                $('#player' + player.ordinal + '_ore').text("ore " + player.ore);
+                $('#player' + player.ordinal + ' .inventory-content #wool .inventory-display').text("wool: " + player.wool);
+                $('#player' + player.ordinal + ' .inventory-content #grain .inventory-display').text("grain " + player.grain);
+                $('#player' + player.ordinal + ' .inventory-content #lumber .inventory-display').text("lumber " + player.lumber);
+                $('#player' + player.ordinal + ' .inventory-content #brick .inventory-display').text("brick " + player.brick);
+                $('#player' + player.ordinal + ' .inventory-content #ore .inventory-display').text("ore " + player.ore);
                 player_inventory = [player.wool, player.grain, player.lumber, player.brick, player.ore]
                 for (var i = 0; i < player_inventory.length; i++) {
                     if (player_inventory[i] >= 10) {declare_winner(player.ordinal)}
