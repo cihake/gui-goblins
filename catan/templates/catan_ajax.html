@@ -20,12 +20,14 @@
             draw_board(corner_positions, tile_positions, draw_data);
 
             // Set up player display
-            add_menu_item("player1_inventory", "player1_wool", "wool 0");
+            /*add_menu_item("player1_inventory", "player1_wool", "wool 0");
             add_menu_item("player1_inventory", "player1_grain", "grain 0");
             add_menu_item("player1_inventory", "player1_lumber", "lumber 0");
             add_menu_item("player1_inventory", "player1_brick", "brick 0");
             add_menu_item("player1_inventory", "player1_ore", "ore 0");
-            add_menu_item("player1_inventory", "player1_title", "player 1");
+            add_menu_item("player1_inventory", "player1_title", "player 1");*/
+
+            $(".trade-input").hide();
 
             // Initial announcement
             $('.announcer').html("Game setup; all players place their "
@@ -37,7 +39,20 @@
             $('.build_road').hide();
             $('.build_city').hide();
             $('.cancel').hide();
-            $('#player1_inventory').hide();
+            $('#player1').hide();
+            $('#player2').hide();
+            $('#player3').hide();
+
+            // Inventory hover/click
+            $("#player1 .inventory-base").hover(function() {
+                $("#player1 .inventory-content").toggle();
+            });
+            $("#player2 .inventory-base").hover(function() {
+                $("#player2 .inventory-content").toggle();
+            });
+            $("#player3 .inventory-base").hover(function() {
+                $("#player3 .inventory-content").toggle();
+            });
 
             // Erasure functions
             // Dump cache
@@ -195,7 +210,9 @@
                             $('.build_settlement').show();
                             $('.build_road').show();
                             $('.build_city').show();
-                            $('#player1_inventory').show();
+                            $('#player1').show();
+                            $('#player2').show();
+                            $('#player3').show();
                         }
                     }
                 });
