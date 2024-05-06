@@ -41,28 +41,16 @@
             }
             .end_turn {
                 top: 45%;
-                left: 86%;
-            }
-            .build_settlement {
-                top: 5%;
-                left: 86%;
-            }
-            .build_road {
-                top: 14%;
-                left: 86%;
-            }
-            .build_city {
-                top: 23%;
-                left: 86%;
+                right: 4%;
             }
             .cancel {
-                top: 5%;
+                top: 10%;
                 left: 75%;
             }
             /* announcer positioning */
             .announcer {
                 position: absolute;
-                top: 4%;
+                top: 3%;
                 left: 1%;
                 width: 23%;
                 height: 5%;
@@ -90,6 +78,40 @@
 
             .menu-item:last-child {
                 border-bottom: none;
+            }
+
+            /* Revised styling for menus */
+            .build-container {
+                position: fixed;
+                justify-content: center;
+                align-items: center;
+                top: 10%;
+                right: 5%;
+                width: 100px;
+                box-shadow: 0 0 5px rgba(0,0,0,0.2);
+            }
+            .build-base {
+                width: 100%; max-width: 100%;
+                position: relative;
+                padding: 10px;
+                background-color: #eee;
+                color: black;
+                border: 1px solid #ccc;
+                border-radius: 0px;
+            }
+            .build-menu {
+                display: none;
+            }
+            .build-item {
+                position: relative;
+                width: 100%; max-width: 100%;
+                background-color: #eee;
+                color: black;
+                border-left: 1px solid #ccc;
+                border-right: 1px solid #ccc;
+                border-bottom: 1px solid #ccc;
+                padding: 10px;
+                border-radius: 0px;
             }
 
             .menu-positioning {
@@ -167,10 +189,9 @@
             <text id="wintext" x="110%" y="80%"> Player 1 wins!</text>
         </svg>
         
+        
+
         <button class="end_turn btn btn-success">Gather resources</button>
-        <button class="build_settlement btn btn-success">Build settlement</button>
-        <button class="build_road btn btn-success">Build road</button>
-        <button class="build_city btn btn-success">Build city</button>
         <button class="cancel btn btn-success">Cancel</button>
 
         <!--<button class="clear_database">Erase database objects (debug)</button>
@@ -179,6 +200,14 @@
         <div class="announcer"></div>
         
         <div class="menu-positioning">
+            <div class="build-container">
+                <button class="build-base">Build</button>
+                <div class="build-menu">
+                    <button class="build-item" id="settlement">Settlement</button>
+                    <button class="build-item" id="road">Road</button>
+                    <button class="build-item" id="city">City</button>
+                </div>
+            </div>
             <div class="inventory-container" id="player1">
                 <div class="inventory-content">
                     <div class="inventory-item" id="ore">
