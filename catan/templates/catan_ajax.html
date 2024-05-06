@@ -13,6 +13,10 @@
 
             var draw_data = JSON.parse($('#draw_data').attr('data-pass'));
 
+            // Menu variables
+            var trade_spacing = "&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp";
+            var player_steadiness = [false, false, false];
+
             // Set up the board
             var corner_positions = [];
             var tile_positions = [];
@@ -27,7 +31,7 @@
             add_menu_item("player1_inventory", "player1_ore", "ore 0");
             add_menu_item("player1_inventory", "player1_title", "player 1");*/
 
-            $(".trade-input").hide();
+            //$(".trade-input").hide();
 
             // Initial announcement
             $('.announcer').html("Game setup; all players place their "
@@ -36,34 +40,79 @@
             // Hide elements until players finish setting up
             $('.end_turn').hide();
             $('.build-container').hide();
+            $('.trade').hide();
+            $('.accept').hide();
             $('.cancel').hide();
             $('#player1').hide();
             $('#player2').hide();
             $('#player3').hide();
+            $('.inventory-display').hide();
+            $('#ore .trade-display').html("ore:"+trade_spacing+"/0");
+            $('#brick .trade-display').html("brick:"+trade_spacing+"/0");
+            $('#lumber .trade-display').html("lumber:"+trade_spacing+"/0");
+            $('#grain .trade-display').html("grain:"+trade_spacing+"/0");
+            $('#wool .trade-display').html("wool:"+trade_spacing+"/0");
 
             // Menu hover/click
-            $(".build-base").mouseenter(function() {
-                $(".build-menu").show();
+            $(".build-base").mouseenter(function() {$(".build-menu").show();});
+            $(".build-base").mouseleave(function() {$(".build-menu").hide();});
+            $(".build-menu").mouseenter(function() {$(".build-menu").show();});
+            $(".build-menu").mouseleave(function() {$(".build-menu").hide();});
+            $(".inventory-base").click(function() {
+                var player = $(this).parent().attr('id');
+                var menu = "#"+player+" .inventory-content";
+                var steadiness = false;
+                var index = -1;
+                if (player == "player1") {index = 0;}
+                else if (player == "player2") {index = 1;}
+                else if (player == "player3") {index = 2;}
+                steadiness = player_steadiness[index];
+                if (steadiness == false) {
+                    player_steadiness[index] = true;
+                    $(menu).show();
+                }
+                else if (steadiness == true) {
+                    player_steadiness[index] = false;
+                    $(menu).hide();
+                }
             });
-            $(".build-base").mouseleave(function() {
-                $(".build-menu").hide();
+            $(".inventory-base").mouseenter(function() {
+                var player = $(this).parent().attr('id');
+                var menu = "#"+player+" .inventory-content";
+                $(menu).show();
             });
-            $(".build-menu").mouseenter(function() {
-                $(".build-menu").show();
+            $(".inventory-content").mouseenter(function() {
+                var player = $(this).parent().attr('id');
+                var menu = "#"+player+" .inventory-content";
+                $(menu).show();
             });
-            $(".build-menu").mouseleave(function() {
-                $(".build-menu").hide();
+            $(".inventory-base").mouseleave(function() {
+                var player = $(this).parent().attr('id');
+                var menu = "#"+player+" .inventory-content";
+                var steadiness = false;
+                var index = -1;
+                if (player == "player1") {index = 0;}
+                else if (player == "player2") {index = 1;}
+                else if (player == "player3") {index = 2;}
+                steadiness = player_steadiness[index];
+                if (steadiness == false) {
+                    $(menu).hide();
+                }
             });
-            $("#player1 .inventory-base").hover(function() {
-                $("#player1 .inventory-content").toggle();
+            $(".inventory-content").mouseleave(function() {
+                var player = $(this).parent().attr('id');
+                var menu = "#"+player+" .inventory-content";
+                var steadiness = false;
+                var index = -1;
+                if (player == "player1") {index = 0;}
+                else if (player == "player2") {index = 1;}
+                else if (player == "player3") {index = 2;}
+                steadiness = player_steadiness[index];
+                if (steadiness == false) {
+                    $(menu).hide();
+                }
             });
-            $("#player2 .inventory-base").hover(function() {
-                $("#player2 .inventory-content").toggle();
-            });
-            $("#player3 .inventory-base").hover(function() {
-                $("#player3 .inventory-content").toggle();
-            });
-
+            
             // Erasure functions
             // Dump cache
             $('.clear_data').click(function() {
@@ -102,7 +151,8 @@
                     headers: {'X-CSRFToken': csrftoken},
                     success: function(response) { 
                         announce(response); // Print response
-                        $('.cancel').hide(); // Hide the "cancel" button
+                        $('.cancel').hide();
+                        $('.accept').hide();
                     }
                 });
             });
@@ -119,7 +169,10 @@
                         announce(response); // Print response
                         
                         // Show the "cancel" button, if the player can afford to build
-                        if (response['can_afford']) {$('.cancel').show();}
+                        if (response['can_afford']) {
+                            $('.cancel').show();
+                            $('.accept').hide();
+                        }
                     }
                 });
             });
@@ -134,7 +187,10 @@
                         announce(response); // Print response
                         
                         // Show the "cancel" button, if the player can afford to build
-                        if (response['can_afford']) {$('.cancel').show();}
+                        if (response['can_afford']) {
+                            $('.cancel').show();
+                            $('.accept').hide();
+                        }
                     }
                 });
             });
@@ -149,7 +205,40 @@
                         announce(response); // Print response
                         
                         // Show the "cancel" button, if the player can afford to build
-                        if (response['can_afford']) {$('.cancel').show();}
+                        if (response['can_afford']) {
+                            $('.cancel').show();
+                            $('.accept').hide();
+                        }
+                    }
+                });
+            });
+
+            // Register the "trade" button
+            $('.trade').click(function() {
+                $.ajax({
+                    url: '/catan/',
+                    type: 'POST',
+                    data: {'input': 'trade'},
+                    headers: {'X-CSRFToken': csrftoken},
+
+                    success: function(response) {
+                        $('.cancel').show();
+                        $('.accept').show();
+                    }
+                });
+            });
+
+            // Register the "accept" button
+            $('.accept').click(function() {
+                $.ajax({
+                    url: '/catan/',
+                    type: 'POST',
+                    data: {'input': 'accept'},
+                    headers: {'X-CSRFToken': csrftoken},
+                    success: function(response) { 
+                        announce(response); // Print response
+                        $('.cancel').hide();
+                        $('.accept').hide();
                     }
                 });
             });
@@ -164,7 +253,10 @@
                     
                     success: function(response) {
                         announce(response); // Display a message
-                        $('.cancel').hide(); // Hide the "cancel" button
+                        
+                        // Hide the cancel and accept buttons
+                        $('.accept').hide();
+                        $('.cancel').hide();
 
                         // Normal gather case; update player inventories
                         if (response['robber_flag'] == 0) {update_inventories(response);}
@@ -172,6 +264,7 @@
                         else if (response['robber_flag'] == 1) {
                             $('.end_turn').hide();
                             $('.build-container').hide();
+                            $('.trade').hide();
                         }
                         
                     }
@@ -216,6 +309,7 @@
                         if (response['setup_flag'] == 0 && $('.end_turn').is(':hidden')) {
                             $('.end_turn').show();
                             $('.build-container').show();
+                            $('.trade').show();
                             $('#player1').show();
                             $('#player2').show();
                             $('#player3').show();
@@ -251,6 +345,7 @@
                             update_inventories(response)
                             $('.end_turn').show();
                             $('.build-container').show();
+                            $('.trade').show();
                         }
                     }
                 });
