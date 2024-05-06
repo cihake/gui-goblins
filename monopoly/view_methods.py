@@ -25,11 +25,33 @@ def tax_player(player, space, response):
 def respond_to_property(game, landed_property, player, response):
     if landed_property.player != player.ordinal:
         buy_price = int(landed_property.prices.split(',')[0])
-        player.money -= buy_price
-        landed_property.player = player.ordinal
-        landed_property.save()
-        response['announcement'] += landed_property.name + " bought for $" + str(buy_price) + "\n"
+        rent_price = int(landed_property.rents.split(',')[0])
+
+        print(f"You landed on {landed_property.name}.")
+        print(f"Buy price: ${buy_price}")
+        print(f"Rent price: ${rent_price}")
+
+        # Ask the player if they want to buy the property
+        choice = input("Do you want to buy this property? (yes/no): ").lower()
+        if choice == "yes":
+            return buy_property(game, landed_property, player, buy_price, response)
+        else:
+            print("You chose not to buy this property.")
+            return False
     else:
         rent_price = int(landed_property.rents.split(',')[0])
         player.money += rent_price
-        response['announcement'] += "Collected $" + str(rent_price) + " rent on " + landed_property.name + "\n"
+        response['announcement'] += f"Collected ${rent_price} rent on {landed_property.name}\n"
+    
+    return False
+
+def buy_property(game, landed_property, player, buy_price, response):
+    if player.money >= buy_price:
+        player.money -= buy_price
+        landed_property.player = player.ordinal
+        landed_property.save()
+        response['announcement'] += f"{landed_property.name} bought for ${buy_price}\n"
+        return True
+    else:
+        print("You don't have enough money to buy this property.")
+        return False

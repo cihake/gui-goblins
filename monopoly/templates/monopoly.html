@@ -11,9 +11,16 @@
 
         <!--Define the CSS style for content-->
         <style>
-            html, body {
-                margin: 0; padding: 0; height: 100%; overflow: visible;
-            }
+           html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: visible;
+    background-image: url("{% static 'MonopolyBackground.jpg' %}");
+    background-size: cover; /* Cover the entire background */
+    background-position: center; /* Center the background image */
+    background-repeat: no-repeat; /* Do not repeat the background image */
+}
             #svg-container {
                 width: 100vw; height: 100vh;
                 display: flex; justify-content: center; align-items: center;
@@ -25,11 +32,25 @@
             text {
                 font-family: Arial, sans-serif; font-size: 30px; fill: black;;
             }
-            button {
-                position: absolute; padding: 10px 20px;
-                background-color: #007bff; color: white;
-                border: none; border-radius: 5px; cursor: pointer;
-            }
+            button.monopoly-button {
+    position: absolute;
+    padding: 10px 20px;
+    background-color: #ffd700; /* Monopoly gold color */
+    color: #000; /* Black text */
+    border: 2px solid #000; /* Black border */
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: "Arial Black", sans-serif; /* Bold font */
+    font-size: 16px;
+    text-transform: uppercase; /* Uppercase text */
+    letter-spacing: 1px; /* Add some letter spacing */
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); /* Add a subtle shadow */
+}
+
+button.monopoly-button:hover {
+    background-color: #ffc107; /* Lighter gold on hover */
+    border-color: #ffc107;
+}
             /* Positioning for each button */
             .clear_data {
                 top: 0%;
@@ -44,30 +65,116 @@
                 left: 85%;
             }
             /* announcer positioning */
-            .announcer {
-                position: absolute;
-                top: 15%;
-                left: 1%;
-                width: 22%;
-                height: 5%;
-            }
+        .announcer {
+    position: absolute;
+    top: 15%;
+    left: 1%;
+    width: 22%;
+    height: 5%;
+    color: white; /* Set text color to white */
+    background-color: black; /* Set background color to black */
+    border: 2px solid #ffd700; /* Gold border */
+    padding: 10px; /* Add some padding */
+}
         </style>
     </head>
     <!--*************************************************************************-->
     <body>
-        <svg id="svg-container" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid meet">
-            <!--The game board-->
-            <g id="board" height="1000">
-                <image id="board_image" xlink:href="{% static 'Monopoly.jpg' %}"
-                height="1000" />
-            </g>
-            <text id="wintext" x="110%" y="8%"> Player 1 wins!</text>
-            <text id="money1" x="110%" y="92%"></text>
-        </svg>
-        <button class="dice_roll btn btn-success">Roll dice</button>
-        <button class="clear_database btn btn-success">Erase database objects (debug)</button>
-        <button class="clear_data btn btn-success">Clear session (debug)</button>
-        <div class="announcer"></div>
+    <svg id="svg-container" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid meet">
+        <!-- The game board -->
+        <g id="board" height="1000">
+            <!-- Use the image map instead of directly including the image -->
+            <image xlink:href="{% static 'NewMonopoly.jpg' %}" height="1000" alt="Monopoly Board"></image>
+        <a href="{% static 'Old Kent Road.jpg' %}" target="">
+            <rect x="785" y="870" width="80" height="127" title="Old Kent Road" alt="Old Kent Road" fill="rgba(0, 0, 0, 0)"/>
+        </a>
+        <a href="{% static 'Whitechapel Road.jpg' %}" target="">
+            <rect x="624" y="870" width="79" height="127" title="Whitechapel Road" alt="Whitechapel Road" fill="rgba(0, 0, 0, 0)"/>
+        </a>
+        <a href="{% static 'Kings Cross.jpg' %}" target="">
+            <rect x="458" y="869" width="84" height="131" title="Kings Cross Station" alt="Kings Cross Station" fill="rgba(0, 0, 0, 0)"/>
+        </a>
+        <a href="{% static 'The Angel Islington.jpg' %}" target="">
+            <rect x="377" y="871" width="79" height="129" title="The Angel, Islington" alt="The Angel, Islington" fill="rgba(0, 0, 0, 0)"/>
+        </a>
+        <a href="{% static 'Euston Road.jpg' %}" target="">
+            <rect x="213" y="871" width="82" height="129" title="Euston Road" alt="Euston Road" fill="rgba(0, 0, 0, 0)"/>
+        </a>
+        <a href="{% static 'Pentonville Road.jpg' %}" target="">
+            <rect x="134" y="869" width="79" height="131" title="Pentonville Road" alt="Pentonville Road" fill="rgba(0, 0, 0, 0)"/>
+        </a>
+        <a href="{% static 'Pall Mall.jpg' %}" target="">
+            <rect x="1" y="787" width="132" height="82" title="Pall Mall" alt="Pall Mall" fill="rgba(0, 0, 0, 0)"/>
+        </a>
+        <a href="{% static 'Whitehall.jpg' %}" target="">
+            <rect x="1" y="624" width="132" height="78" title="Whitehall" alt="Whitehall" fill="rgba(0, 0, 0, 0)"/>
+        </a>
+        <a href="{% static 'Northumberland Avenue.jpg' %}" target="">
+            <rect x="1" y="541" width="132" height="81" title="Northumberland Avenue" alt="Northumberland Avenue" fill="rgba(0, 0, 0, 0)"/>
+        </a>
+        <a href="{% static 'Marylebone Station.jpg' %}" target="">
+            <rect x="2" y="458" width="132" height="81" title="Marylebone Station" alt="Marylebone Station" fill="rgba(0, 0, 0, 0)"/>
+        </a>
+        <a href="{% static 'Bow Street.jpg' %}" target="">
+            <rect x="0" y="376" width="132" height="80" title="Bow Street" alt="Bow Street" fill="rgba(0, 0, 0, 0)"/>
+        </a>
+        <a href="{% static 'Marlborough Street.jpg' %}" target="">
+            <rect x="1" y="212" width="132" height="80" title="Marlborough Street" alt="Marlborough Street" fill="rgba(0, 0, 0, 0)"/>
+        </a>
+        <a href="{% static 'Vine Street.jpg' %}" target="">
+            <rect x="1" y="131" width="132" height="80" title="Vine Street" alt="Vine Street" fill="rgba(0, 0, 0, 0)"/>
+        </a>
+        <a href="{% static 'Strand.jpg' %}" target="">
+            <rect x="135" y="1" width="82" height="127" title="Strand" alt="Strand" fill="rgba(0, 0, 0, 0)"/>
+        </a>
+        <a href="{% static 'Fleet Street.jpg' %}" target="">
+            <rect x="297" y="2" width="81" height="128" title="Fleet Street" alt="Fleet Street" fill="rgba(0, 0, 0, 0)"/>
+        </a>
+        <a href="{% static 'Trafalgar Square.jpg' %}" target="">
+            <rect x="378" y="-1" width="80" height="131" title="Trafalgar Square" alt="Trafalgar Square" fill="rgba(0, 0, 0, 0)"/>
+        </a>
+        <a href="{% static 'Fenchurch St. Station.jpg' %}" target="">
+            <rect x="461" y="0" width="80" height="131" title="Fenchurch St. Station" alt="Fenchurch St. Station" fill="rgba(0, 0, 0, 0)"/>
+        </a>
+        <a href="{% static 'Leicester Square.jpg' %}" target="">
+            <rect x="542" y="3" width="81" height="128" title="Leicester Square" alt="Leicester Square" fill="rgba(0, 0, 0, 0)"/>
+        </a>
+        <a href="{% static 'Coventry Street.jpg' %}" target="">
+            <rect x="623" y="2" width="81" height="128" title="Coventry Street" alt="Coventry Street" fill="rgba(0, 0, 0, 0)"/>
+        </a>
+        <a href="{% static 'Electric Company.jpg' %}" target="">
+            <rect x="1" y="703" width="131" height="82" title="Electric Company" alt="Electric Company" fill="rgba(0, 0, 0, 0)"/>
+        </a>
+        <a href="{% static 'Water Works.jpg' %}" target="">
+            <rect x="706" y="0" width="78" height="130" title="Water Works" alt="Water Works" fill="rgba(0, 0, 0, 0)"/>
+        </a>
+        <a href="{% static 'Piccadilly.jpg' %}" target="">
+            <rect x="787" y="-1" width="79" height="131" title="Piccadilly" alt="Piccadilly" fill="rgba(0, 0, 0, 0)"/>
+        </a>
+        <a href="{% static 'Regent Street.jpg' %}" target="">
+            <rect x="867" y="132" width="131" height="80" title="Regent Street" alt="Regent Street" fill="rgba(0, 0, 0, 0)"/>
+        </a>
+        <a href="{% static 'Oxford Street.jpg' %}" target="">
+            <rect x="867" y="215" width="131" height="78" title="Oxford Street" alt="Oxford Street" fill="rgba(0, 0, 0, 0)"/>
+        </a>
+        <a href="{% static 'Bond Street.jpg' %}" target="">
+            <rect x="868" y="378" width="132" height="80" title="Bond Street" alt="Bond Street" fill="rgba(0, 0, 0, 0)"/>
+        </a>
+        <a href="{% static 'Liverpool St. Station.jpg' %}" target="">
+            <rect x="866" y="461" width="131" height="80" title="Liverpool St. Station" alt="Liverpool St. Station" fill="rgba(0, 0, 0, 0)"/>
+        </a>
+        <a href="{% static 'Park Lane.jpg' %}" target="">
+            <rect x="869" y="625" width="131" height="79" title="Park Lane" alt="Park Lane" fill="rgba(0, 0, 0, 0)"/>
+        </a>
+        <a href="{% static 'Mayfair.jpg' %}" target="">
+            <rect x="868" y="789" width="131" height="79" title="Mayfair" alt="Mayfair" fill="rgba(0, 0, 0, 0)"/>
+        </a>
+        </g>
+        <text id="wintext" x="110%" y="8%"> Player 1 wins!</text>
+        <text id="money1" x="110%" y="92%"></text>
+    </svg>
+    <button class="dice_roll monopoly-button">Roll dice</button>
+    <div class="announcer"></div>
         
         <!--*************************************************************************-->
         <!--JavaScript for input-->
@@ -214,5 +321,19 @@
                     return cookieValue;
                 }
         </script>
+        <!-- JavaScript to handle opening images in a new window -->
+
+<script>
+    $(document).ready(function () {
+        // Attach click event to all anchor tags within the SVG
+        $('#board a').on('click', function (e) {
+            e.preventDefault(); // Prevent default link behavior
+            var url = $(this).attr('href'); // Get the URL from the anchor tag's href attribute
+            // Open the URL in a new window with specific dimensions
+            window.open(url, '_blank', 'width=215,height=313');
+        });
+    });
+</script>
+
     </body>
 </html>

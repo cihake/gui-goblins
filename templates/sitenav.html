@@ -1,5 +1,5 @@
 <!--~~~ SITENAV.HTML ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>
-Last edit on 04/28/24 (01:09) by @cihake
+Last edit on 05/5/24 (02:56) by @nyoung
 
 IMPORTANT:	Changes made to this file will modify ANY/ALL templates that
 			'extend' base.html. Exercise caution!
@@ -22,9 +22,22 @@ It has the following layout:
 	SEARCH									|
 <~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 {% load static %}
+<style>
+.navbar-brand {
+    position: relative; /* Make the parent container for absolute positioning */
+}
+
+.logo-img {
+    position: absolute; /* Position the image absolutely */
+    max-height: 80px; /* Adjust the maximum height of the image as needed */
+    top: calc(50% + 15px); /* Position the image vertically at 50% from the top plus 10px */
+    transform: translate(-50%, -50%); /* Center the image both horizontally and vertically */
+    right: 100px; /* Adjust the left position to move the image to the left */
+}
+</style>
 <nav class="navbar navbar-expand-lg fixed-top bg-dark" data-bs-theme="dark">
 	<div class="container">
-		<a href="{% url 'home' %}" class="navbar-brand" onclick="playClickSound()">TheGoblinEnclave</a>
+		<a href="{% url 'home' %}" class="navbar-brand" onclick="playClickSound()"><img src="{% static 'Goblin.png' %}" alt="Site Logo" class="logo-img">TheGoblinEnclave</a>
 		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
 		</button>
