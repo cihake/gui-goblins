@@ -7,7 +7,7 @@ from .models.player import Player
 from .models.board import Board
 from .models.corner import Corner
 from .models.tile import Tile
-from .view_methods import build_attempt, gather_resources, handle_setup, can_afford, handle_road_build, city_attempt, move_attempt, steal_resource
+from .view_methods import build_attempt, gather_resources, handle_setup, can_afford, handle_road_build, city_attempt, move_attempt, steal_resource, determine_winner
 
 def catan_view(request):
     # Load game key, or create one if none in session and valueless
@@ -23,7 +23,7 @@ def catan_view(request):
     
     # Create game objects if none match the key
     if not Game.objects.filter(game_key=game_key).exists():
-        game = Game.initialize(game_key, 1, 2)
+        game = Game.initialize(game_key, 3, 2)
         board = Board.initialize(game_key, True)
         current_player = game.players.get(ordinal=1)
         game.save()
@@ -102,6 +102,8 @@ def catan_view(request):
         elif input == "corner":
             yindex = request.POST.get('yindex')
             xindex = request.POST.get('xindex')
+            print(board.corners.get(yindex=yindex, xindex=xindex))
+            print(current_player)
             # Setup phase
             if game.setup_flag != 0:
                 handle_setup(game, board, current_player, yindex, xindex, response)
@@ -113,11 +115,6 @@ def catan_view(request):
                     current_player.wool -= 1; current_player.grain -= 1; current_player.lumber -= 1; current_player.brick -= 1
                     current_player.save()
                     game.build_flag = 0
-                    # Victory condition: 10 buildings
-                    response['number_buildings'] = 0
-                    for Corner in board.corners.all():
-                        if Corner.building > 0:
-                            response['number_buildings'] += 1
             # Road building mode; two-step process
             elif game.build_flag == 2 or game.build_flag == 3:
                 handle_road_build(game, board, current_player, yindex, xindex, response)
@@ -127,7 +124,9 @@ def catan_view(request):
                 city_attempt(board, current_player, yindex, xindex, response)
                 if response['build_success'] == 1:
                     current_player.grain -= 2; current_player.ore -= 3; current_player.save()
-                
+            
+            print(board.corners.get(yindex=yindex, xindex=xindex))
+            print(current_player)
         
 
         # Tile clicked
@@ -163,11 +162,12 @@ def catan_view(request):
         
 
         # Sava game data, return response
-        send_inventories(game, response)
-        send_flags(game, response)
         game.save()
         board.save()
+        send_inventories(game, response)
+        send_flags(game, response)
         update_turn_display(game, response)
+        determine_winner(game, board, current_player, response)
         print(response['announcement'])
         return JsonResponse(response)
     

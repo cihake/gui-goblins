@@ -175,7 +175,7 @@ def handle_road_build (game, board, player, yindex, xindex, response):
         corner_to_build.roads += str(player.ordinal); corner_to_build.save()
         # Charge player
         player.lumber -= 1; player.brick -= 1; player.save()
-        game.build_flag = 0
+        game.build_flag = 2
         response['announcement'] += "Built successfully\n"
         return
     
@@ -185,6 +185,7 @@ def city_attempt(board, player, yindex, xindex, response):
     corner_to_build = board.corners.get(yindex=yindex, xindex=xindex)
     if corner_to_build.building == 1 and corner_to_build.player == player.ordinal:
         corner_to_build.building = 2; corner_to_build.save()
+        player.number_cities += 1; player.save()
         response['build_success'] = 1
         response['announcement'] += "Built successfully\n"
     else:
@@ -320,3 +321,9 @@ def can_afford(player, input, response):
         if (player.grain >= 2 and player.ore >= 3):
             return True
         else: return False
+
+
+def determine_winner(game, board, player, response):
+    if game.current_player == player.ordinal and player.number_cities >= 5:
+        game.winner = player.ordinal
+        response['winner'] = player.ordinal

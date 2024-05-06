@@ -6,6 +6,7 @@ and a resource total.
 class Player(models.Model):
     ordinal = models.IntegerField(default=-1)
     starting_settlements = models.IntegerField(default=0)
+    number_cities = models.IntegerField(default=0)
     wool = models.IntegerField(default=0)
     grain = models.IntegerField(default=0)
     lumber = models.IntegerField(default=0)
