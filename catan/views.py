@@ -23,7 +23,7 @@ def catan_view(request):
     
     # Create game objects if none match the key
     if not Game.objects.filter(game_key=game_key).exists():
-        game = Game.initialize(game_key, 1, 2)
+        game = Game.initialize(game_key, 3, 2)
         board = Board.initialize(game_key, True)
         current_player = game.players.get(ordinal=1)
         game.save()
