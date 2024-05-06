@@ -130,7 +130,7 @@
             // Draw a road
             else if (response['build_type'] == "road_end") {
                 draw_road(response, player_color, corner_positions)
-                $('.cancel').hide(); // Hide the "cancel" button
+                //$('.cancel').hide(); // Hide the "cancel" button
             }
             // Draw a city
             else if (response['build_type'] == "city") {
@@ -263,10 +263,6 @@
                 $('#player' + player.ordinal + ' .inventory-content #lumber .inventory-display').text("lumber " + player.lumber);
                 $('#player' + player.ordinal + ' .inventory-content #brick .inventory-display').text("brick " + player.brick);
                 $('#player' + player.ordinal + ' .inventory-content #ore .inventory-display').text("ore " + player.ore);
-                player_inventory = [player.wool, player.grain, player.lumber, player.brick, player.ore]
-                for (var i = 0; i < player_inventory.length; i++) {
-                    if (player_inventory[i] >= 10) {declare_winner(player.ordinal)}
-                }
             });
         }
 

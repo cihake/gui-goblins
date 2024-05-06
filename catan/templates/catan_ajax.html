@@ -35,15 +35,25 @@
 
             // Hide elements until players finish setting up
             $('.end_turn').hide();
-            $('.build_settlement').hide();
-            $('.build_road').hide();
-            $('.build_city').hide();
+            $('.build-container').hide();
             $('.cancel').hide();
             $('#player1').hide();
             $('#player2').hide();
             $('#player3').hide();
 
-            // Inventory hover/click
+            // Menu hover/click
+            $(".build-base").mouseenter(function() {
+                $(".build-menu").show();
+            });
+            $(".build-base").mouseleave(function() {
+                $(".build-menu").hide();
+            });
+            $(".build-menu").mouseenter(function() {
+                $(".build-menu").show();
+            });
+            $(".build-menu").mouseleave(function() {
+                $(".build-menu").hide();
+            });
             $("#player1 .inventory-base").hover(function() {
                 $("#player1 .inventory-content").toggle();
             });
@@ -99,7 +109,7 @@
 
             // Build buttons
             // Register the "build settlement" button
-            $('.build_settlement').click(function() {
+            $('.build-menu #settlement').click(function() {
                 $.ajax({
                     url: '/catan/',
                     type: 'POST',
@@ -114,7 +124,7 @@
                 });
             });
             // Register the "build road" button
-            $('.build_road').click(function() {
+            $('.build-menu #road').click(function() {
                 $.ajax({
                     url: '/catan/',
                     type: 'POST',
@@ -129,7 +139,7 @@
                 });
             });
             // Register the "build city" button
-            $('.build_city').click(function() {
+            $('.build-menu #city').click(function() {
                 $.ajax({
                     url: '/catan/',
                     type: 'POST',
@@ -161,9 +171,7 @@
                         // Special robber case; start interaction
                         else if (response['robber_flag'] == 1) {
                             $('.end_turn').hide();
-                            $('.build_settlement').hide();
-                            $('.build_road').hide();
-                            $('.build_city').hide();
+                            $('.build-container').hide();
                         }
                         
                     }
@@ -199,17 +207,15 @@
                             update_inventories(response); // Update player inventories
                             
                             // Victory condition: 10 buildings
-                            if (response['number_buildings'] >= 10) {
-                                declare_winner(1)
+                            if (response['winner'] && response['winner']> 0) {
+                                declare_winner(response['winner']);
                             }
                         }
 
                         // Reveal elements after setup
                         if (response['setup_flag'] == 0 && $('.end_turn').is(':hidden')) {
                             $('.end_turn').show();
-                            $('.build_settlement').show();
-                            $('.build_road').show();
-                            $('.build_city').show();
+                            $('.build-container').show();
                             $('#player1').show();
                             $('#player2').show();
                             $('#player3').show();
@@ -244,9 +250,7 @@
                             move_robber(tile_positions, xindex, yindex);
                             update_inventories(response)
                             $('.end_turn').show();
-                            $('.build_settlement').show();
-                            $('.build_road').show();
-                            $('.build_city').show();
+                            $('.build-container').show();
                         }
                     }
                 });

@@ -13,6 +13,7 @@ class Game(models.Model):
     current_player = models.IntegerField(default=1)
     previous_player = models.IntegerField(default=1)
     turn = models.IntegerField(default=1)
+    winner = models.IntegerField(default=0)
     setup_flag = models.IntegerField(default=1)
     build_flag = models.IntegerField(default=0)
     robber_flag = models.IntegerField(default=0)
