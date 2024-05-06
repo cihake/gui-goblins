@@ -1,4 +1,8 @@
 """Event handler for space landing"""
+import tkinter as tk
+from tkinter import ttk
+from ttkthemes import ThemedStyle
+
 def respond_to_space(game, board, property_deck, player, response):
     space = board.get_space(player.space)
     
@@ -22,22 +26,53 @@ def tax_player(player, space, response):
 
 
 """Either offer to buy the property or charge rent"""
+
 def respond_to_property(game, landed_property, player, response):
     if landed_property.player != player.ordinal:
         buy_price = int(landed_property.prices.split(',')[0])
         rent_price = int(landed_property.rents.split(',')[0])
 
-        print(f"You landed on {landed_property.name}.")
-        print(f"Buy price: ${buy_price}")
-        print(f"Rent price: ${rent_price}")
+        if player.money < buy_price:
+            # Player doesn't have enough money, display message using the announcer and automatically pass
+            response['announcement'] += f"You don't have enough money to buy {landed_property.name}.\n"
+            return False        
+        # Create a Tkinter window
+        root = tk.Tk()
+        root.title("Property Decision")
+        root.configure(bg="ivory")  # Set background color
 
-        # Ask the player if they want to buy the property
-        choice = input("Do you want to buy this property? (yes/no): ").lower()
-        if choice == "yes":
+        # Set the size of the window
+        root.geometry("400x300")  # Set the width and height
+
+        # Define custom fonts
+        title_font = ("Arial", 18, "bold")
+        text_font = ("Arial", 12)
+        button_font = ("Arial", 14, "bold")
+
+        # Display information about the property with custom fonts and colors
+        label = tk.Label(root, text=f"You landed on {landed_property.name}.\nBuy price: ${buy_price}\nRent price: ${rent_price}", font=text_font, bg="ivory")
+        label.pack(pady=20)  # Add padding
+
+        # Function to buy the property
+        def buy_property_func():
+            root.destroy()  # Close the window
             return buy_property(game, landed_property, player, buy_price, response)
-        else:
+
+        # Function when player chooses not to buy
+        def pass_property_func():
+            root.destroy()  # Close the window
             print("You chose not to buy this property.")
             return False
+
+        # Create buttons for buying or passing with custom fonts and colors
+        buy_button = tk.Button(root, text="Buy", command=buy_property_func, font=button_font, bg="green", fg="white")
+        buy_button.pack(pady=10, padx=20, ipadx=10, ipady=5)  # Add padding and internal padding
+        pass_button = tk.Button(root, text="Pass", command=pass_property_func, font=button_font, bg="red", fg="white")
+        pass_button.pack(pady=10, padx=20, ipadx=10, ipady=5)  # Add padding and internal padding
+
+        # Run the Tkinter event loop
+        root.mainloop()
+
     else:
         rent_price = int(landed_property.rents.split(',')[0])
         player.money += rent_price

@@ -3,9 +3,10 @@ from django.http import JsonResponse
 from account.models import Coin, Account, Leaderboard
 from django.urls import reverse
 
-
 def candyland_view(request):
+    # Check if the user is authenticated
     if request.user.is_authenticated:
+        # Check if the user has enough coins
         try:
             coin_balance = Coin.objects.get(user=request.user).amount
             if coin_balance < 10:
@@ -15,7 +16,6 @@ def candyland_view(request):
     else:
         return redirect('register')  # Redirect unauthenticated users to register page
 
-    
     # Initialize variables
     if 'position' not in request.session:
         request.session['position'] = 1
@@ -31,12 +31,19 @@ def candyland_view(request):
 
         request.session['position'] += 1  # Increment position
 
-        if request.session['position'] >= 132 and input_data == 'win':
-            coin_balance += 300  # Add 15 coins for winning
+        if request.session['position'] >= 132:
+            # Add 15 coins for winning
+            coin_balance += 15
+            # Update the coin balance
             Coin.objects.filter(user=request.user).update(amount=coin_balance)
+            # Redirect to the home screen after winning
+            return JsonResponse({'redirect': reverse('home')})
 
         return JsonResponse({'echo': input_data})
+
     # Initial HTTP request
     else:
-        Coin.objects.filter(user=request.user).update(amount=coin_balance - 10)
+        # Deduct 10 coins from the user's balance
+        coin_balance -= 10
+        Coin.objects.filter(user=request.user).update(amount=coin_balance)
         return render(request, 'candyland.html')

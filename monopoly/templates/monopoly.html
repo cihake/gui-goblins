@@ -76,6 +76,68 @@ button.monopoly-button:hover {
     border: 2px solid #ffd700; /* Gold border */
     padding: 10px; /* Add some padding */
 }
+#money1 {
+    color: lightgreen;
+     position: relative; /* Set position to relative */
+     top: -100px; /* Adjust top position to move it up */
+     left: 20px;
+}
+#money2 {
+    color: lightblue;
+     position: relative; /* Set position to relative */
+     top: -100px; /* Adjust top position to move it up */
+     left: 50px;
+}
+
+.dice {
+            width: 100px;
+            height: 100px;
+            border: 2px solid black;
+            position: relative;
+            display: inline-block;
+            margin: 20px;
+        }
+
+        /* CSS styles for the dots */
+        .dot {
+            width: 15px;
+            height: 15px;
+            background-color: black;
+            border-radius: 50%;
+            position: absolute;
+        }
+
+        /* Positioning for dots */
+        .dot1 {
+            top: 20px;
+            left: 20px;
+        }
+
+        .dot2 {
+            top: 40px;
+            left: 40px;
+        }
+
+        .dot3 {
+            top: 20px;
+            left: 40px;
+        }
+
+        .dot4 {
+            top: 40px;
+            left: 20px;
+        }
+
+        .dot5 {
+            top: 30px;
+            left: 30px;
+        }
+
+        .dot6 {
+            top: 20px;
+            left: 30px;
+        }
+}
         </style>
     </head>
     <!--*************************************************************************-->
@@ -83,7 +145,7 @@ button.monopoly-button:hover {
     <svg id="svg-container" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid meet">
         <!-- The game board -->
         <g id="board" height="1000">
-            <!-- Use the image map instead of directly including the image -->
+            
             <image xlink:href="{% static 'NewMonopoly.jpg' %}" height="1000" alt="Monopoly Board"></image>
         <a href="{% static 'Old Kent Road.jpg' %}" target="">
             <rect x="785" y="870" width="80" height="127" title="Old Kent Road" alt="Old Kent Road" fill="rgba(0, 0, 0, 0)"/>
@@ -171,90 +233,134 @@ button.monopoly-button:hover {
         </a>
         </g>
         <text id="wintext" x="110%" y="8%"> Player 1 wins!</text>
-        <text id="money1" x="110%" y="92%"></text>
     </svg>
     <button class="dice_roll monopoly-button">Roll dice</button>
     <div class="announcer"></div>
+    <text id="money1" x="110%" y="92%">Player 1: $1500</text>
+    <text id="money2" x="110%" y="96%">AI: $1500</text>
+    <script>$('#money1').text("Player 1: $" + player1_money);</script>
+    <audio id="diceRollSound">
+    <source src="{% static 'Dice Roll Sound.mp3' %}" type="audio/mpeg">
+    Your browser does not support the audio element.
+</audio>
+<polygon id="ai_piece" points="500,500 530,540 470,540" fill="black" />
+
         
         <!--*************************************************************************-->
         <!--JavaScript for input-->
         <script>
             // Run once the document has loaded
-            $(document).ready(function() {
-                // Get CSRF token, mandatory security for AJAX
-                var csrftoken = getCookie('csrftoken');
+$(document).ready(function() {
+    // Get CSRF token, mandatory security for AJAX
+    var csrftoken = getCookie('csrftoken');
 
-                // Board setup
-                $('#wintext').hide();
-                var coordinates = board_setup();
-                var xcoords = coordinates[0];
-                var ycoords = coordinates[1];
+    // Board setup
+    $('#wintext').hide();
+    var coordinates = board_setup();
+    var xcoords = coordinates[0];
+    var ycoords = coordinates[1];
 
-                // Display player 1
-                create_circle("piece1", xcoords[0], ycoords[0], 15, "black");
-                $('#money1').text("Player 1 : $" + String(0));
+    // Display player 1
+    create_circle("piece1", xcoords[0], ycoords[0], 25, "blue");
+    $('#money1').text("Player 1: $" + String(1500)); // Initialize money to $1500
+    create_polygon("ai_piece", xcoords[0], ycoords[0], "red");
 
-                // Dump cache
-                $('.clear_data').click(function() {
-                    $.ajax({
-                        url: '/monopoly/',
-                        type: 'POST',
-                        data: {'input': 'clear_data'},
-                        headers: {'X-CSRFToken': csrftoken},
-                    });
-                });
-                // Clear database
-                $('.clear_database').click(function() {
-                    $.ajax({
-                        url: '/monopoly/',
-                        type: 'POST',
-                        data: {'input': 'clear_database'},
-                        headers: {'X-CSRFToken': csrftoken},
-                    });
-                });
-                // Reset game variables
-                $(window).on('beforeunload', function() {
-                    $.ajax({
-                        url: '/monopoly/',
-                        type: 'POST',
-                        data: {'input': 'unload'},
-                        headers: {'X-CSRFToken': csrftoken},
-                    });
-                });
+function create_polygon(id, x, y, color) {
+    var svgNS = "http://www.w3.org/2000/svg";
+    var polygon = document.createElementNS(svgNS, "polygon");
+    polygon.setAttributeNS(null, "id", id);
+    polygon.setAttributeNS(null, "points", (x - 20) + "," + (y + 25) + " " + x + "," + (y - 20) + " " + (x + 20) + "," + (y + 25));
+    polygon.setAttributeNS(null, "fill", color);
+    document.getElementById("board").appendChild(polygon);
+}
+ function ai_turn() {
+    // Simulate dice roll for AI
+    var ai_roll = Math.floor(Math.random() * 6) + 1;
+    // Simulate AI moving
+    var ai_space = Math.min(player1_space + ai_roll, 39); // Assuming player1_space is accessible here
+    // Update AI's position on the board
+    $('#ai_piece').attr("points", (xcoords[ai_space] - 20) + "," + (ycoords[ai_space] + 25) + " " + xcoords[ai_space] + "," + (ycoords[ai_space] - 20) + " " + (xcoords[ai_space] + 20) + "," + (ycoords[ai_space] + 25));
+    $.ajax({
+        url: '/monopoly/',
+        type: 'POST',
+        data: {
+            'input': 'ai_buy_properties',
+            'player2_space': ai_space,
+            'player2_money': 1500 // Initialize AI's money to $1500
+        },
+        headers: { 'X-CSRFToken': csrftoken },
+        success: function (response) {
+            var ai_money = response['player2_money'];
+            $('#money2').text("AI: $" + ai_money);
+        }
+    });
+}
 
-                // Register a dice roll
-                $('.dice_roll').click(function() {
-                    console.log("Dice roll")
-                    $.ajax({
-                        url: '/monopoly/',
-                        type: 'POST',
-                        data: {
-                            'input': 'dice_roll',
-                        },
-                        headers: {'X-CSRFToken': csrftoken},
-                        
-                        success: function(response) {
-                            // Display a message
-                            $('.announcer').html(response['announcement'].replace(/\n/g, '<br>'));
+    // Dump cache
+    $('.clear_data').click(function() {
+        $.ajax({
+            url: '/monopoly/',
+            type: 'POST',
+            data: {'input': 'clear_data'},
+            headers: {'X-CSRFToken': csrftoken},
+        });
+    });
+    // Clear database
+    $('.clear_database').click(function() {
+        $.ajax({
+            url: '/monopoly/',
+            type: 'POST',
+            data: {'input': 'clear_database'},
+            headers: {'X-CSRFToken': csrftoken},
+        });
+    });
+    // Reset game variables
+    $(window).on('beforeunload', function() {
+        $.ajax({
+            url: '/monopoly/',
+            type: 'POST',
+            data: {'input': 'unload'},
+            headers: {'X-CSRFToken': csrftoken},
+        });
+    });
 
-                            // Alter the piece's position
-                            var player1_space = response['player1_space']
-                            var player1_money = response['player1_money']
+    // Register a dice roll
+    $('.dice_roll').click(function() {
+        console.log("Dice roll");
+        $.ajax({
+            url: '/monopoly/',
+            type: 'POST',
+            data: {
+                'input': 'dice_roll',
+            },
+            headers: {'X-CSRFToken': csrftoken},
 
-                            $('#money1').text("Player 1 : $" + player1_money);
-                            // Change the displayed space
-                            $('#piece1').attr("cx", xcoords[player1_space]);
-                            $('#piece1').attr("cy", ycoords[player1_space]);
+            success: function(response) {
+                var audio = document.getElementById('diceRollSound');
+                    audio.play();
+                // Display a message
+                $('.announcer').html(response['announcement'].replace(/\n/g, '<br>'));
 
-                            // If $1000 are accrued, the player wins
-                            if (player1_money >= 1000) {
-                                declare_winner(1);
-                            }
-                        }
-                    });
-                });
+                // Alter the piece's position
+                var player1_space = response['player1_space'];
+                var player1_money = response['player1_money'];
 
-            });
+                $('#money1').text("Player 1: $" + player1_money).css({
+                'font-family': 'Arial, sans-serif',
+                'font-size': '24px',
+                'font-weight': 'bold',
+});
+                // Change the displayed space
+                $('#piece1').attr("cx", xcoords[player1_space]);
+                $('#piece1').attr("cy", ycoords[player1_space]);
+
+                
+               ai_turn();
+            }
+        });
+    });
+});
+
         </script>
         <!--*************************************************************************-->
         <!--JavaScript functions-->
@@ -334,6 +440,7 @@ button.monopoly-button:hover {
         });
     });
 </script>
+
 
     </body>
 </html>
